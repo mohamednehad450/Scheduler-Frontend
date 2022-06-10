@@ -29,6 +29,7 @@ const AppLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
                 fixed
                 navbar={<Nav opened={opened} setOpened={setOpened} />}
                 header={<Header opened={opened} setOpened={setOpened} />}
+                padding={0}
             >
                 {children}
             </AppShell>
