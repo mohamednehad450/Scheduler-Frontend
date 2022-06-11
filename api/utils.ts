@@ -120,7 +120,7 @@ interface SequenceData {
 
 // TODO: Add pagination 
 // TODO: Add auth
-class CRUD<T> {
+class CRUD<T extends { id: unknown }> {
 
     url: string
 
@@ -128,7 +128,7 @@ class CRUD<T> {
         this.url = url
     }
 
-    getPromise = (id: string) => axios.get(this.url, {
+    getPromise = (id: T['id']) => axios.get(this.url, {
         params: { id },
         headers: {
             "Content Type": "application/json"
@@ -136,7 +136,7 @@ class CRUD<T> {
     });
 
 
-    get = (id: string, cb: Callback<T>) => this.getPromise(id)
+    get = (id: T['id'], cb: Callback<T>) => this.getPromise(id)
         .then(v => cb(null, v.data))
         .catch(err => cb(err));
 
@@ -165,7 +165,7 @@ class CRUD<T> {
         .catch(err => cb(err));
 
 
-    deletePromise = (id: string,) => axios.delete(this.url, {
+    deletePromise = (id: T['id']) => axios.delete(this.url, {
         params: { id },
         headers: {
             "Content Type": "application/json"
@@ -173,7 +173,7 @@ class CRUD<T> {
     });
 
 
-    delete = (id: string, cb: Callback<void>) => this.deletePromise(id)
+    delete = (id: T['id'], cb: Callback<void>) => this.deletePromise(id)
         .then(() => cb(null))
         .catch(err => cb(err));
 
