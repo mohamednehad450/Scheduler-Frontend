@@ -128,52 +128,66 @@ class CRUD<T> {
         this.url = url
     }
 
-    get = (id: string, cb: Callback<T>) =>
-        axios.get(this.url, {
-            params: { id },
-            headers: {
-                "Content Type": "application/json"
-            }
-        })
-            .then(v => cb(null, v.data))
-            .catch(err => cb(err))
+    getPromise = (id: string) => axios.get(this.url, {
+        params: { id },
+        headers: {
+            "Content Type": "application/json"
+        }
+    });
 
-    post = (obj: T, cb: Callback<T>) =>
-        axios.post(this.url, obj, {
-            headers: {
-                "Content Type": "application/json"
-            }
-        })
-            .then(v => cb(null, v.data))
-            .catch(err => cb(err))
 
-    patch = (obj: T, cb: Callback<T>) => {
-        axios.patch(this.url, obj, {
-            headers: {
-                "Content Type": "application/json"
-            }
-        })
-            .then(v => cb(null, v.data))
-            .catch(err => cb(err))
-    }
+    get = (id: string, cb: Callback<T>) => this.getPromise(id)
+        .then(v => cb(null, v.data))
+        .catch(err => cb(err));
 
-    delete = (id: string, cb: Callback<void>) => {
-        axios.delete(this.url, {
-            params: { id },
-            headers: {
-                "Content Type": "application/json"
-            }
-        })
-            .then(() => cb(null))
-            .catch(err => cb(err))
-    }
 
-    list = (cb: Callback<T[]>) => {
-        axios.get(this.url + 's', {
-        })
-            .then(l => cb(null, l.data))
-            .catch(err => cb(err))
-    }
+    postPromise = (obj: T) => axios.post(this.url, obj, {
+        headers: {
+            "Content Type": "application/json"
+        }
+    });
+
+
+    post = (obj: T, cb: Callback<T>) => this.postPromise(obj)
+        .then(v => cb(null, v.data))
+        .catch(err => cb(err));
+
+
+    patchPromise = (obj: T) => axios.patch(this.url, obj, {
+        headers: {
+            "Content Type": "application/json"
+        }
+    });
+
+
+    patch = (obj: T, cb: Callback<T>) => this.patchPromise(obj)
+        .then(v => cb(null, v.data))
+        .catch(err => cb(err));
+
+
+    deletePromise = (id: string,) => axios.delete(this.url, {
+        params: { id },
+        headers: {
+            "Content Type": "application/json"
+        }
+    });
+
+
+    delete = (id: string, cb: Callback<void>) => this.deletePromise(id)
+        .then(() => cb(null))
+        .catch(err => cb(err));
+
+
+    listPromise = () => axios.get(this.url + 's', {
+        headers: {
+            "Content Type": "application/json"
+        }
+    });
+    list = (cb: Callback<T[]>) => this.listPromise()
+        .then(l => cb(null, l.data))
+        .catch(err => cb(err));
+
+
 }
 
 export { CRUD }
