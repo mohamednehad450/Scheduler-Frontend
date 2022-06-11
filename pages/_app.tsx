@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { AppLayout } from '../components/layout';
 import { ProvideSequence } from '../components/context/sequences';
 import { ProvideActions } from '../components/context/actions';
+import { ProvidePins } from '../components/context/pins';
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
@@ -14,9 +15,11 @@ export default function App(props: AppProps) {
       </Head>
       <ProvideSequence>
         <ProvideActions>
-          <AppLayout>
-            <Component {...pageProps} />
-          </AppLayout>
+          <ProvidePins>
+            <AppLayout>
+              <Component {...pageProps} />
+            </AppLayout>
+          </ProvidePins>
         </ProvideActions>
       </ProvideSequence>
     </>
