@@ -16,6 +16,7 @@
     "next": "12.1.6",
     "react": "18.1.0",
     "react-dom": "18.1.0",
+    "socket.io-client": "^4.5.1",
     "tabler-icons-react": "^1.48.1"
   },
   "devDependencies": {
