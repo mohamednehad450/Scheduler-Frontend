@@ -1,8 +1,9 @@
+import { showNotification } from "@mantine/notifications"
+import { channel } from "diagnostics_channel"
 import EventEmitter from "events"
 import { createContext, useContext, useEffect, useState } from "react"
 import { io, Socket } from "socket.io-client"
 import { Pin, SequenceData } from "../../../api"
-
 
 enum ACTIONS {
     RUN = "run",
@@ -16,10 +17,17 @@ type SequenceActions = {
     [key in (ACTIONS.RUN | ACTIONS.STOP | ACTIONS.ACTIVATE | ACTIONS.DEACTIVATE)]: (id: SequenceData['id']) => void
 }
 
+type PinStatus = {
+    pin: Pin,
+    running: boolean,
+    err: Error | null | undefined,
+    reservedBy?: SequenceData['id']
+}
+
 type State = {
     runningSequences: SequenceData['id'][]
     activeSequences: SequenceData['id'][]
-    pins: { p: Pin, running: boolean, err: Error | null | undefined }[],
+    pins: PinStatus[],
 }
 
 type ErrorObject = {
@@ -38,6 +46,7 @@ type SuccessObject = {
 interface ActionsContext extends SequenceActions {
     [ACTIONS.REFRESH]: () => void
     state: State
+    emitter?: EventEmitter
 }
 
 
@@ -45,12 +54,13 @@ const actionsContext = createContext<ActionsContext | undefined>(undefined)
 
 const useActions = () => useContext(actionsContext)
 
-const ioUrl = 'http://localhost:3000/'
+const ioUrl = 'http://localhost:8000/'
 
-const initActionsContext = (eventEmitter?: EventEmitter): ActionsContext => {
+const initActionsContext = (): ActionsContext => {
 
     const [socket, setSocket] = useState<Socket>()
     const [state, setState] = useState<State>({ runningSequences: [], activeSequences: [], pins: [] })
+    const [emitter, setEmitter] = useState<EventEmitter>()
 
     useEffect(() => {
         const s = io(ioUrl)
@@ -58,20 +68,40 @@ const initActionsContext = (eventEmitter?: EventEmitter): ActionsContext => {
             if (!socket) {
                 setSocket(s)
             }
+            const e = emitter || new EventEmitter()
+            if (!emitter) {
+                setEmitter(e)
+            }
             s.on('state', (s: Partial<State>) => {
                 setState(old => ({ ...old, ...s }))
             })
             s.on('error', (err: ErrorObject) => {
-                eventEmitter?.emit('error', err)
+                e.emit('error', err)
             })
             s.on('success', (s: SuccessObject) => {
-                eventEmitter?.emit('success', s)
+                e.emit('success', s)
             })
+            s.on('pinChange', (channel: number, running: boolean, reservedBy?: SequenceData['id']) => {
+                setState(s => ({
+                    ...s,
+                    pins: s.pins.map(p => p.pin.channel === channel ? {
+                        ...p,
+                        running,
+                        reservedBy,
+
+                    } : p)
+                }))
+            })
+            s.on('stop', (id: string,) => e.emit('stop', id))
+            s.on('run', (id: string, date: string, duration: number) => e.emit('run', id, new Date(date), duration))
+
         })
 
         return () => {
             s.close()
             setSocket(undefined)
+            emitter?.removeAllListeners()
+            setEmitter(undefined)
         }
     }, [])
 
@@ -89,7 +119,8 @@ const initActionsContext = (eventEmitter?: EventEmitter): ActionsContext => {
         activate,
         deactivate,
         refresh,
-        state
+        state,
+        emitter,
     }
 }
 
