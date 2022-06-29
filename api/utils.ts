@@ -4,7 +4,7 @@ type Callback<T> = (err: unknown, val?: T) => void
 
 // TODO: Add pagination 
 // TODO: Add auth
-class CRUD<T extends { id: unknown }> {
+class CRUD<K, T> {
 
     url: string
 
@@ -12,7 +12,7 @@ class CRUD<T extends { id: unknown }> {
         this.url = url
     }
 
-    getPromise = (id: T['id']) => axios.get(this.url, {
+    getPromise = (id: K) => axios.get(this.url, {
         params: { id },
         headers: {
             "Content Type": "application/json"
@@ -20,7 +20,7 @@ class CRUD<T extends { id: unknown }> {
     });
 
 
-    get = (id: T['id'], cb: Callback<T>) => this.getPromise(id)
+    get = (id: K, cb: Callback<T>) => this.getPromise(id)
         .then(v => cb(null, v.data))
         .catch(err => cb(err));
 
@@ -49,7 +49,7 @@ class CRUD<T extends { id: unknown }> {
         .catch(err => cb(err));
 
 
-    deletePromise = (id: T['id']) => axios.delete(this.url, {
+    deletePromise = (id: K) => axios.delete(this.url, {
         params: { id },
         headers: {
             "Content Type": "application/json"
@@ -57,7 +57,7 @@ class CRUD<T extends { id: unknown }> {
     });
 
 
-    delete = (id: T['id'], cb: Callback<void>) => this.deletePromise(id)
+    delete = (id: K, cb: Callback<void>) => this.deletePromise(id)
         .then(() => cb(null))
         .catch(err => cb(err));
 

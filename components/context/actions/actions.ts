@@ -1,9 +1,7 @@
-import { showNotification } from "@mantine/notifications"
-import { channel } from "diagnostics_channel"
 import EventEmitter from "events"
 import { createContext, useContext, useEffect, useState } from "react"
 import { io, Socket } from "socket.io-client"
-import { Pin, SequenceData } from "../../../api"
+import { PinDbType, SequenceDBType } from "../../../Scheduler/src/db"
 
 enum ACTIONS {
     RUN = "run",
@@ -14,19 +12,18 @@ enum ACTIONS {
 }
 
 type SequenceActions = {
-    [key in (ACTIONS.RUN | ACTIONS.STOP | ACTIONS.ACTIVATE | ACTIONS.DEACTIVATE)]: (id: SequenceData['id']) => void
+    [key in (ACTIONS.RUN | ACTIONS.STOP | ACTIONS.ACTIVATE | ACTIONS.DEACTIVATE)]: (id: SequenceDBType['id']) => void
 }
 
 type PinStatus = {
-    pin: Pin,
+    pin: PinDbType,
     running: boolean,
     err: Error | null | undefined,
-    reservedBy?: SequenceData['id']
+    reservedBy?: SequenceDBType['id']
 }
 
 type State = {
-    runningSequences: SequenceData['id'][]
-    activeSequences: SequenceData['id'][]
+    runningSequences: SequenceDBType['id'][]
     pins: PinStatus[],
 }
 
@@ -59,7 +56,7 @@ const ioUrl = 'http://localhost:8000/'
 const initActionsContext = (): ActionsContext => {
 
     const [socket, setSocket] = useState<Socket>()
-    const [state, setState] = useState<State>({ runningSequences: [], activeSequences: [], pins: [] })
+    const [state, setState] = useState<State>({ runningSequences: [], pins: [] })
     const [emitter, setEmitter] = useState<EventEmitter>()
 
     useEffect(() => {
@@ -81,13 +78,13 @@ const initActionsContext = (): ActionsContext => {
             s.on('success', (s: SuccessObject) => {
                 e.emit('success', s)
             })
-            s.on('pinChange', (channel: number, running: boolean, reservedBy?: SequenceData['id']) => {
+            s.on('pinChange', (channel: number, running: boolean, reservedBy?: SequenceDBType['id']) => {
                 setState(s => ({
                     ...s,
                     pins: s.pins.map(p => p.pin.channel === channel ? {
                         ...p,
                         running,
-                        reservedBy,
+                        reservedBy: running ? reservedBy : undefined,
 
                     } : p)
                 }))
@@ -106,10 +103,10 @@ const initActionsContext = (): ActionsContext => {
     }, [])
 
 
-    const run = (id: SequenceData['id']) => socket?.emit(ACTIONS.RUN, id)
-    const stop = (id: SequenceData['id']) => socket?.emit(ACTIONS.STOP, id)
-    const activate = (id: SequenceData['id']) => socket?.emit(ACTIONS.ACTIVATE, id)
-    const deactivate = (id: SequenceData['id']) => socket?.emit(ACTIONS.DEACTIVATE, id)
+    const run = (id: SequenceDBType['id']) => socket?.emit(ACTIONS.RUN, id)
+    const stop = (id: SequenceDBType['id']) => socket?.emit(ACTIONS.STOP, id)
+    const activate = (id: SequenceDBType['id']) => socket?.emit(ACTIONS.ACTIVATE, id)
+    const deactivate = (id: SequenceDBType['id']) => socket?.emit(ACTIONS.DEACTIVATE, id)
     const refresh = () => socket?.emit(ACTIONS.REFRESH)
 
 
