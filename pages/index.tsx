@@ -1,14 +1,38 @@
+import { Grid, Container, } from '@mantine/core'
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import { DeviceTime, PinsStatus, Sequences } from '../components/dashboard'
+
+const g = {
+  sm: 12,
+  md: 6,
+  lg: 6,
+  xl: 4,
+  span: 12
+}
+
 
 const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Dashboard - Scheduler</title>
-        <meta name="description" content="" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>
+          Scheduler: Dashboard
+        </title>
       </Head>
+      <Container size={'lg'} m="sm" p="sm">
+        <Grid gutter="md">
+          <Grid.Col {...g} >
+            <DeviceTime />
+          </Grid.Col>
+          <Grid.Col {...g} >
+            <PinsStatus />
+          </Grid.Col>
+          <Grid.Col {...g} >
+            <Sequences />
+          </Grid.Col>
+        </Grid>
+      </Container>
     </>
   )
 }
