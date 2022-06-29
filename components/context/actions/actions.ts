@@ -25,6 +25,7 @@ type PinStatus = {
 type State = {
     runningSequences: SequenceDBType['id'][]
     pins: PinStatus[],
+    deviceTime: Date | null
 }
 
 type ErrorObject = {
@@ -56,7 +57,7 @@ const ioUrl = 'http://localhost:8000/'
 const initActionsContext = (): ActionsContext => {
 
     const [socket, setSocket] = useState<Socket>()
-    const [state, setState] = useState<State>({ runningSequences: [], pins: [] })
+    const [state, setState] = useState<State>({ runningSequences: [], pins: [], deviceTime: null })
     const [emitter, setEmitter] = useState<EventEmitter>()
 
     useEffect(() => {
@@ -91,6 +92,7 @@ const initActionsContext = (): ActionsContext => {
             })
             s.on('stop', (id: string,) => e.emit('stop', id))
             s.on('run', (id: string, date: string, duration: number) => e.emit('run', id, new Date(date), duration))
+            s.on('tick', (date) => setState(s => ({ ...s, deviceTime: new Date(date) })))
 
         })
 
