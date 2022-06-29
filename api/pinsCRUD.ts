@@ -1,5 +1,6 @@
-import { CRUD, Pin } from "./utils";
+import { CRUD } from "./utils";
+import { PinDbType, } from '../Scheduler/src/db'
 
 const url = 'http://localhost:8000/pin'
 
-export default new CRUD<Pin>(url)
+export default new CRUD<PinDbType>(url)
