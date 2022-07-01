@@ -18,7 +18,7 @@ const PinsStatus: FC = () => {
                 <Tabs.Tab label="All Pins">
                     <ScrollList
                         body={actions?.state.pins.map(s => (
-                            <PinStatusRow label={s.pin.label} running={s.running} />
+                            <PinStatusRow key={s.pin.channel} label={s.pin.label} running={s.running} />
                         ))}
                         footer={
                             <Group position="apart" p={'xs'}>
@@ -31,7 +31,7 @@ const PinsStatus: FC = () => {
                 <Tabs.Tab label="Reserved Pins">
                     <ScrollList
                         body={actions?.state.pins.filter(s => s.reservedBy).map((s) => (
-                            <Group p={'xs'} position="apart" style={{ borderBottom: "2px solid #e9ecef" }}>
+                            <Group key={s.pin.channel} p={'xs'} position="apart" style={{ borderBottom: "2px solid #e9ecef" }}>
                                 <Text size="sm">{s.pin.label}</Text>
                                 <Text size="sm">{seq?.list.find(seq => s.reservedBy === seq.id)?.name || "NULL"}</Text>
                             </Group>

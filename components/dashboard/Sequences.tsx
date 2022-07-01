@@ -15,13 +15,10 @@ const Sequences: FC = () => {
                 <Tabs.Tab label="Active Sequences">
                     <ScrollList
                         body={seq?.list.filter(s => s.active).map((s) => (
-                            <>
-                                <Group p={'xs'} position="apart">
-                                    <Text size="sm">{s.name}</Text>
-                                    <Text size="sm">{s.schedule?.label}</Text>
-                                </Group>
-                                <Divider />
-                            </>
+                            <Group key={s.id} p={'xs'} position="apart" style={{ borderBottom: "2px solid #e9ecef" }}>
+                                <Text size="sm">{s.name}</Text>
+                                <Text size="sm">{s.schedule?.label}</Text>
+                            </Group>
                         ))}
                         footer={
                             <Group position="apart" p={'xs'}>
@@ -34,7 +31,7 @@ const Sequences: FC = () => {
                 <Tabs.Tab label="Running Sequences">
                     <ScrollList
                         body={seq?.list.filter(s => s.id in (actions?.state.runningSequences || [])).map((s) => (
-                            <Group p={'xs'} position="apart" style={{ borderBottom: "2px solid #e9ecef" }}>
+                            <Group key={s.id} p={'xs'} position="apart" style={{ borderBottom: "2px solid #e9ecef" }}>
                                 <Text size="sm">{s.name}</Text>
                                 <Text size="sm">{s.lastRun?.toLocaleDateString()}</Text>
                             </Group>
