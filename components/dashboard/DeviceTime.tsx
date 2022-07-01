@@ -14,7 +14,7 @@ const DeviceTime: FC = () => {
                     <Text weight={500} size='lg'>Device Time</Text>
                     <Divider />
                 </Group>
-                <Group style={{ flex: 4, }} py="lg" m="lg" position='center' direction='column'>
+                <Group style={{ flex: 4, display: 'flex', justifyContent: 'center' }} m="lg" position='center' direction='column'>
                     <Text color={'gray'} >{actions?.state.deviceTime?.toDateString()}</Text>
                     <Title>{actions?.state.deviceTime?.toLocaleTimeString()}</Title>
                 </Group>
