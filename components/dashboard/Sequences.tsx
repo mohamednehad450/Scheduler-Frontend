@@ -9,6 +9,7 @@ const Sequences: FC = () => {
 
     const actions = useActions()
     const seq = useSequence()
+    const running = seq?.list.filter(s => (actions?.state.runningSequences || []).some(id => id === s.id)) || []
     return (
         <Card shadow="sm" p="sm" radius={'md'} style={{ height: '18rem', }}  >
             <Tabs variant="default">
@@ -30,10 +31,10 @@ const Sequences: FC = () => {
                 </Tabs.Tab>
                 <Tabs.Tab label="Running Sequences">
                     <ScrollList
-                        body={seq?.list.filter(s => s.id in (actions?.state.runningSequences || [])).map((s) => (
+                        body={running.map((s) => (
                             <Group key={s.id} p={'xs'} position="apart" style={{ borderBottom: "2px solid #e9ecef" }}>
                                 <Text size="sm">{s.name}</Text>
-                                <Text size="sm">{s.lastRun?.toLocaleDateString()}</Text>
+                                <Text size="sm">{s.lastRun ? new Date(s.lastRun).toLocaleString() : "Never"}</Text>
                             </Group>
                         ))}
                         footer={
