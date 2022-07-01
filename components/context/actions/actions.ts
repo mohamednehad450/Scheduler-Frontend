@@ -1,5 +1,5 @@
 import EventEmitter from "events"
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useCallback, useContext, useEffect, useState } from "react"
 import { io, Socket } from "socket.io-client"
 import { PinDbType, SequenceDBType } from "../../../Scheduler/src/db"
 
@@ -52,7 +52,7 @@ const actionsContext = createContext<ActionsContext | undefined>(undefined)
 
 const useActions = () => useContext(actionsContext)
 
-const ioUrl = 'http://localhost:8000/'
+const ioUrl = 'http://localhost:8000'
 
 const initActionsContext = (): ActionsContext => {
 
@@ -66,19 +66,22 @@ const initActionsContext = (): ActionsContext => {
             if (!socket) {
                 setSocket(s)
             }
+
             const e = emitter || new EventEmitter()
-            if (!emitter) {
-                setEmitter(e)
-            }
+            setEmitter(e)
+
             s.on('state', (s: Partial<State>) => {
                 setState(old => ({ ...old, ...s }))
             })
+
             s.on('error', (err: ErrorObject) => {
                 e.emit('error', err)
             })
+
             s.on('success', (s: SuccessObject) => {
                 e.emit('success', s)
             })
+
             s.on('pinChange', (channel: number, running: boolean, reservedBy?: SequenceDBType['id']) => {
                 setState(s => ({
                     ...s,
@@ -98,6 +101,7 @@ const initActionsContext = (): ActionsContext => {
 
         return () => {
             s.close()
+            s.removeAllListeners()
             setSocket(undefined)
             emitter?.removeAllListeners()
             setEmitter(undefined)
@@ -105,11 +109,11 @@ const initActionsContext = (): ActionsContext => {
     }, [])
 
 
-    const run = (id: SequenceDBType['id']) => socket?.emit(ACTIONS.RUN, id)
-    const stop = (id: SequenceDBType['id']) => socket?.emit(ACTIONS.STOP, id)
-    const activate = (id: SequenceDBType['id']) => socket?.emit(ACTIONS.ACTIVATE, id)
-    const deactivate = (id: SequenceDBType['id']) => socket?.emit(ACTIONS.DEACTIVATE, id)
-    const refresh = () => socket?.emit(ACTIONS.REFRESH)
+    const run = useCallback((id: SequenceDBType['id']) => socket?.emit(ACTIONS.RUN, id), [socket])
+    const stop = useCallback((id: SequenceDBType['id']) => socket?.emit(ACTIONS.STOP, id), [socket])
+    const activate = useCallback((id: SequenceDBType['id']) => socket?.emit(ACTIONS.ACTIVATE, id), [socket])
+    const deactivate = useCallback((id: SequenceDBType['id']) => socket?.emit(ACTIONS.DEACTIVATE, id), [socket])
+    const refresh = useCallback(() => socket?.emit(ACTIONS.REFRESH), [socket])
 
 
     return {
