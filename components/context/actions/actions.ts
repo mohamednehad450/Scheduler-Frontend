@@ -6,13 +6,11 @@ import { PinDbType, SequenceDBType } from "../../../Scheduler/src/db"
 enum ACTIONS {
     RUN = "run",
     STOP = 'stop',
-    ACTIVATE = 'activate',
-    DEACTIVATE = 'deactivate',
     REFRESH = "refresh"
 }
 
 type SequenceActions = {
-    [key in (ACTIONS.RUN | ACTIONS.STOP | ACTIONS.ACTIVATE | ACTIONS.DEACTIVATE)]: (id: SequenceDBType['id']) => void
+    [key in (ACTIONS.RUN | ACTIONS.STOP)]: (id: SequenceDBType['id']) => void
 }
 
 type PinStatus = {
@@ -111,16 +109,12 @@ const initActionsContext = (): ActionsContext => {
 
     const run = useCallback((id: SequenceDBType['id']) => socket?.emit(ACTIONS.RUN, id), [socket])
     const stop = useCallback((id: SequenceDBType['id']) => socket?.emit(ACTIONS.STOP, id), [socket])
-    const activate = useCallback((id: SequenceDBType['id']) => socket?.emit(ACTIONS.ACTIVATE, id), [socket])
-    const deactivate = useCallback((id: SequenceDBType['id']) => socket?.emit(ACTIONS.DEACTIVATE, id), [socket])
     const refresh = useCallback(() => socket?.emit(ACTIONS.REFRESH), [socket])
 
 
     return {
         run,
         stop,
-        activate,
-        deactivate,
         refresh,
         state,
         emitter,
