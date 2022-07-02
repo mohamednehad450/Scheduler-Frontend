@@ -12,12 +12,7 @@ class CRUD<K, T> {
         this.url = url
     }
 
-    getPromise = (id: K) => axios.get(this.url, {
-        params: { id },
-        headers: {
-            "Content Type": "application/json"
-        }
-    });
+    getPromise = (id: K) => axios.get(this.url + '/' + id);
 
 
     get = (id: K, cb: Callback<T>) => this.getPromise(id)
@@ -25,11 +20,7 @@ class CRUD<K, T> {
         .catch(err => cb(err));
 
 
-    postPromise = (obj: T) => axios.post(this.url, obj, {
-        headers: {
-            "Content Type": "application/json"
-        }
-    });
+    postPromise = (obj: T) => axios.post(this.url, obj);
 
 
     post = (obj: T, cb: Callback<T>) => this.postPromise(obj)
@@ -37,24 +28,24 @@ class CRUD<K, T> {
         .catch(err => cb(err));
 
 
-    patchPromise = (obj: T) => axios.patch(this.url, obj, {
-        headers: {
-            "Content Type": "application/json"
-        }
-    });
+    putPromise = (id: K, obj: T) => axios.put(this.url + "/" + id, obj);
 
 
-    patch = (obj: T, cb: Callback<T>) => this.patchPromise(obj)
+    put = (id: K, obj: T, cb: Callback<T>) => this.putPromise(id, obj)
         .then(v => cb(null, v.data))
         .catch(err => cb(err));
 
 
-    deletePromise = (id: K) => axios.delete(this.url, {
-        params: { id },
-        headers: {
-            "Content Type": "application/json"
-        }
-    });
+    patchPromise = async (id: K, obj: Partial<T>) => axios.patch(this.url + "/" + id, obj)
+
+
+
+    patch = (id: K, obj: Partial<T>, cb: Callback<T>) => this.patchPromise(id, obj)
+        .then(obj => cb(null, obj.data))
+        .catch(err => cb(err))
+
+
+    deletePromise = (id: K) => axios.delete(this.url + "/" + id);
 
 
     delete = (id: K, cb: Callback<void>) => this.deletePromise(id)

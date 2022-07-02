@@ -10,7 +10,8 @@ interface CRUDContext<K, T> {
     add: (s: T, cb: Callback<T>) => void
     remove: (id: K, cb: Callback<void>) => void
     get: (id: K, cb: Callback<T>) => void
-    update: (s: T, cb: Callback<T>) => void
+    set: (id: K, s: T, cb: Callback<T>) => void
+    update: (id: K, s: Partial<T>, cb: Callback<T>) => void
 }
 
 function initCRUDContext<K, T>(CRUD: CRUD<K, T>, keyExtractor: (obj: T) => K): CRUDContext<K, T> {
@@ -65,7 +66,16 @@ function initCRUDContext<K, T>(CRUD: CRUD<K, T>, keyExtractor: (obj: T) => K): C
     }
 
 
-    const update = (s: T, cb: Callback<T>) => CRUD.patch(s, (err, s) => {
+    const update = (id: K, s: Partial<T>, cb: Callback<T>) => CRUD.patch(id, s, (err, s) => {
+        if (err) {
+            cb(err)
+            return
+        }
+        s && setList(arr => arr.map(oldS => keyExtractor(s) === keyExtractor(oldS) ? s : oldS))
+        cb(null, s)
+    })
+
+    const set = (id: K, s: T, cb: Callback<T>) => CRUD.put(id, s, (err, s) => {
         if (err) {
             cb(err)
             return
@@ -75,16 +85,15 @@ function initCRUDContext<K, T>(CRUD: CRUD<K, T>, keyExtractor: (obj: T) => K): C
     })
 
 
-
     return {
         list,
         refresh,
         remove,
         get,
         update,
-        add
+        add,
+        set,
     }
-
 }
 
 export { initCRUDContext }
