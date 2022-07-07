@@ -1,12 +1,14 @@
 import { Group, Text, ActionIcon, Tooltip } from '@mantine/core'
 import { FC, } from 'react'
 import { Calendar, CalendarOff, Edit, PlayerPause, PlayerPlay, } from 'tabler-icons-react';
-import { SequenceDBType } from '../../Scheduler/src/db'
+import type { SequenceDBType } from '../../Scheduler/src/db'
 import { useActions } from '../../components/context/actions'
+import { useSequence } from '../context/sequences';
 
 const SequenceRow: FC<{ sequence: SequenceDBType, }> = ({ sequence }) => {
 
     const actions = useActions()
+    const sequences = useSequence()
     const isRunning = (actions?.state.runningSequences || []).some(id => id === sequence.id)
 
     return (
@@ -35,9 +37,14 @@ const SequenceRow: FC<{ sequence: SequenceDBType, }> = ({ sequence }) => {
                     </Tooltip>
                     <Tooltip label={sequence.active ? 'Deactivate' : "Activate"} withArrow>
                         <ActionIcon
-
                             variant='default'
-                            onClick={() => sequence.active ? actions?.deactivate(sequence.id) : actions?.activate(sequence.id)}
+                            onClick={() => sequences?.update(
+                                sequence.id,
+                                { active: !sequence.active },
+                                (err: any) => {
+                                    // TODO
+                                }
+                            )}
                         >
                             {sequence.active ?
                                 <CalendarOff size={16} /> :
