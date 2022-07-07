@@ -11,6 +11,7 @@ const Sequences: NextPage = () => {
 
     const [active, setActive] = useState(0)
     const seq = useSequence()
+    useEffect(() => { seq?.refresh() }, [])
     const actions = useActions()
 
     return (
