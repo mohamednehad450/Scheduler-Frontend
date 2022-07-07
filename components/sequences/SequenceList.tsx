@@ -1,6 +1,6 @@
 import { Table } from '@mantine/core'
 import { FC } from 'react'
-import { SequenceDBType } from '../../Scheduler/src/db'
+import type { SequenceDBType } from '../../Scheduler/src/db'
 import SequenceRow from './SequenceRow'
 
 
