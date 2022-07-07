@@ -1,9 +1,9 @@
 import { FC, PropsWithChildren } from "react"
-import { initSequencesContext, sequencesContext, } from "./sequences"
+import { useSequencesCRUD, sequencesContext, } from "./sequences"
 
 
 const ProvideSequence: FC<PropsWithChildren<{}>> = ({ children }) => {
-    const seq = initSequencesContext()
+    const seq = useSequencesCRUD()
 
     return (
         <sequencesContext.Provider value={seq}>

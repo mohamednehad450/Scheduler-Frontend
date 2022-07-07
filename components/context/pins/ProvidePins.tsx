@@ -1,9 +1,9 @@
 import { FC, PropsWithChildren } from "react"
-import { initPinsContext, pinsContext, } from "./pins"
+import { usePinsCRUD, pinsContext, } from "./pins"
 
 
 const ProvidePins: FC<PropsWithChildren<{}>> = ({ children }) => {
-    const pins = initPinsContext()
+    const pins = usePinsCRUD()
     return (
         <pinsContext.Provider value={pins}>
             {children}

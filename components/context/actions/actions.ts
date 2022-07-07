@@ -1,7 +1,7 @@
 import EventEmitter from "events"
 import { createContext, useCallback, useContext, useEffect, useState } from "react"
 import { io, Socket } from "socket.io-client"
-import { PinDbType, SequenceDBType } from "../../../Scheduler/src/db"
+import type { PinDbType, SequenceDBType } from "../../../Scheduler/src/db"
 
 enum ACTIONS {
     RUN = "run",
@@ -52,7 +52,7 @@ const useActions = () => useContext(actionsContext)
 
 const ioUrl = 'http://localhost:8000'
 
-const initActionsContext = (): ActionsContext => {
+const useActionsContext = (): ActionsContext => {
 
     const [socket, setSocket] = useState<Socket>()
     const [state, setState] = useState<State>({ runningSequences: [], pins: [], deviceTime: null })
@@ -121,5 +121,5 @@ const initActionsContext = (): ActionsContext => {
     }
 }
 
-export { useActions, initActionsContext, actionsContext }
+export { useActions, useActionsContext, actionsContext }
 export type { State, ACTIONS, ErrorObject, SuccessObject }

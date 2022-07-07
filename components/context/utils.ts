@@ -14,7 +14,7 @@ interface CRUDContext<K, T> {
     update: (id: K, s: Partial<T>, cb: Callback<T>) => void
 }
 
-function initCRUDContext<K, T>(CRUD: CRUD<K, T>, keyExtractor: (obj: T) => K): CRUDContext<K, T> {
+function useCRUD<K, T>(CRUD: CRUD<K, T>, keyExtractor: (obj: T) => K): CRUDContext<K, T> {
 
     const [list, setList] = useState<T[]>([])
 
@@ -27,7 +27,6 @@ function initCRUDContext<K, T>(CRUD: CRUD<K, T>, keyExtractor: (obj: T) => K): C
         ls && setList(ls)
     })
 
-    useEffect(() => { refresh() }, [])
 
     const add = (s: T, cb: Callback<T>) => CRUD.post(s, (err, val) => {
         if (err) {
@@ -96,5 +95,5 @@ function initCRUDContext<K, T>(CRUD: CRUD<K, T>, keyExtractor: (obj: T) => K): C
     }
 }
 
-export { initCRUDContext }
+export { useCRUD }
 export type { CRUDContext }

@@ -1,9 +1,9 @@
 import { FC, PropsWithChildren } from "react"
-import { initActionsContext, actionsContext } from "./actions"
+import { useActionsContext, actionsContext } from "./actions"
 
 
 const ProvideActions: FC<PropsWithChildren<{}>> = ({ children }) => {
-    const actions = initActionsContext()
+    const actions = useActionsContext()
 
     return (
         <actionsContext.Provider value={actions}>
