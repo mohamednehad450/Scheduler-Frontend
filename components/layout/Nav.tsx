@@ -11,7 +11,7 @@ interface NavProps {
 }
 
 const Nav: FC<NavProps> = ({ opened, setOpened }) => {
-    const close = () => setOpened(false)
+    const close = () => setTimeout(() => setOpened(false))
     return (
         <Navbar p="md" hiddenBreakpoint="sm" hidden={!opened} width={{ sm: 200, lg: 300 }}>
             <NavButton href="/" onClick={close} icon={<Dashboard size={20} />} color="blue" label='Dashboard' />
