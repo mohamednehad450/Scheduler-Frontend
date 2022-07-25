@@ -6,7 +6,7 @@ import SequenceRow from './SequenceRow'
 
 const SequenceList: FC<{ sequences?: SequenceDBType[] }> = ({ sequences }) => {
     return (
-        <Table striped highlightOnHover verticalSpacing={'xs'} horizontalSpacing="lg">
+        <Table striped highlightOnHover verticalSpacing={'xs'} horizontalSpacing="sm" sx={theme => ({ ":hover": { cursor: "pointer" } })}>
             <thead style={{ position: 'sticky' }}>
                 <tr>
                     <th>
