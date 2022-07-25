@@ -59,7 +59,7 @@ const Sequence: NextPage = () => {
           </Grid.Col>
           <Grid.Col {...g} >
             <Card title='Actions' body={(
-              <SequenceActions sequence={sequence} />
+              <SequenceActions sequence={sequence} onChange={seq => setSequence(seq)} />
             )} />
           </Grid.Col>
           <Grid.Col {...g} >
