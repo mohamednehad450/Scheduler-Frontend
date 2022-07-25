@@ -2,10 +2,10 @@ import { Tabs, Container, Title } from '@mantine/core'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import { useSequence } from '../components/context/sequences'
+import { useSequence } from '../../components/context/sequences'
 import { Calendar, CalendarOff, List, } from 'tabler-icons-react';
-import { useActions } from '../components/context/actions'
-import { SequenceList } from '../components/sequences'
+import { useActions } from '../../components/context/actions'
+import { SequenceList } from '../../components/sequences'
 
 const Sequences: NextPage = () => {
 
