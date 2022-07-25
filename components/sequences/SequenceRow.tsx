@@ -1,4 +1,4 @@
-import { Group, Text, ActionIcon, Tooltip } from '@mantine/core'
+import { Group, Text, ActionIcon, Tooltip, MediaQuery, Menu } from '@mantine/core'
 import { FC, MouseEventHandler } from 'react'
 import { Calendar, CalendarOff, Edit, PlayerPause, PlayerPlay, } from 'tabler-icons-react';
 import type { SequenceDBType } from '../../Scheduler/src/db'
@@ -37,38 +37,67 @@ const SequenceRow: FC<{ sequence: SequenceDBType, }> = ({ sequence }) => {
                 <Text >{sequence.schedule?.label}</Text>
             </td>
             <td>
-                <Group>
-                    <Tooltip label={isRunning ? 'Stop' : "Run"} withArrow>
-                        <ActionIcon
-                            variant="default"
+                <MediaQuery smallerThan={'md'} styles={{ display: 'none' }}>
+                    <Group>
+                        <Tooltip label={isRunning ? 'Stop' : "Run"} withArrow>
+                            <ActionIcon
+                                variant="default"
+                                onClick={toggleRun}
+                            >
+                                {isRunning ?
+                                    <PlayerPause size={16} /> :
+                                    < PlayerPlay size={16} />
+                                }
+                            </ActionIcon>
+                        </Tooltip>
+                        <Tooltip label={sequence.active ? 'Deactivate' : "Activate"} withArrow>
+                            <ActionIcon
+                                variant='default'
+                                onClick={toggleActive}
+                            >
+                                {sequence.active ?
+                                    <CalendarOff size={16} /> :
+                                    <Calendar size={16} />
+                                }
+                            </ActionIcon>
+                        </Tooltip>
+                        <Tooltip label={"Edit"} withArrow>
+                            <ActionIcon
+                                variant='default'
+                                onClick={stopPropagation(() => alert('TO BE IMPLEMENTED'))}
+                            >
+                                <Edit size={16} />
+                            </ActionIcon>
+                        </Tooltip>
+                    </Group>
+                </MediaQuery>
+                <MediaQuery largerThan={'md'} styles={{ display: 'none' }} >
+                    <Menu onClick={stopPropagation()}>
+                        <Menu.Label>Actions</Menu.Label>
+                        <Menu.Item
                             onClick={toggleRun}
-                        >
-                            {isRunning ?
+                            icon={isRunning ?
                                 <PlayerPause size={16} /> :
                                 < PlayerPlay size={16} />
                             }
-                        </ActionIcon>
-                    </Tooltip>
-                    <Tooltip label={sequence.active ? 'Deactivate' : "Activate"} withArrow>
-                        <ActionIcon
-                            variant='default'
-                            onClick={toggleActive}
                         >
-                            {sequence.active ?
+                            {isRunning ? "Stop" : "Run"}
+                        </Menu.Item>
+                        <Menu.Item
+                            onClick={toggleActive}
+                            icon={sequence.active ?
                                 <CalendarOff size={16} /> :
                                 <Calendar size={16} />
                             }
-                        </ActionIcon>
-                    </Tooltip>
-                    <Tooltip label={"Edit"} withArrow>
-                        <ActionIcon
-                            variant='default'
-                            onClick={stopPropagation(() => alert('TO BE IMPLEMENTED'))}
                         >
-                            <Edit size={16} />
-                        </ActionIcon>
-                    </Tooltip>
-                </Group>
+                            {sequence.active ?
+                                "Deactivate" :
+                                "Activate"
+                            }
+                        </Menu.Item>
+                        <Menu.Item icon={<Edit size={16} />}>Edit</Menu.Item>
+                    </Menu>
+                </MediaQuery>
             </td>
         </tr>
     )
