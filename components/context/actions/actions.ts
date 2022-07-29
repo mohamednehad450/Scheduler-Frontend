@@ -13,16 +13,11 @@ type SequenceActions = {
     [key in (ACTIONS.RUN | ACTIONS.STOP)]: (id: SequenceDBType['id']) => void
 }
 
-type PinStatus = {
-    pin: PinDbType,
-    running: boolean,
-    err: Error | null | undefined,
-    reservedBy?: SequenceDBType['id']
-}
 
 type State = {
     runningSequences: SequenceDBType['id'][]
-    pins: PinStatus[],
+    runningChannel: PinDbType['channel'][],
+    reservedPins: { pin: PinDbType, sequenceId: SequenceDBType['id'] }[]
     deviceTime: Date | null
 }
 
@@ -55,7 +50,7 @@ const ioUrl = 'http://localhost:8000'
 const useActionsContext = (): ActionsContext => {
 
     const [socket, setSocket] = useState<Socket>()
-    const [state, setState] = useState<State>({ runningSequences: [], pins: [], deviceTime: null })
+    const [state, setState] = useState<State>({ runningSequences: [], runningChannel: [], reservedPins: [], deviceTime: null })
     const [emitter, setEmitter] = useState<EventEmitter>()
 
     useEffect(() => {
@@ -80,16 +75,16 @@ const useActionsContext = (): ActionsContext => {
                 e.emit('success', s)
             })
 
-            s.on('pinChange', (channel: number, running: boolean, reservedBy?: SequenceDBType['id']) => {
-                setState(s => ({
-                    ...s,
-                    pins: s.pins.map(p => p.pin.channel === channel ? {
-                        ...p,
-                        running,
-                        reservedBy: running ? reservedBy : undefined,
-
-                    } : p)
-                }))
+            s.on('channelChange', (channel: number, running: boolean) => {
+                setState(s => {
+                    const set = new Set(s.runningChannel)
+                    running ? set.add(channel) : set.delete(channel)
+                    return {
+                        ...s,
+                        runningChannel: [...set]
+                    }
+                }
+                )
             })
             s.on('stop', (id: string,) => e.emit('stop', id))
             s.on('run', (id: string, date: string, duration: number) => e.emit('run', id, new Date(date), duration))

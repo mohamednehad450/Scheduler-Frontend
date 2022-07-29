@@ -1,6 +1,7 @@
 import { Card, Group, Tabs, Text } from "@mantine/core";
 import { FC } from "react";
 import { useActions } from "../context/actions";
+import { usePins } from "../context/pins";
 import { useSequence } from "../context/sequences";
 import PinStatusRow from "./PinStatusRow";
 import ScrollList from "./ScrollList";
@@ -11,14 +12,15 @@ const PinsStatus: FC = () => {
 
     const actions = useActions()
     const seq = useSequence()
+    const pins = usePins()
 
     return (
         <Card shadow="sm" p="sm" radius={'md'} style={{ height: '18rem', }}  >
             <Tabs variant="default">
                 <Tabs.Tab label="All Pins">
                     <ScrollList
-                        body={actions?.state.pins.map(s => (
-                            <PinStatusRow key={s.pin.channel} label={s.pin.label} running={s.running} />
+                        body={pins?.list.map(s => (
+                            <PinStatusRow key={s.channel} label={s.label} running={actions?.state.runningChannel.some(c => c === s.channel) || false} />
                         ))}
                         footer={
                             <Group position="apart" p={'xs'}>
@@ -30,10 +32,10 @@ const PinsStatus: FC = () => {
                 </Tabs.Tab>
                 <Tabs.Tab label="Reserved Pins">
                     <ScrollList
-                        body={actions?.state.pins.filter(s => s.reservedBy).map((s) => (
+                        body={actions?.state.reservedPins.map((s) => (
                             <Group key={s.pin.channel} p={'xs'} position="apart" style={{ borderBottom: "2px solid #e9ecef" }}>
                                 <Text size="sm">{s.pin.label}</Text>
-                                <Text size="sm">{seq?.list.find(seq => s.reservedBy === seq.id)?.name || "NULL"}</Text>
+                                <Text size="sm">{seq?.list.find(seq => s.sequenceId === seq.id)?.name || "NULL"}</Text>
                             </Group>
                         ))}
                         footer={
