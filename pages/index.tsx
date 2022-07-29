@@ -2,6 +2,7 @@ import { Grid, Container, } from '@mantine/core'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect } from 'react'
+import { usePins } from '../components/context/pins'
 import { useSequence } from '../components/context/sequences'
 import { DeviceTime, PinsStatus, Sequences } from '../components/dashboard'
 
@@ -16,7 +17,11 @@ const g = {
 
 const Home: NextPage = () => {
   const seq = useSequence()
-  useEffect(() => { seq?.refresh() }, [])
+  const pins = usePins()
+  useEffect(() => {
+    seq?.refresh()
+    pins?.refresh()
+  }, [])
   return (
     <>
       <Head>
