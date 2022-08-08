@@ -4,7 +4,10 @@ import SequenceActions from './SequenceActions'
 import SequenceActivities from './SequenceActivities'
 import SequenceList from './SequenceList'
 import SequenceSchedule from './SequenceSchedule'
+import L from "later";
 
+// Load the browser version
+const later: typeof L = require("later/index-browserify");
 
 export {
     SequenceList,
@@ -13,4 +16,5 @@ export {
     SequenceActions,
     SequenceActivities,
     SequenceSchedule,
+    later
 }
