@@ -20,27 +20,27 @@ class CRUD<K, T> {
         .catch(err => cb(err));
 
 
-    postPromise = (obj: T) => axios.post(this.url, obj);
+    postPromise = (obj: any) => axios.post(this.url, obj);
 
 
-    post = (obj: T, cb: Callback<T>) => this.postPromise(obj)
+    post = (obj: any, cb: Callback<T>) => this.postPromise(obj)
         .then(v => cb(null, v.data))
         .catch(err => cb(err));
 
 
-    putPromise = (id: K, obj: T) => axios.put(this.url + "/" + id, obj);
+    putPromise = (id: K, obj: any) => axios.put(this.url + "/" + id, obj);
 
 
-    put = (id: K, obj: T, cb: Callback<T>) => this.putPromise(id, obj)
+    put = (id: K, obj: any, cb: Callback<T>) => this.putPromise(id, obj)
         .then(v => cb(null, v.data))
         .catch(err => cb(err));
 
 
-    patchPromise = async (id: K, obj: Partial<T>) => axios.patch(this.url + "/" + id, obj)
+    patchPromise = async (id: K, obj: any) => axios.patch(this.url + "/" + id, obj)
 
 
 
-    patch = (id: K, obj: Partial<T>, cb: Callback<T>) => this.patchPromise(id, obj)
+    patch = (id: K, obj: any, cb: Callback<T>) => this.patchPromise(id, obj)
         .then(obj => cb(null, obj.data))
         .catch(err => cb(err))
 
