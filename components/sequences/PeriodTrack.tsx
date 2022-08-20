@@ -24,6 +24,7 @@ function PeriodTrack({ xScale, yScale, yValue }: PeriodTrackProps) {
             />
             {xScale.ticks().map((t, i) => i !== 0 && (
                 <circle
+                    key={t}
                     cx={xScale(t) + "%"}
                     cy={(yScale(yValue) || 0) + yScale.bandwidth() / 2}
                     fill="white"

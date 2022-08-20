@@ -22,6 +22,7 @@ const PeriodTicks: FC<PeriodTicksProps> = ({ xScale, yScale }) => {
         <g>
             {xScale.ticks().map((t, i) => i % 2 === 0 ? (
                 <text
+                    key={t}
                     textAnchor='middle'
                     style={{ fontSize: theme.fontSizes.xs }}
                     fill={theme.colors.gray[7]}
@@ -31,7 +32,11 @@ const PeriodTicks: FC<PeriodTicksProps> = ({ xScale, yScale }) => {
                     {FormatTime(t)}
                 </text>
             ) : (
-                <MediaQuery smallerThan={'md'} styles={{ display: 'none' }}>
+                <MediaQuery
+                    smallerThan={'md'}
+                    styles={{ display: 'none' }}
+                    key={t}
+                >
                     <text
                         textAnchor='middle'
                         style={{ fontSize: theme.fontSizes.xs }}
