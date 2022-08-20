@@ -8,27 +8,48 @@ interface PeriodMarkProps<T> {
     x2Value: (item: T) => number
     yScale: ScaleBand<number>
     yValue: (item: T) => number
-
+    showThump?: boolean
 }
 
-function PeriodMark<T extends Object>({ item, x1Value, x2Value, xScale, yValue, yScale }: PeriodMarkProps<T>) {
+
+function PeriodMark<T extends Object>({ item, x1Value, x2Value, xScale, yValue, yScale, showThump }: PeriodMarkProps<T>) {
     const theme = useMantineTheme()
 
-    const x = xScale(x1Value(item)) + "%"
-    const width = xScale(x2Value(item)) + "%"
+    const x = xScale(x1Value(item))
+    const width = xScale(x2Value(item))
 
     const height = yScale.bandwidth()
     const y = yScale(yValue(item))
     return (
         <g>
             <rect
-                width={width}
+                width={`${width}%`}
                 height={height}
-                x={x}
+                x={`${x}%`}
                 y={y}
                 fill={theme.colors.blue[7]}
                 rx={yScale.bandwidth() / 2}
             />
+            {showThump && (
+                <>
+                    <circle
+                        r={yScale.bandwidth()}
+                        stroke={theme.colors.blue[7]}
+                        cx={`${x}%`}
+                        cy={(y || 0) + yScale.bandwidth() / 2}
+                        fill={'white'}
+                        strokeWidth={3}
+                    />
+                    <circle
+                        r={yScale.bandwidth()}
+                        stroke={theme.colors.blue[7]}
+                        cx={`${x + width}%`}
+                        cy={(y || 0) + yScale.bandwidth() / 2}
+                        fill={'white'}
+                        strokeWidth={3}
+                    />
+                </>
+            )}
         </g>
     )
 }
