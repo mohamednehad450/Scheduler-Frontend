@@ -4,6 +4,7 @@ import { AppLayout } from '../components/layout';
 import { ProvideSequence } from '../components/context/sequences';
 import { ProvideActions } from '../components/context/actions';
 import { ProvidePins } from '../components/context/pins';
+import { ProvideSchedule } from '../components/context/schedule';
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
@@ -14,13 +15,15 @@ export default function App(props: AppProps) {
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
       <ProvideSequence>
-        <ProvideActions>
-          <ProvidePins>
-            <AppLayout>
-              <Component {...pageProps} />
-            </AppLayout>
-          </ProvidePins>
-        </ProvideActions>
+        <ProvideSchedule>
+          <ProvideActions>
+            <ProvidePins>
+              <AppLayout>
+                <Component {...pageProps} />
+              </AppLayout>
+            </ProvidePins>
+          </ProvideActions>
+        </ProvideSchedule>
       </ProvideSequence>
     </>
   );
