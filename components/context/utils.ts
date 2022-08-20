@@ -34,7 +34,7 @@ function useCRUD<K, T>(CRUD: CRUD<K, T>, keyExtractor: (obj: T) => K): CRUDConte
             return
         }
         val && setList(arr => [...arr, val])
-        cb(null, s)
+        cb(null, val)
     })
 
 
