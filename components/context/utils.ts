@@ -7,11 +7,11 @@ type Callback<T> = (err: unknown, val?: T) => void
 interface CRUDContext<K, T> {
     list: T[]
     refresh: () => void
-    add: (s: T, cb: Callback<T>) => void
+    add: (s: any, cb: Callback<T>) => void
     remove: (id: K, cb: Callback<void>) => void
     get: (id: K, cb: Callback<T>) => void
-    set: (id: K, s: T, cb: Callback<T>) => void
-    update: (id: K, s: Partial<T>, cb: Callback<T>) => void
+    set: (id: K, s: any, cb: Callback<T>) => void
+    update: (id: K, s: any, cb: Callback<T>) => void
 }
 
 function useCRUD<K, T>(CRUD: CRUD<K, T>, keyExtractor: (obj: T) => K): CRUDContext<K, T> {
@@ -28,7 +28,7 @@ function useCRUD<K, T>(CRUD: CRUD<K, T>, keyExtractor: (obj: T) => K): CRUDConte
     })
 
 
-    const add = (s: T, cb: Callback<T>) => CRUD.post(s, (err, val) => {
+    const add = (s: any, cb: Callback<T>) => CRUD.post(s, (err, val) => {
         if (err) {
             cb(err)
             return
@@ -65,7 +65,7 @@ function useCRUD<K, T>(CRUD: CRUD<K, T>, keyExtractor: (obj: T) => K): CRUDConte
     }
 
 
-    const update = (id: K, s: Partial<T>, cb: Callback<T>) => CRUD.patch(id, s, (err, s) => {
+    const update = (id: K, s: any, cb: Callback<T>) => CRUD.patch(id, s, (err, s) => {
         if (err) {
             cb(err)
             return
@@ -74,7 +74,7 @@ function useCRUD<K, T>(CRUD: CRUD<K, T>, keyExtractor: (obj: T) => K): CRUDConte
         cb(null, s)
     })
 
-    const set = (id: K, s: T, cb: Callback<T>) => CRUD.put(id, s, (err, s) => {
+    const set = (id: K, s: any, cb: Callback<T>) => CRUD.put(id, s, (err, s) => {
         if (err) {
             cb(err)
             return
