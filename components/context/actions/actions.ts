@@ -2,6 +2,7 @@ import EventEmitter from "events"
 import { createContext, useCallback, useContext, useEffect, useState } from "react"
 import { io, Socket } from "socket.io-client"
 import type { PinDbType, SequenceDBType } from "../../../Scheduler/src/db"
+import os from 'os'
 
 enum ACTIONS {
     RUN = "run",
@@ -45,7 +46,6 @@ const actionsContext = createContext<ActionsContext | undefined>(undefined)
 
 const useActions = () => useContext(actionsContext)
 
-const ioUrl = 'http://localhost:8000'
 
 const useActionsContext = (): ActionsContext => {
 
@@ -54,7 +54,7 @@ const useActionsContext = (): ActionsContext => {
     const [emitter, setEmitter] = useState<EventEmitter>()
 
     useEffect(() => {
-        const s = io(ioUrl)
+        const s = io(`http://${os.hostname()}:8000`)
         s.on('connect', () => {
             if (!socket) {
                 setSocket(s)
