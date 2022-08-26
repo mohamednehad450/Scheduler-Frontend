@@ -1,4 +1,4 @@
-import { Tabs, Container, Title, Group, ActionIcon } from '@mantine/core'
+import { Tabs, Container, Title, Group, ActionIcon, Modal, Divider } from '@mantine/core'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
@@ -34,7 +34,7 @@ const Sequences: NextPage = () => {
                     >
                         <Plus size={32} />
                     </ActionIcon>
-                    <NewSequence opened={add} onClose={() => setAdd(false)} />
+
                 </Group>
                 <Tabs variant='outline' active={active} onTabChange={setActive} tabPadding={0} >
                     <Tabs.Tab label="All" icon={<List size={16} />} />
@@ -66,6 +66,16 @@ const Sequences: NextPage = () => {
                     })} />
                 </Container>
             </Container>
+            <Modal
+                size={'lg'}
+                centered
+                opened={add}
+                onClose={() => setAdd(false)}
+                title="Add New Sequence"
+            >
+                <Divider pt="md" />
+                <NewSequence onClose={() => setAdd(false)} />
+            </Modal>
         </>
     )
 }

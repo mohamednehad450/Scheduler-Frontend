@@ -36,16 +36,16 @@ const nextConfig = {
         destination: "http://localhost:8000/sequence/:id",
       },
       {
-        source: "/api/schedules",
-        destination: "http://localhost:8000/schedules",
+        source: "/api/crons",
+        destination: "http://localhost:8000/crons",
       },
       {
-        source: "/api/schedule",
-        destination: "http://localhost:8000/schedule",
+        source: "/api/cron",
+        destination: "http://localhost:8000/cron",
       },
       {
-        source: "/api/schedule/:id",
-        destination: "http://localhost:8000/schedule/:id",
+        source: "/api/cron/:id",
+        destination: "http://localhost:8000/cron/:id",
       },
 
     ]

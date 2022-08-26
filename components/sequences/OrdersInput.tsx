@@ -108,8 +108,47 @@ const OrdersInput: FC<OrdersInputProps> = ({ orders, onChange, error }) => {
         <div>
 
             <Group p="xs">
+                <Group>
+                    <Select
+                        styles={{ root: { width: '50%' } }}
+                        label={`Sequence Length`}
+                        value={String(maxX)}
+                        data={sequenceLength}
+                        onChange={v => {
+                            const length = Number(v)
+                            setMaxX(length)
+
+                            // Make sure step is at most half of the length
+                            const newStep = (length / 2) < step ?
+                                Number([...steps].reverse().find(({ value }) => Number(value) <= (length / 2))?.value || 10) :
+                                undefined
+                            newStep && setStep(newStep)
+
+                            onChange(update(channelMap, length))
+                        }}
+                        rightSection={(
+                            <ActionIcon size={"sm"} color="gray" onClick={() => setCustomLength(true)}>
+                                <Plus />
+                            </ActionIcon>
+                        )}
+                    />
+
+                    <Select
+                        styles={{ root: { width: '40%' } }}
+                        label={'Step'}
+                        value={String(step)}
+                        data={steps}
+                        onChange={(v) => {
+                            const c = Number(v)
+                            if (isNaN(c) || maxX * 0.5 < c) return
+                            setStep(c)
+                        }}
+                        rightSectionWidth={0}
+                        rightSection={(<></>)}
+                    />
+                </Group>
                 <Select
-                    styles={{ root: { width: '25%' } }}
+                    styles={{ root: { minWidth: '25%' } }}
                     label={'Channels'}
                     value=""
                     data={pins?.list.filter((p) => !channelMap.has(p.channel)).map(p => ({ value: String(p.channel), label: p.label })) || []}
@@ -123,43 +162,6 @@ const OrdersInput: FC<OrdersInputProps> = ({ orders, onChange, error }) => {
                     rightSection={(<></>)}
                     rightSectionWidth={0}
                     error={error}
-                />
-
-                <Select
-                    styles={{ root: { width: '40%' } }}
-                    label={`Sequence Length`}
-                    value={String(maxX)}
-                    data={sequenceLength}
-                    onChange={v => {
-                        const length = Number(v)
-                        setMaxX(length)
-
-                        // Make sure step is at most half of the length
-                        const newStep = (length / 2) < step ?
-                            Number([...steps].reverse().find(({ value }) => Number(value) <= (length / 2))?.value || 10) :
-                            undefined
-                        newStep && setStep(newStep)
-
-                        onChange(update(channelMap, length))
-                    }}
-                    rightSection={(
-                        <ActionIcon size={"sm"} color="gray" onClick={() => setCustomLength(true)}>
-                            <Plus />
-                        </ActionIcon>
-                    )}
-                />
-
-                <Select
-                    styles={{ root: { width: '25%' } }}
-                    label={'Step'}
-                    value={String(step)}
-                    data={steps}
-                    onChange={(v) => {
-                        const c = Number(v)
-                        if (isNaN(c) || maxX * 0.5 < c) return
-                        setStep(c)
-                    }}
-                    rightSection={(<></>)}
                 />
             </Group>
             {[...channelMap.entries()].map(([channel, orders]) => (

@@ -16,7 +16,7 @@ const SequenceList: FC<{ sequences?: SequenceDBType[] }> = ({ sequences }) => {
                         Last Run
                     </th>
                     <th>
-                        Schedule
+                        No. of Triggers
                     </th>
                     <th>
                         Actions

@@ -32,13 +32,13 @@ const Sequences: FC = () => {
                                 onClick={() => router.push('sequences/' + s.id)}
                             >
                                 <Text size="sm">{s.name}</Text>
-                                <Text size="sm">{s.schedule?.label}</Text>
+                                <Text size="sm">{s.CronSequence.length} Triggers</Text>
                             </Group>
                         ))}
                         footer={
                             <Group position="apart" p={'xs'}>
                                 <Text weight={'bold'}>Sequence</Text>
-                                <Text weight={'bold'} >Schedule</Text>
+                                <Text weight={'bold'} >Triggers</Text>
                             </Group >
                         }
                     />

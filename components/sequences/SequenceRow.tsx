@@ -34,7 +34,7 @@ const SequenceRow: FC<{ sequence: SequenceDBType, }> = ({ sequence }) => {
                 <Text >{sequence.lastRun ? new Date(sequence.lastRun).toLocaleString() : 'Never'}</Text>
             </td>
             <td>
-                <Text >{sequence.schedule?.label}</Text>
+                <Text >{sequence.CronSequence.length ? sequence.CronSequence.length + " triggers" : "no triggers"} </Text>
             </td>
             <td>
                 <MediaQuery smallerThan={'md'} styles={{ display: 'none' }}>

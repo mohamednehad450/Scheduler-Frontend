@@ -1,7 +1,7 @@
-import { Button, Divider, Group, LoadingOverlay, Modal, ScrollArea, Select, Switch, TextInput } from "@mantine/core";
-import { useRouter } from "next/router";
+import { ActionIcon, Button, Group, LoadingOverlay, MultiSelect, ScrollArea, Stepper, Text, TextInput, ThemeIcon } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
-import { useSchedule } from "../context/schedule";
+import { CircleCheck, Plus } from "tabler-icons-react";
+import { useCron } from "../context";
 import { useSequence } from "../context/sequences";
 import OrdersInput, { OrderInput } from "./OrdersInput";
 
@@ -10,16 +10,15 @@ type SequenceInput = {
     name: string,
     active: boolean,
     orders: { create: OrderInput[] },
-    scheduleId: number
-
 }
 
 
-const NewSequence: FC<{ opened: boolean, onClose: () => void }> = ({ opened, onClose }) => {
+const NewSequence: FC<{ onClose: () => void }> = ({ onClose }) => {
 
-    const schedule = useSchedule()
+
+    const cron = useCron()
     const seq = useSequence()
-    const router = useRouter()
+
 
     const [loading, setLoading] = useState(false)
     const [sequence, setSequence] = useState<SequenceInput>({
@@ -28,120 +27,142 @@ const NewSequence: FC<{ opened: boolean, onClose: () => void }> = ({ opened, onC
         orders: {
             create: []
         },
-        scheduleId: -1
     })
+
+
+    const [triggers, setTriggers] = useState<{
+        seqId?: number,
+        cronsIds: number[]
+    }>({
+        cronsIds: []
+    })
+
+    const [step, setStep] = useState(0)
 
     const [error, setError] = useState({
         name: '',
-        scheduleId: '',
         orders: ''
     })
 
     useEffect(() => {
         setError({
             name: '',
-            scheduleId: '',
             orders: ''
         })
     }, [sequence])
 
+
     useEffect(() => {
-        schedule?.refresh()
+        cron?.refresh()
     }, [])
 
 
-
-
-
     return (
-        <Modal
-            size={'lg'}
-            centered
-            opened={opened}
-            onClose={onClose}
-            title="Add New Sequence"
-        >
-            <Divider />
-            <ScrollArea
-                styles={{ viewport: { height: '24rem' } }}
-                py={'md'}
-                px="sm"
+        <>
+            <Stepper
+                styles={{ content: { minHeight: '12rem' }, steps: { padding: `0 2rem`, } }}
+                active={step}
+                breakpoint="xs"
+                size="sm"
+
             >
+                <Stepper.Step label="First step" description="Create new Sequence">
+                    <ScrollArea
+                        styles={{ viewport: { height: '24rem' } }}
+                    >
+                        <Group p="xs">
+                            <TextInput
+                                required
+                                value={sequence.name}
+                                onChange={(e) => setSequence(s => ({ ...s, name: e.target.value }))}
+                                label="Name"
+                                error={error.name}
+                            />
+                        </Group>
+                        <OrdersInput
+                            error={error.orders}
+                            orders={sequence.orders.create}
+                            onChange={os => setSequence(s => ({ ...s, orders: { create: os } }))}
+                        />
+                    </ScrollArea>
+                </Stepper.Step>
+                <Stepper.Step label="Second step" description="Add Triggers" >
+                    <Group p="xs">
+                        <MultiSelect
+                            size="md"
+                            data={cron?.list.map(c => ({ value: String(c.id), label: c.label })) || []}
+                            value={triggers.cronsIds.map(String)}
+                            label="Cron Triggers"
+                            placeholder="- Select Triggers"
+                            onChange={(cronsIds) => setTriggers(t => ({ ...t, cronsIds: cronsIds.map(Number) }))}
+                            rightSection={(
+                                <ActionIcon size={"sm"} color="gray" onClick={() => alert('to be implemented')}>
+                                    <Plus />
+                                </ActionIcon>
+                            )}
+                        />
+                    </Group>
+                </Stepper.Step>
+                <Stepper.Completed>
+                    <div style={{ minHeight: '11rem', display: 'grid', placeItems: 'center' }}>
+                        <ThemeIcon size={96} variant="outline" style={{ borderWidth: 0 }}  >
+                            <CircleCheck size={96} />
+                        </ThemeIcon>
+                        <Text>All Done.</Text>
+                    </div>
+                </Stepper.Completed>
+            </Stepper>
 
-                <Group p="xs">
-                    <TextInput
-                        required
-                        value={sequence.name}
-                        onChange={(e) => setSequence(s => ({ ...s, name: e.target.value }))}
-                        label="Name"
-                        error={error.name}
-                    />
-                </Group>
-
-                <Group p="xs">
-                    <Select
-                        required
-                        placeholder="- Select Schedule"
-                        value={String(sequence.scheduleId)}
-                        onChange={(scheduleId) => setSequence(s => ({ ...s, scheduleId: Number(scheduleId) }))}
-                        label="Schedule"
-                        data={schedule?.list.map(s => ({ value: String(s.id), label: s.label })) || []}
-                        error={error.scheduleId}
-                    />
-                    <Switch pt="xl" checked={sequence.active} onChange={(e) => setSequence(s => ({ ...s, active: e.target.checked }))} label="Activate" />
-                </Group>
-
-                <OrdersInput
-                    error={error.orders}
-                    orders={sequence.orders.create}
-                    onChange={os => setSequence(s => ({ ...s, orders: { create: os } }))}
-                />
-
-            </ScrollArea>
             <Group position="right">
                 <Button
                     styles={{ root: { minWidth: '6rem' } }}
                     m="sm"
                     variant='subtle'
-                    onClick={onClose}
+                    onClick={[
+                        onClose,
+                        () => setStep(2),
+                        () => setStep(1),
+                    ][step]}
                 >
-                    {"Cancel"}
+                    {["Cancel", "Skip", "Back"][step]}
                 </Button>
                 <Button
                     styles={{ root: { minWidth: '6rem' } }}
                     m='sm'
-                    onClick={() => {
-                        let err = false
-                        if (!sequence.name) {
-                            setError(e => ({ ...e, name: 'You must provide a name.' }))
-                            err = true
-                        }
-                        if (sequence.scheduleId === -1) {
-                            setError(e => ({ ...e, scheduleId: 'You must select a schedule' }))
-                            err = true
-                        }
-                        if (sequence.orders.create.length < 1) {
-                            setError(e => ({ ...e, orders: 'You must add at least 1 channel' }))
-                            err = true
-                        }
-                        if (err) return
-                        setLoading(true)
-                        seq?.add(sequence, (err, newSeq) => {
-                            if (err) {
-                                // TODO
-                                setLoading(false)
-                                return
+                    onClick={[
+                        () => {
+                            let err = false
+                            if (!sequence.name) {
+                                setError(e => ({ ...e, name: 'You must provide a name.' }))
+                                err = true
                             }
-                            router.push('sequences/' + newSeq?.id)
-                            setLoading(false)
-                        })
-                    }}
+
+                            if (sequence.orders.create.length < 1) {
+                                setError(e => ({ ...e, orders: 'You must add at least 1 channel' }))
+                                err = true
+                            }
+                            if (err) return
+                            setLoading(true)
+                            seq?.add(sequence, (err, newSeq) => {
+                                if (err) {
+                                    // TODO
+                                    setLoading(false)
+                                    return
+                                }
+                                setStep(1)
+                                setTriggers({ seqId: newSeq?.id, cronsIds: [] })
+                                setLoading(false)
+                            })
+                        },
+                        () => { alert('To be Implemented'); setStep(2) },
+                        onClose
+                    ][step]}
                 >
                     <LoadingOverlay visible={loading} />
-                    {"Submit"}
+                    {["Next", "Next", "Done"][step]}
                 </Button>
             </Group>
-        </Modal >
+        </ >
     )
 }
 

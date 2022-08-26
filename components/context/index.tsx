@@ -1,7 +1,7 @@
 import { FC, PropsWithChildren } from "react";
 import { ProvideActions, useActions } from "./actions";
 import { ProvidePins, usePins } from "./pins";
-import { ProvideSchedule, useSchedule } from "./schedule";
+import { ProvideCron, useCron } from "./cron";
 import { ProvideSequence, useSequence } from "./sequences";
 
 
@@ -9,13 +9,13 @@ const AppContext: FC<PropsWithChildren<{}>> = ({ children }) => {
 
     return (
         <ProvideSequence>
-            <ProvideSchedule>
+            <ProvideCron>
                 <ProvideActions>
                     <ProvidePins>
                         {children}
                     </ProvidePins>
                 </ProvideActions>
-            </ProvideSchedule>
+            </ProvideCron>
         </ProvideSequence>
     )
 }
@@ -25,5 +25,5 @@ export {
     useActions,
     usePins,
     useSequence,
-    useSchedule
+    useCron,
 }

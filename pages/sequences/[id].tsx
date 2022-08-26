@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useSequence } from '../../components/context/sequences'
 import { SequenceDBType } from '../../Scheduler/src/db'
-import { Card, OrdersPreview, SequenceActions, SequenceActivities, SequenceSchedule } from '../../components/sequences'
+import { Card, OrdersPreview, SequenceActions, SequenceActivities, SequenceTriggers } from '../../components/sequences'
 
 
 
@@ -64,9 +64,8 @@ const Sequence: NextPage = () => {
           </Grid.Col>
           <Grid.Col {...g} >
             <Card
-              title='Schedule'
-              body={<SequenceSchedule schedule={sequence.schedule} />}
-
+              title='Triggers'
+              body={<SequenceTriggers cronTriggers={sequence.CronSequence} />}
             />
           </Grid.Col>
           <Grid.Col {...g} >
