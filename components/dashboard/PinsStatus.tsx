@@ -1,6 +1,6 @@
 import { Card, Group, LoadingOverlay, Tabs, Text } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
-import { DeviceState, DeviceStateHandler, useSocket } from "../context";
+import { DeviceState, DeviceStateHandler, ChannelChangeHandler, useSocket } from "../context";
 import { usePins } from "../context/pins";
 import { useSequence } from "../context/sequences";
 import PinStatusRow from "./PinStatusRow";
@@ -15,17 +15,24 @@ const PinsStatus: FC = () => {
     const pins = usePins()
 
 
-    const [runningChannel, setRunningChannel] = useState<DeviceState['runningChannel']>()
+    const [channelsStatus, setChannelsStatus] = useState<DeviceState['channelsStatus']>()
     const [reservedPins, setReservedPins] = useState<DeviceState['reservedPins']>()
 
     useEffect(() => {
-        const handleState: DeviceStateHandler = ({ reservedPins, runningChannel }) => {
-            runningChannel && setRunningChannel(runningChannel)
+        const handleState: DeviceStateHandler = ({ reservedPins, channelsStatus }) => {
+            channelsStatus && setChannelsStatus(channelsStatus)
             reservedPins && setReservedPins(reservedPins)
         }
+        const handleChannelChange: ChannelChangeHandler = (change) => setChannelsStatus(old => ({ ...old, ...change }))
+
         socket?.on('state', handleState)
+        socket?.on('channelChange', handleChannelChange)
+
         socket?.emit('refresh')
-        return () => { socket?.removeListener('state', handleState) }
+        return () => {
+            socket?.removeListener('state', handleState)
+            socket?.removeListener('channelChange', handleChannelChange)
+        }
     }, [socket])
 
     return (
@@ -34,7 +41,7 @@ const PinsStatus: FC = () => {
                 <Tabs.Tab label="All Pins">
                     <ScrollList
                         body={pins?.list.map(s => (
-                            <PinStatusRow key={s.channel} label={s.label} running={runningChannel?.some(c => c === s.channel) || false} />
+                            <PinStatusRow key={s.channel} label={s.label} running={!!channelsStatus && channelsStatus[s.channel]} />
                         ))}
                         footer={
                             <Group position="apart" p={'xs'}>
@@ -61,7 +68,7 @@ const PinsStatus: FC = () => {
                     />
                 </Tabs.Tab>
             </Tabs>
-            <LoadingOverlay visible={!socket || !runningChannel || !reservedPins} />
+            <LoadingOverlay visible={!socket || !channelsStatus || !reservedPins} />
         </Card>
     )
 }

@@ -11,11 +11,12 @@ enum ACTIONS {
 
 type DeviceState = {
     runningSequences: SequenceDBType['id'][]
-    runningChannel: PinDbType['channel'][],
+    channelsStatus: { [key: PinDbType['channel']]: boolean },
     reservedPins: { pin: PinDbType, sequenceId: SequenceDBType['id'] }[]
 }
 
 type DeviceStateHandler = (state: Partial<DeviceState>) => void
+type ChannelChangeHandler = (change: DeviceState['channelsStatus']) => void
 type TickHandler = (dateString: string) => void
 
 type ErrorObject = {
@@ -59,4 +60,4 @@ const useSocketContext = (): Socket | undefined => {
 }
 
 export { useSocket, useSocketContext, socketContext }
-export type { DeviceState, DeviceStateHandler, TickHandler, ACTIONS, ErrorObject, SuccessObject }
+export type { DeviceState, DeviceStateHandler, TickHandler, ChannelChangeHandler, ACTIONS, ErrorObject, SuccessObject }

@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren } from "react";
-import { ProvideSocket, useSocket, TickHandler, DeviceState, DeviceStateHandler } from './socket'
+import { ProvideSocket, useSocket, TickHandler, DeviceState, DeviceStateHandler, ChannelChangeHandler, } from './socket'
 import { ProvidePins, usePins } from "./pins";
 import { ProvideCron, useCron } from "./cron";
 import { ProvideSequence, useSequence } from "./sequences";
@@ -32,4 +32,5 @@ export type {
     DeviceState,
     DeviceStateHandler,
     TickHandler,
+    ChannelChangeHandler,
 }
