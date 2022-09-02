@@ -2,9 +2,8 @@ import { ActionIcon, Button, Group, LoadingOverlay, MultiSelect, ScrollArea, Ste
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 import { CircleCheck, Plus } from "tabler-icons-react";
-import { cronSequence } from "../../api";
-import { useCron } from "../context";
-import { useSequence } from "../context/sequences";
+import { cronCRUD, cronSequence, pinsCRUD, sequenceCRUD } from "../../api";
+import { CronDbType, PinDbType, } from "../../Scheduler/src/db";
 import OrdersInput, { OrderInput } from "./OrdersInput";
 
 
@@ -17,9 +16,17 @@ type SequenceInput = {
 
 const NewSequence: FC<{ onClose: () => void }> = ({ onClose }) => {
 
+    const [crons, setCrons] = useState<CronDbType[]>([])
+    const [pins, setPins] = useState<PinDbType[]>([])
 
-    const cron = useCron()
-    const seq = useSequence()
+
+    useEffect(() => {
+        cronCRUD.list()
+            .then(d => setCrons(d.data))
+        pinsCRUD.list()
+            .then(d => setPins(d.data))
+    }, [])
+
     const router = useRouter()
 
 
@@ -55,10 +62,6 @@ const NewSequence: FC<{ onClose: () => void }> = ({ onClose }) => {
     }, [sequence])
 
 
-    useEffect(() => {
-        cron?.refresh()
-    }, [])
-
 
     return (
         <>
@@ -67,7 +70,6 @@ const NewSequence: FC<{ onClose: () => void }> = ({ onClose }) => {
                 active={step}
                 breakpoint="xs"
                 size="sm"
-
             >
                 <Stepper.Step label="First step" description="Create new Sequence">
                     <ScrollArea
@@ -85,6 +87,7 @@ const NewSequence: FC<{ onClose: () => void }> = ({ onClose }) => {
                         <OrdersInput
                             error={error.orders}
                             orders={sequence.orders.create}
+                            pins={pins}
                             onChange={os => setSequence(s => ({ ...s, orders: { create: os } }))}
                         />
                     </ScrollArea>
@@ -93,7 +96,7 @@ const NewSequence: FC<{ onClose: () => void }> = ({ onClose }) => {
                     <Group p="xs">
                         <MultiSelect
                             size="md"
-                            data={cron?.list.map(c => ({ value: String(c.id), label: c.label })) || []}
+                            data={crons.map(c => ({ value: String(c.id), label: c.label })) || []}
                             value={triggers.cronsIds.map(String)}
                             label="Cron Triggers"
                             placeholder="- Select Triggers"
@@ -122,7 +125,7 @@ const NewSequence: FC<{ onClose: () => void }> = ({ onClose }) => {
                     m="sm"
                     variant='subtle'
                     onClick={[
-                        onClose,
+                        () => onClose(),
                         () => setStep(2),
                         () => setStep(1),
                     ][step]}
@@ -146,19 +149,22 @@ const NewSequence: FC<{ onClose: () => void }> = ({ onClose }) => {
                             }
                             if (err) return
                             setLoading(true)
-                            seq?.add(sequence, (err, newSeq) => {
-                                if (err) {
+                            sequenceCRUD.add(sequence)
+                                .then(({ data: newSeq }) => {
+
+                                    setStep(1)
+                                    setTriggers({ seqId: newSeq.id, cronsIds: newSeq.CronSequence.map(c => c.cron.id) })
+                                    setLoading(false)
+                                })
+                                .catch(err => {
                                     // TODO
                                     setLoading(false)
                                     return
-                                }
-                                setStep(1)
-                                setTriggers({ seqId: newSeq?.id, cronsIds: [] })
-                                setLoading(false)
-                            })
+
+                                })
                         },
                         () => { triggers.seqId && cronSequence.linkSequencePromise(triggers.seqId, triggers.cronsIds).then(() => setStep(2)) },
-                        () => router.push('sequences/' + triggers.seqId)
+                        () => router.push('/sequences/' + triggers.seqId)
                     ][step]}
                 >
                     <LoadingOverlay visible={loading} />

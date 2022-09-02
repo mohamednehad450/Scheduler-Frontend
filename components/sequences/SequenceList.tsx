@@ -5,7 +5,7 @@ import { DeviceState, DeviceStateHandler, useSocket } from '../context'
 import SequenceRow from './SequenceRow'
 
 
-const SequenceList: FC<{ sequences?: SequenceDBType[], show: 'running' | 'active' | 'all' }> = ({ sequences, show }) => {
+const SequenceList: FC<{ sequences: SequenceDBType[], show: 'running' | 'active' | 'all' }> = ({ sequences, show }) => {
 
     const socket = useSocket()
     const [runningSequences, setRunningSequences] = useState<DeviceState['runningSequences']>([])

@@ -1,19 +1,19 @@
 import { Card, Divider, Group, Tabs, Text, } from "@mantine/core";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
+import { SequenceDBType } from "../../Scheduler/src/db";
 import { DeviceState, DeviceStateHandler, useSocket } from "../context";
-import { useSequence } from "../context/sequences";
 import ScrollList from "./ScrollList";
 
 
-const Sequences: FC = () => {
+const Sequences: FC<{ sequences: SequenceDBType[] }> = ({ sequences }) => {
 
     const socket = useSocket()
-    const seq = useSequence()
     const router = useRouter()
 
     const [runningSequences, setRunningSequences] = useState<DeviceState['runningSequences']>([])
-    const running = seq?.list.filter(s => (runningSequences || []).some(id => id === s.id)) || []
+
+    const running = sequences.filter(s => (runningSequences || []).some(id => id === s.id)) || []
 
 
     useEffect(() => {
@@ -32,7 +32,7 @@ const Sequences: FC = () => {
             <Tabs variant="default">
                 <Tabs.Tab label="Active Sequences">
                     <ScrollList
-                        body={seq?.list.filter(s => s.active).map((s) => (
+                        body={sequences.filter(s => s.active).map((s) => (
                             <Group
                                 key={s.id}
                                 p={'xs'}

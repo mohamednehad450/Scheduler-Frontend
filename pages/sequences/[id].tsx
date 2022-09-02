@@ -3,9 +3,9 @@ import { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { useSequence } from '../../components/context/sequences'
 import { SequenceDBType } from '../../Scheduler/src/db'
 import { Card, OrdersPreview, SequenceActions, SequenceActivities, SequenceTriggers } from '../../components/sequences'
+import { sequenceCRUD } from '../../api'
 
 
 
@@ -27,19 +27,17 @@ const g2 = {
 const Sequence: NextPage = () => {
   const router = useRouter()
   const [sequence, setSequence] = useState<SequenceDBType>()
-  const seq = useSequence()
   useEffect(() => {
     if (Array.isArray(router.query.id) || isNaN(Number(router.query.id))) {
       return
     }
     const id = Number(router.query.id)
-    seq?.get(id, (err, s) => {
-      if (err || !s) {
+    sequenceCRUD.get(id)
+      .then(d => setSequence(d.data))
+      .catch(err => {
         router.push('/sequences')
         return
-      }
-      setSequence(s)
-    })
+      })
   }, [router.query])
 
   return (

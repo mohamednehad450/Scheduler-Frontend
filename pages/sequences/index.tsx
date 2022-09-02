@@ -2,9 +2,10 @@ import { Tabs, Container, Title, Group, ActionIcon, Modal, Divider } from '@mant
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import { useSequence } from '../../components/context/sequences'
 import { Calendar, CalendarOff, List, Plus, } from 'tabler-icons-react';
 import { NewSequence, SequenceList } from '../../components/sequences'
+import { SequenceDBType } from '../../Scheduler/src/db'
+import { sequenceCRUD } from '../../api'
 
 
 const lists: ('all' | 'active' | 'running')[] = ['all', 'active', 'running']
@@ -12,8 +13,12 @@ const Sequences: NextPage = () => {
 
     const [active, setActive] = useState(0)
     const [add, setAdd] = useState(false)
-    const seq = useSequence()
-    useEffect(() => { seq?.refresh() }, [])
+
+    const [sequences, setSequences] = useState<SequenceDBType[]>([])
+    useEffect(() => {
+        sequenceCRUD.list()
+            .then(d => setSequences(d.data))
+    }, [])
 
     return (
         <>
@@ -49,7 +54,7 @@ const Sequences: NextPage = () => {
                         background: s.colorScheme === 'light' ? s.white : s.black,
                         height: '100%'
                     })}>
-                    <SequenceList sequences={seq?.list} show={lists[active]} />
+                    <SequenceList sequences={sequences} show={lists[active]} />
                 </Container>
             </Container>
             <Modal

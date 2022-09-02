@@ -1,11 +1,13 @@
 import { Container, Grid, Group, ThemeIcon } from "@mantine/core"
+import { useDebouncedValue } from "@mantine/hooks"
 import { useRouter } from "next/router"
 import { FC, useEffect, useState } from "react"
 import { CalendarEvent, CalendarOff, Edit, PlayerPause, PlayerPlay, Trash } from "tabler-icons-react"
+import { sequenceCRUD } from "../../api"
 import { SequenceDBType } from "../../Scheduler/src/db"
 import { DeviceState, DeviceStateHandler, useSocket } from "../context"
-import { useSequence } from "../context/sequences"
 import LoadingButton from "./LoadingButton"
+import NewSequence from "./NewSequence"
 
 
 const g = {
@@ -35,9 +37,7 @@ interface SequenceActionsProps {
 
 const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
 
-    const seq = useSequence()
     const socket = useSocket()
-
     const [runningSequences, setRunningSequences] = useState<DeviceState['runningSequences']>([])
 
     useEffect(() => {
@@ -89,14 +89,15 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                 <Grid.Col {...g}>
                     <Group direction="column" style={{ alignItems: 'stretch' }}>
                         <LoadingButton p={0} disabled={sequence.active} onClick={(onDone) => {
-                            seq?.update(sequence?.id, { active: true },
-                                (err, seq) => {
-                                    if (!err && seq && onChange) {
-                                        onChange(seq)
-                                    }
+                            sequenceCRUD.update(sequence?.id, { active: true })
+                                .then(d => {
                                     onDone()
-                                }
-                            )
+                                    onChange && onChange(d.data)
+                                })
+                                .catch(err => {
+                                    // TODO
+                                    onDone()
+                                })
                         }}>
                             <Group>
                                 <CalendarEvent size={16} />
@@ -104,14 +105,15 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                             </Group>
                         </LoadingButton>
                         <LoadingButton p={0} disabled={!sequence.active} onClick={(onDone) => {
-                            seq?.update(sequence?.id, { active: false },
-                                (err, seq) => {
-                                    if (!err && seq && onChange) {
-                                        onChange(seq)
-                                    }
+                            sequenceCRUD.update(sequence?.id, { active: false })
+                                .then(d => {
                                     onDone()
-                                }
-                            )
+                                    onChange && onChange(d.data)
+                                })
+                                .catch(err => {
+                                    // TODO
+                                    onDone()
+                                })
                         }}>
                             <Group>
                                 <CalendarOff size={16} />
@@ -132,14 +134,12 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                             </Group>
                         </LoadingButton>
                         <LoadingButton confirm p={0} color={"red"} onClick={(onDone) => {
-                            seq?.remove(sequence?.id,
-                                (err) => {
-                                    if (!err) {
-                                        router.back()
-                                    }
+                            sequenceCRUD.remove(sequence?.id)
+                                .then(() => router.back())
+                                .catch(err => {
+                                    // TODO
                                     onDone()
-                                }
-                            )
+                                })
                         }}>
                             <Group>
                                 <Trash size={16} />

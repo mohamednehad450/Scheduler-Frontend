@@ -1,9 +1,9 @@
 import { Group, Text, ActionIcon, Tooltip, MediaQuery, Menu } from '@mantine/core'
-import { FC, MouseEventHandler } from 'react'
+import { FC, MouseEventHandler, useState } from 'react'
 import { Calendar, CalendarOff, Edit, PlayerPause, PlayerPlay, Trash, } from 'tabler-icons-react';
 import type { SequenceDBType } from '../../Scheduler/src/db'
-import { useSequence } from '../context/sequences';
 import { useRouter } from 'next/router';
+import { sequenceCRUD } from '../../api';
 
 const stopPropagation: (cb?: MouseEventHandler) => MouseEventHandler = (cb) => (e) => {
     e.stopPropagation()
@@ -14,18 +14,18 @@ const SequenceRow: FC<{
     isRunning: boolean,
     run: (id: SequenceDBType['id']) => void
     stop: (id: SequenceDBType['id']) => void
-}> = ({ sequence, isRunning, run, stop }) => {
+}> = ({ sequence: initSequence, isRunning, run, stop }) => {
 
-    const sequences = useSequence()
+    const [sequence, setSequence] = useState(initSequence)
     const router = useRouter()
     const toggleRun = stopPropagation(() => isRunning ? stop(sequence.id) : run(sequence.id))
-    const toggleActive = stopPropagation(() => sequences?.update(
-        sequence.id,
-        { active: !sequence.active },
-        (err: any) => {
-            // TODO
-        }
-    ))
+    const toggleActive = stopPropagation(() =>
+        sequenceCRUD.update(sequence.id, { active: !sequence.active })
+            .then(d => setSequence(d.data))
+            .catch(err => {
+                // TODO
+            })
+    )
 
     return (
         <tr onClick={stopPropagation(() => router.push(router.route + '/' + sequence.id))} >

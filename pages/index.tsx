@@ -1,10 +1,10 @@
 import { Grid, Container, } from '@mantine/core'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { useEffect } from 'react'
-import { usePins } from '../components/context/pins'
-import { useSequence } from '../components/context/sequences'
+import { useEffect, useState } from 'react'
+import { pinsCRUD, sequenceCRUD } from '../api'
 import { DeviceTime, PinsStatus, Sequences } from '../components/dashboard'
+import { PinDbType, SequenceDBType } from '../Scheduler/src/db'
 
 const g = {
   sm: 12,
@@ -16,11 +16,16 @@ const g = {
 
 
 const Home: NextPage = () => {
-  const seq = useSequence()
-  const pins = usePins()
+
+  const [pins, setPins] = useState<PinDbType[]>([])
+  const [sequences, setSequences] = useState<SequenceDBType[]>([])
+
+
   useEffect(() => {
-    seq?.refresh()
-    pins?.refresh()
+    sequenceCRUD.list()
+      .then(d => setSequences(d.data))
+    pinsCRUD.list()
+      .then(d => setPins(d.data))
   }, [])
   return (
     <>
@@ -35,10 +40,10 @@ const Home: NextPage = () => {
             <DeviceTime />
           </Grid.Col>
           <Grid.Col {...g} >
-            <PinsStatus />
+            <PinsStatus pins={pins} sequences={sequences} />
           </Grid.Col>
           <Grid.Col {...g} >
-            <Sequences />
+            <Sequences sequences={sequences} />
           </Grid.Col>
         </Grid>
       </Container>

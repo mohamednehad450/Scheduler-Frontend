@@ -1,18 +1,15 @@
 import { Card, Group, LoadingOverlay, Tabs, Text } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
+import { PinDbType, SequenceDBType } from "../../Scheduler/src/db";
 import { DeviceState, DeviceStateHandler, ChannelChangeHandler, useSocket } from "../context";
-import { usePins } from "../context/pins";
-import { useSequence } from "../context/sequences";
 import PinStatusRow from "./PinStatusRow";
 import ScrollList from "./ScrollList";
 
 
 
-const PinsStatus: FC = () => {
+const PinsStatus: FC<{ pins: PinDbType[], sequences: SequenceDBType[] }> = ({ pins, sequences }) => {
 
     const socket = useSocket()
-    const seq = useSequence()
-    const pins = usePins()
 
 
     const [channelsStatus, setChannelsStatus] = useState<DeviceState['channelsStatus']>()
@@ -40,7 +37,7 @@ const PinsStatus: FC = () => {
             <Tabs variant="default">
                 <Tabs.Tab label="All Pins">
                     <ScrollList
-                        body={pins?.list.map(s => (
+                        body={pins.map(s => (
                             <PinStatusRow key={s.channel} label={s.label} running={!!channelsStatus && channelsStatus[s.channel]} />
                         ))}
                         footer={
@@ -56,7 +53,7 @@ const PinsStatus: FC = () => {
                         body={reservedPins?.map((s) => (
                             <Group key={s.pin.channel} p={'xs'} position="apart" style={{ borderBottom: "2px solid #e9ecef" }}>
                                 <Text size="sm">{s.pin.label}</Text>
-                                <Text size="sm">{seq?.list.find(seq => s.sequenceId === seq.id)?.name || "NULL"}</Text>
+                                <Text size="sm">{sequences.find(seq => s.sequenceId === seq.id)?.name || "NULL"}</Text>
                             </Group>
                         ))}
                         footer={
