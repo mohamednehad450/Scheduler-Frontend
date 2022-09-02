@@ -1,9 +1,9 @@
 import { Container, Grid, Group, ThemeIcon } from "@mantine/core"
 import { useRouter } from "next/router"
-import { FC } from "react"
+import { FC, useEffect, useState } from "react"
 import { CalendarEvent, CalendarOff, Edit, PlayerPause, PlayerPlay, Trash } from "tabler-icons-react"
 import { SequenceDBType } from "../../Scheduler/src/db"
-import { useActions } from "../context/actions"
+import { DeviceState, DeviceStateHandler, useSocket } from "../context"
 import { useSequence } from "../context/sequences"
 import LoadingButton from "./LoadingButton"
 
@@ -36,8 +36,22 @@ interface SequenceActionsProps {
 const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
 
     const seq = useSequence()
-    const actions = useActions()
-    const isRunning = actions?.state.runningSequences.some(id => id === sequence.id)
+    const socket = useSocket()
+
+    const [runningSequences, setRunningSequences] = useState<DeviceState['runningSequences']>([])
+
+    useEffect(() => {
+        const handleState: DeviceStateHandler = ({ runningSequences }) => {
+            runningSequences && setRunningSequences(runningSequences)
+        }
+        socket?.on('state', handleState)
+        socket?.emit('refresh')
+        return () => { socket?.removeListener('state', handleState) }
+    }, [socket])
+
+
+
+    const isRunning = runningSequences.some(id => id === sequence.id)
     const router = useRouter()
     return (
         <Container>
@@ -45,8 +59,8 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                 <Grid.Col {...g}>
                     <Group direction="column" style={{ alignItems: 'stretch' }}>
                         <LoadingButton p={0} disabled={isRunning} onClick={(onDone) => {
-                            actions?.run(sequence.id)
-                            actions?.emitter?.once('run', (id: SequenceDBType['id']) => {
+                            socket?.emit('run', sequence.id)
+                            socket?.once('run', (id: SequenceDBType['id']) => {
                                 if (id === sequence.id) {
                                     onDone()
                                 }
@@ -58,8 +72,8 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                             </Group>
                         </LoadingButton>
                         <LoadingButton p={0} disabled={!isRunning} onClick={(onDone) => {
-                            actions?.stop(sequence.id)
-                            actions?.emitter?.once('stop', (id: SequenceDBType['id']) => {
+                            socket?.emit('stop', sequence.id)
+                            socket?.once('stop', (id: SequenceDBType['id']) => {
                                 if (id === sequence.id) {
                                     onDone()
                                 }

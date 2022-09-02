@@ -1,8 +1,7 @@
 import { Group, Text, ActionIcon, Tooltip, MediaQuery, Menu } from '@mantine/core'
 import { FC, MouseEventHandler } from 'react'
-import { Calendar, CalendarOff, Edit, PlayerPause, PlayerPlay, } from 'tabler-icons-react';
+import { Calendar, CalendarOff, Edit, PlayerPause, PlayerPlay, Trash, } from 'tabler-icons-react';
 import type { SequenceDBType } from '../../Scheduler/src/db'
-import { useActions } from '../../components/context/actions'
 import { useSequence } from '../context/sequences';
 import { useRouter } from 'next/router';
 
@@ -10,13 +9,16 @@ const stopPropagation: (cb?: MouseEventHandler) => MouseEventHandler = (cb) => (
     e.stopPropagation()
     cb && cb(e)
 }
-const SequenceRow: FC<{ sequence: SequenceDBType, }> = ({ sequence }) => {
+const SequenceRow: FC<{
+    sequence: SequenceDBType,
+    isRunning: boolean,
+    run: (id: SequenceDBType['id']) => void
+    stop: (id: SequenceDBType['id']) => void
+}> = ({ sequence, isRunning, run, stop }) => {
 
-    const actions = useActions()
     const sequences = useSequence()
-    const isRunning = (actions?.state.runningSequences || []).some(id => id === sequence.id)
     const router = useRouter()
-    const toggleRun = stopPropagation(() => isRunning ? actions?.stop(sequence.id) : actions?.run(sequence.id))
+    const toggleRun = stopPropagation(() => isRunning ? stop(sequence.id) : run(sequence.id))
     const toggleActive = stopPropagation(() => sequences?.update(
         sequence.id,
         { active: !sequence.active },
@@ -69,6 +71,15 @@ const SequenceRow: FC<{ sequence: SequenceDBType, }> = ({ sequence }) => {
                                 <Edit size={16} />
                             </ActionIcon>
                         </Tooltip>
+                        <Tooltip label={"Delete"} withArrow>
+                            <ActionIcon
+                                variant='default'
+                                color={'red'}
+                                onClick={stopPropagation(() => alert('TO BE IMPLEMENTED'))}
+                            >
+                                <Trash size={16} />
+                            </ActionIcon>
+                        </Tooltip>
                     </Group>
                 </MediaQuery>
                 <MediaQuery largerThan={'md'} styles={{ display: 'none' }} >
@@ -96,6 +107,12 @@ const SequenceRow: FC<{ sequence: SequenceDBType, }> = ({ sequence }) => {
                             }
                         </Menu.Item>
                         <Menu.Item icon={<Edit size={16} />}>Edit</Menu.Item>
+                        <Menu.Item
+                            color={"red"}
+                            icon={<Trash size={16} />}
+                        >
+                            Delete
+                        </Menu.Item>
                     </Menu>
                 </MediaQuery>
             </td>

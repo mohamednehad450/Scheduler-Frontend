@@ -4,16 +4,16 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { useSequence } from '../../components/context/sequences'
 import { Calendar, CalendarOff, List, Plus, } from 'tabler-icons-react';
-import { useActions } from '../../components/context/actions'
 import { NewSequence, SequenceList } from '../../components/sequences'
 
+
+const lists: ('all' | 'active' | 'running')[] = ['all', 'active', 'running']
 const Sequences: NextPage = () => {
 
     const [active, setActive] = useState(0)
     const [add, setAdd] = useState(false)
     const seq = useSequence()
     useEffect(() => { seq?.refresh() }, [])
-    const actions = useActions()
 
     return (
         <>
@@ -49,21 +49,7 @@ const Sequences: NextPage = () => {
                         background: s.colorScheme === 'light' ? s.white : s.black,
                         height: '100%'
                     })}>
-                    <SequenceList sequences={seq?.list.filter(s => {
-                        switch (active) {
-                            case 0:
-                                // All
-                                return true
-                            case 1:
-                                // Active
-                                return s.active
-                            case 2:
-                                // Running 
-                                return (actions?.state.runningSequences || []).some(id => id === s.id)
-                            default:
-                                return false
-                        }
-                    })} />
+                    <SequenceList sequences={seq?.list} show={lists[active]} />
                 </Container>
             </Container>
             <Modal

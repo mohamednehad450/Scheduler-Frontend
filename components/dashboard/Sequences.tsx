@@ -1,17 +1,32 @@
 import { Card, Divider, Group, Tabs, Text, } from "@mantine/core";
 import { useRouter } from "next/router";
-import { FC } from "react";
-import { useActions } from "../context/actions";
+import { FC, useEffect, useState } from "react";
+import { DeviceState, DeviceStateHandler, useSocket } from "../context";
 import { useSequence } from "../context/sequences";
 import ScrollList from "./ScrollList";
 
 
 const Sequences: FC = () => {
 
-    const actions = useActions()
+    const socket = useSocket()
     const seq = useSequence()
     const router = useRouter()
-    const running = seq?.list.filter(s => (actions?.state.runningSequences || []).some(id => id === s.id)) || []
+
+    const [runningSequences, setRunningSequences] = useState<DeviceState['runningSequences']>([])
+    const running = seq?.list.filter(s => (runningSequences || []).some(id => id === s.id)) || []
+
+
+    useEffect(() => {
+        const handleState: DeviceStateHandler = ({ runningSequences }) => {
+            runningSequences && setRunningSequences(runningSequences)
+        }
+        socket?.on('state', handleState)
+        socket?.emit('refresh')
+        return () => { socket?.removeListener('state', handleState) }
+    }, [socket])
+
+
+
     return (
         <Card shadow="sm" p="sm" radius={'md'} style={{ height: '18rem', }}  >
             <Tabs variant="default">
