@@ -31,13 +31,15 @@ const g2 = {
 
 interface SequenceActionsProps {
     sequence: SequenceDBType
-    onChange?: (s: SequenceDBType) => void
+    onChange: (s: SequenceDBType) => void
 }
 
 
 const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
 
     const socket = useSocket()
+    const [edit, setEdit] = useState(false)
+    const [debouncedEdit] = useDebouncedValue(edit, 100)
     const [runningSequences, setRunningSequences] = useState<DeviceState['runningSequences']>([])
 
     useEffect(() => {
@@ -92,7 +94,7 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                             sequenceCRUD.update(sequence?.id, { active: true })
                                 .then(d => {
                                     onDone()
-                                    onChange && onChange(d.data)
+                                    onChange(d.data)
                                 })
                                 .catch(err => {
                                     // TODO
@@ -108,7 +110,7 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                             sequenceCRUD.update(sequence?.id, { active: false })
                                 .then(d => {
                                     onDone()
-                                    onChange && onChange(d.data)
+                                    onChange(d.data)
                                 })
                                 .catch(err => {
                                     // TODO
@@ -125,7 +127,7 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                 <Grid.Col {...g2}  >
                     <Group direction="column" style={{ alignItems: 'stretch' }}>
                         <LoadingButton p={0} color={"gray"} onClick={(onDone) => {
-                            alert('To be implemented')
+                            setEdit(true)
                             onDone()
                         }}>
                             <Group>
@@ -149,6 +151,9 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                     </Group>
                 </Grid.Col>
             </Grid>
+            {edit &&
+                <NewSequence onClose={(newSeq) => { setEdit(false); newSeq && onChange(newSeq); }} opened={debouncedEdit} initialSequence={sequence} />
+            }
         </Container>
     )
 }

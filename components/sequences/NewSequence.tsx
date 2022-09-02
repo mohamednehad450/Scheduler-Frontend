@@ -1,9 +1,9 @@
-import { ActionIcon, Button, Group, LoadingOverlay, MultiSelect, ScrollArea, Stepper, Text, TextInput, ThemeIcon } from "@mantine/core";
+import { ActionIcon, Button, Divider, Group, LoadingOverlay, Modal, MultiSelect, ScrollArea, Stepper, Text, TextInput, ThemeIcon } from "@mantine/core";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 import { CircleCheck, Plus } from "tabler-icons-react";
 import { cronCRUD, cronSequence, pinsCRUD, sequenceCRUD } from "../../api";
-import { CronDbType, PinDbType, } from "../../Scheduler/src/db";
+import { CronDbType, PinDbType, SequenceDBType } from "../../Scheduler/src/db";
 import OrdersInput, { OrderInput } from "./OrdersInput";
 
 
@@ -14,11 +14,14 @@ type SequenceInput = {
 }
 
 
-const NewSequence: FC<{ onClose: () => void }> = ({ onClose }) => {
+const NewSequence: FC<{
+    opened: boolean,
+    onClose: (newSeq?: SequenceDBType) => void,
+    initialSequence?: SequenceDBType
+}> = ({ onClose, initialSequence, opened }) => {
 
     const [crons, setCrons] = useState<CronDbType[]>([])
     const [pins, setPins] = useState<PinDbType[]>([])
-
 
     useEffect(() => {
         cronCRUD.list()
@@ -32,19 +35,22 @@ const NewSequence: FC<{ onClose: () => void }> = ({ onClose }) => {
 
     const [loading, setLoading] = useState(false)
     const [sequence, setSequence] = useState<SequenceInput>({
-        name: '',
-        active: false,
+        name: initialSequence?.name || '',
+        active: initialSequence?.active || false,
         orders: {
-            create: []
+            create: initialSequence?.orders.map(({ offset, duration, channel }) => ({ offset, duration, channel })) || []
         },
     })
+
+    const [newSequence, setNewSequence] = useState<SequenceDBType>()
 
 
     const [triggers, setTriggers] = useState<{
         seqId?: number,
         cronsIds: number[]
     }>({
-        cronsIds: []
+        seqId: initialSequence?.id || undefined,
+        cronsIds: initialSequence?.CronSequence.map(c => c.cron.id) || []
     })
 
     const [step, setStep] = useState(0)
@@ -64,14 +70,21 @@ const NewSequence: FC<{ onClose: () => void }> = ({ onClose }) => {
 
 
     return (
-        <>
+        <Modal
+            size={'lg'}
+            centered
+            opened={opened}
+            onClose={() => onClose()}
+            title={initialSequence ? `Edit ${initialSequence.name}` : "Add New Sequence"}
+        >
+            <Divider pt="md" />
             <Stepper
                 styles={{ content: { minHeight: '12rem' }, steps: { padding: `0 2rem`, } }}
                 active={step}
                 breakpoint="xs"
                 size="sm"
             >
-                <Stepper.Step label="First step" description="Create new Sequence">
+                <Stepper.Step label="First step" description={initialSequence ? `Edit ${initialSequence.name}` : "Create new Sequence"}>
                     <ScrollArea
                         styles={{ viewport: { height: '24rem' } }}
                     >
@@ -149,29 +162,43 @@ const NewSequence: FC<{ onClose: () => void }> = ({ onClose }) => {
                             }
                             if (err) return
                             setLoading(true)
-                            sequenceCRUD.add(sequence)
-                                .then(({ data: newSeq }) => {
+                            initialSequence ?
+                                sequenceCRUD.update(initialSequence.id, sequence)
+                                    .then(({ data: newSeq }) => {
+                                        setStep(1)
+                                        setTriggers({ seqId: newSeq.id, cronsIds: newSeq.CronSequence.map(c => c.cron.id) })
+                                        setNewSequence(newSeq)
+                                        setLoading(false)
+                                    })
+                                    .catch(err => {
+                                        // TODO
+                                        setLoading(false)
+                                        return
 
-                                    setStep(1)
-                                    setTriggers({ seqId: newSeq.id, cronsIds: newSeq.CronSequence.map(c => c.cron.id) })
-                                    setLoading(false)
-                                })
-                                .catch(err => {
-                                    // TODO
-                                    setLoading(false)
-                                    return
-
-                                })
+                                    })
+                                : sequenceCRUD.add(sequence)
+                                    .then(({ data: newSeq }) => {
+                                        setStep(1)
+                                        setTriggers({ seqId: newSeq.id, cronsIds: [] })
+                                        setNewSequence(newSeq)
+                                        setLoading(false)
+                                    })
+                                    .catch(err => {
+                                        // TODO
+                                        setLoading(false)
+                                        return
+                                    })
                         },
                         () => { triggers.seqId && cronSequence.linkSequencePromise(triggers.seqId, triggers.cronsIds).then(() => setStep(2)) },
-                        () => router.push('/sequences/' + triggers.seqId)
+                        () => initialSequence ? onClose(newSequence) : router.push('/sequences/' + triggers.seqId)
                     ][step]}
                 >
                     <LoadingOverlay visible={loading} />
                     {["Next", "Next", "Done"][step]}
                 </Button>
             </Group>
-        </ >
+        </Modal>
+
     )
 }
 
