@@ -2,7 +2,6 @@ import { ActionIcon, Group, Select, } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import { Plus } from "tabler-icons-react";
 import { PinDbType } from "../../Scheduler/src/db";
-import { usePins } from "../context/pins";
 import DurationInput from "./DurationInput";
 import TrackInput from "./TrackInput";
 
@@ -15,6 +14,7 @@ export type OrderInput = {
 
 interface OrdersInputProps {
     orders: OrderInput[],
+    pins: PinDbType[]
     onChange: (os: OrderInput[]) => void
     error?: string
 }
@@ -41,10 +41,10 @@ const formatTimeLabel = (ms: number): string => {
 
 }
 
-const update = (map: Map<PinDbType['channel'], [number, number][]>, maxX: number): OrderInput[] =>
-    [...map.entries()]
-        .flatMap(([channel, os]) =>
-            os.map(([x1, x2]) => ({ channel, duration: Math.round((x2 - x1) * maxX), offset: Math.round(x1 * maxX) })));
+const update = (map: { [key: PinDbType['channel']]: [number, number][] }, maxX: number): OrderInput[] =>
+    [...Object.keys(map)]
+        .flatMap((channel) =>
+            map[Number(channel)].map(([x1, x2]) => ({ channel: Number(channel), duration: Math.round((x2 - x1) * maxX), offset: Math.round(x1 * maxX) })));
 
 
 const defaultSequenceLength = [
@@ -65,32 +65,30 @@ const steps = [
     { value: String(1000 * 60), label: '1 Minute' },
 ]
 
-const OrdersInput: FC<OrdersInputProps> = ({ orders, onChange, error }) => {
+const sortOrder = (a: [number, number], b: [number, number]) => a[0] > b[0] ? 1 : -1
+
+const OrdersInput: FC<OrdersInputProps> = ({ orders, onChange, error, pins }) => {
 
 
-    const [channelMap, setChannelMap] = useState<Map<PinDbType['channel'], [number, number][]>>(new Map())
-    const [maxX, setMaxX] = useState(Math.max(...orders.map(o => o.duration + o.offset), 30 * 60 * 1000))
+    const [channelMap, setChannelMap] = useState<{ [key: PinDbType['channel']]: [number, number][] }>({})
+    const [maxX, setMaxX] = useState(Math.max(...(orders.length ? orders.map(o => o.duration + o.offset) : [30 * 60 * 1000])))
     const [step, setStep] = useState(1000)
     const [sequenceLength, setSequenceLength] = useState<{ value: string, label: string }[]>([...defaultSequenceLength])
     const [customLength, setCustomLength] = useState(false)
 
 
-    const pins = usePins()
-    useEffect(() => { pins?.refresh() }, [])
 
 
     // Sort orders by channel 
     useEffect(() => {
-        const map = new Map<PinDbType['channel'], [number, number][]>()
+        const map: { [key: PinDbType['channel']]: [number, number][] } = {}
         orders.forEach(o => {
-            if (map.has(o.channel)) {
-                map.set(o.channel, map.get(o.channel)?.concat([[o.offset / maxX, (o.offset + o.duration) / maxX]]) || [])
+            if (map[o.channel]) {
+                map[o.channel] = map[o.channel].concat([[o.offset / maxX, (o.offset + o.duration) / maxX]]).sort(sortOrder)
             } else {
-                map.set(o.channel, [[o.offset / maxX, (o.offset + o.duration) / maxX]])
+                map[o.channel] = [[o.offset / maxX, (o.offset + o.duration) / maxX]]
             }
         });
-
-        [...map.values()].forEach(arr => arr.sort((a, b) => a[0] > b[0] ? 1 : -1))
         setChannelMap(map)
     }, [orders])
 
@@ -117,13 +115,11 @@ const OrdersInput: FC<OrdersInputProps> = ({ orders, onChange, error }) => {
                         onChange={v => {
                             const length = Number(v)
                             setMaxX(length)
-
                             // Make sure step is at most half of the length
                             const newStep = (length / 2) < step ?
                                 Number([...steps].reverse().find(({ value }) => Number(value) <= (length / 2))?.value || 10) :
                                 undefined
                             newStep && setStep(newStep)
-
                             onChange(update(channelMap, length))
                         }}
                         rightSection={(
@@ -151,29 +147,30 @@ const OrdersInput: FC<OrdersInputProps> = ({ orders, onChange, error }) => {
                     styles={{ root: { minWidth: '25%' } }}
                     label={'Channels'}
                     value=""
-                    data={pins?.list.filter((p) => !channelMap.has(p.channel)).map(p => ({ value: String(p.channel), label: p.label })) || []}
+                    data={pins.filter((p) => !channelMap[p.channel]).map(p => ({ value: String(p.channel), label: p.label })) || []}
                     placeholder=" - Add Channel"
                     onChange={(v) => {
                         const c = Number(v)
                         if (isNaN(c)) return
-                        channelMap.set(c, [[0, 0.1]])
-                        setChannelMap(channelMap)
+                        setChannelMap(old => ({ ...old, [c]: [[0, 0.1]] }))
                     }}
                     rightSection={(<></>)}
                     rightSectionWidth={0}
                     error={error}
                 />
             </Group>
-            {[...channelMap.entries()].map(([channel, orders]) => (
+            {[...Object.keys(channelMap)].map((channel) => (
                 <TrackInput
                     key={channel}
-                    value={orders}
+                    value={channelMap[Number(channel)]}
                     onChange={vs => {
-                        channelMap.set(channel, vs)
-                        setChannelMap(new Map(channelMap))
+                        setChannelMap(old => ({ ...old, [Number(channel)]: vs }))
                     }}
-                    onChangeEnd={() => onChange(update(channelMap, maxX))}
-                    label={pins?.list.find(({ channel: c }) => c === channel)?.label || ''}
+                    onChangeEnd={vs => {
+                        setChannelMap({ ...channelMap, [Number(channel)]: vs })
+                        onChange(update({ ...channelMap, [Number(channel)]: vs }, maxX))
+                    }}
+                    label={pins.find(({ channel: c }) => c === Number(channel))?.label || ''}
                     description={'Channel: ' + channel}
                     formatTooltip={v => formatDuration(round(v * maxX))}
                     step={step / maxX}
