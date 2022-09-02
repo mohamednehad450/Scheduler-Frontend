@@ -1,6 +1,8 @@
 import { ActionIcon, Button, Group, LoadingOverlay, MultiSelect, ScrollArea, Stepper, Text, TextInput, ThemeIcon } from "@mantine/core";
+import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 import { CircleCheck, Plus } from "tabler-icons-react";
+import { cronSequence } from "../../api";
 import { useCron } from "../context";
 import { useSequence } from "../context/sequences";
 import OrdersInput, { OrderInput } from "./OrdersInput";
@@ -18,6 +20,7 @@ const NewSequence: FC<{ onClose: () => void }> = ({ onClose }) => {
 
     const cron = useCron()
     const seq = useSequence()
+    const router = useRouter()
 
 
     const [loading, setLoading] = useState(false)
@@ -154,8 +157,8 @@ const NewSequence: FC<{ onClose: () => void }> = ({ onClose }) => {
                                 setLoading(false)
                             })
                         },
-                        () => { alert('To be Implemented'); setStep(2) },
-                        onClose
+                        () => { triggers.seqId && cronSequence.linkSequencePromise(triggers.seqId, triggers.cronsIds).then(() => setStep(2)) },
+                        () => router.push('sequences/' + triggers.seqId)
                     ][step]}
                 >
                     <LoadingOverlay visible={loading} />

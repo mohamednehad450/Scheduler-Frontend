@@ -47,7 +47,14 @@ const nextConfig = {
         source: "/api/cron/:id",
         destination: "http://localhost:8000/cron/:id",
       },
-
+      {
+        source: "/api/link/sequence/:id",
+        destination: "http://localhost:8000/link/sequence/:id",
+      },
+      {
+        source: "/api/link/cron/:id",
+        destination: "http://localhost:8000/link/cron/:id",
+      },
     ]
   }
 
