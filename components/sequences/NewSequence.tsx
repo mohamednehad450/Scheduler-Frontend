@@ -4,6 +4,7 @@ import { FC, useEffect, useState } from "react";
 import { CircleCheck, Plus } from "tabler-icons-react";
 import { cronCRUD, cronSequence, pinsCRUD, sequenceCRUD } from "../../api";
 import { CronDbType, PinDbType, SequenceDBType } from "../../Scheduler/src/db";
+import CronSelect from "./CronSelect";
 import OrdersInput, { OrderInput } from "./OrdersInput";
 
 
@@ -116,21 +117,11 @@ const NewSequence: FC<{
                     </ScrollArea>
                 </Stepper.Step>
                 <Stepper.Step label="Second step" description="Add Triggers" >
-                    <Group p="xs">
-                        <MultiSelect
-                            size="md"
-                            data={crons.map(c => ({ value: String(c.id), label: c.label })) || []}
-                            value={triggers.cronsIds.map(String)}
-                            label="Cron Triggers"
-                            placeholder="- Select Triggers"
-                            onChange={(cronsIds) => setTriggers(t => ({ ...t, cronsIds: cronsIds.map(Number) }))}
-                            rightSection={(
-                                <ActionIcon size={"sm"} color="gray" onClick={() => alert('to be implemented')}>
-                                    <Plus />
-                                </ActionIcon>
-                            )}
-                        />
-                    </Group>
+                    <CronSelect
+                        crons={crons}
+                        value={triggers.cronsIds}
+                        onChange={cronsIds => setTriggers(t => ({ ...t, cronsIds }))}
+                    />
                 </Stepper.Step>
                 <Stepper.Completed>
                     <div style={{ minHeight: '11rem', display: 'grid', placeItems: 'center' }}>
