@@ -18,7 +18,7 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
     const [events, setEvents] = useState<SequenceEventDBType[]>([])
     useEffect(() => {
         sequenceEvents.list(sequence.id, (err, events) => !err && events && setEvents(events))
-    }, [])
+    }, [sequence])
     return (
         <Table highlightOnHover striped>
             <thead>
