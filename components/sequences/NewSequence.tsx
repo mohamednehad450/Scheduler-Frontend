@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Divider, Group, LoadingOverlay, Modal, MultiSelect, ScrollArea, Stepper, Text, TextInput, ThemeIcon } from "@mantine/core";
+import { ActionIcon, Button, Divider, Group, LoadingOverlay, Modal, MultiSelect, ScrollArea, Stepper, Switch, Text, TextInput, ThemeIcon } from "@mantine/core";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 import { CircleCheck, Plus } from "tabler-icons-react";
@@ -96,6 +96,16 @@ const NewSequence: FC<{
                                 label="Name"
                                 error={error.name}
                             />
+                            <Switch
+                                px="md"
+                                mt="xl"
+                                checked={sequence.active}
+                                onChange={(e) => setSequence(s => ({ ...s, active: e.target.checked }))}
+                                label="Active"
+                            />
+                        </Group>
+                        <Group p="xs">
+
                         </Group>
                         <OrdersInput
                             error={error.orders}
