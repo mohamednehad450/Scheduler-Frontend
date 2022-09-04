@@ -1,4 +1,4 @@
-import { Card, Group, LoadingOverlay, Tabs, Text } from "@mantine/core";
+import { Button, Card, Group, LoadingOverlay, Tabs, Text } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import { PinDbType, SequenceDBType } from "../../Scheduler/src/db";
 import { DeviceState, DeviceStateHandler, ChannelChangeHandler, useSocket } from "../context";
@@ -37,9 +37,15 @@ const PinsStatus: FC<{ pins: PinDbType[], sequences: SequenceDBType[] }> = ({ pi
             <Tabs variant="default">
                 <Tabs.Tab label="All Pins">
                     <ScrollList
-                        body={pins.map(s => (
+                        body={pins.length && pins.map(s => (
                             <PinStatusRow key={s.channel} label={s.label} running={!!channelsStatus && channelsStatus[s.channel]} />
                         ))}
+                        empty={
+                            <>
+                                <Text>No pins defined</Text>
+                                <Button onClick={() => alert('to be implemented')} variant="subtle">Add new pin</Button>
+                            </>
+                        }
                         footer={
                             <Group position="apart" p={'xs'}>
                                 <Text weight={'bold'}>Pin</Text>
@@ -50,12 +56,13 @@ const PinsStatus: FC<{ pins: PinDbType[], sequences: SequenceDBType[] }> = ({ pi
                 </Tabs.Tab>
                 <Tabs.Tab label="Reserved Pins">
                     <ScrollList
-                        body={reservedPins?.map((s) => (
+                        body={reservedPins?.length && reservedPins.map((s) => (
                             <Group key={s.pin.channel} p={'xs'} position="apart" style={{ borderBottom: "2px solid #e9ecef" }}>
                                 <Text size="sm">{s.pin.label}</Text>
                                 <Text size="sm">{sequences.find(seq => s.sequenceId === seq.id)?.name || "NULL"}</Text>
                             </Group>
                         ))}
+                        empty={<Text>No reserved pins</Text>}
                         footer={
                             <Group position="apart" p={'xs'}>
                                 <Text weight={'bold'}>Pin</Text>

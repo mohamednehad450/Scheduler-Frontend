@@ -6,7 +6,9 @@ const ScrollList: FC<{ body: ReactNode, footer?: ReactNode, empty?: ReactNode }>
     return (
         <>
             <ScrollArea style={{ height: footer ? '11rem' : '13rem' }}>
-                {body || empty}
+                {body || (
+                    <div style={{ height: footer ? '11rem' : '13rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }} >{empty}</div>
+                )}
             </ScrollArea>
             {footer && (
                 <>

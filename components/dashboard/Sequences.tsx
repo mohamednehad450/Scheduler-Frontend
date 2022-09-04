@@ -14,7 +14,7 @@ const Sequences: FC<{ sequences: SequenceDBType[] }> = ({ sequences }) => {
     const [runningSequences, setRunningSequences] = useState<DeviceState['runningSequences']>([])
 
     const running = sequences.filter(s => (runningSequences || []).some(id => id === s.id)) || []
-
+    const active = sequences.filter(s => s.active)
 
     useEffect(() => {
         const handleState: DeviceStateHandler = ({ runningSequences }) => {
@@ -32,7 +32,7 @@ const Sequences: FC<{ sequences: SequenceDBType[] }> = ({ sequences }) => {
             <Tabs variant="default">
                 <Tabs.Tab label="Active Sequences">
                     <ScrollList
-                        body={sequences.filter(s => s.active).map((s) => (
+                        body={active.length && active.map((s) => (
                             <Group
                                 key={s.id}
                                 p={'xs'}
@@ -50,6 +50,7 @@ const Sequences: FC<{ sequences: SequenceDBType[] }> = ({ sequences }) => {
                                 <Text size="sm">{s.CronSequence.length} Triggers</Text>
                             </Group>
                         ))}
+                        empty={<Text>No active sequences</Text>}
                         footer={
                             <Group position="apart" p={'xs'}>
                                 <Text weight={'bold'}>Sequence</Text>
@@ -60,7 +61,7 @@ const Sequences: FC<{ sequences: SequenceDBType[] }> = ({ sequences }) => {
                 </Tabs.Tab>
                 <Tabs.Tab label="Running Sequences">
                     <ScrollList
-                        body={running.map((s) => (
+                        body={running.length && running.map((s) => (
                             <Group
                                 key={s.id}
                                 p={'xs'}
@@ -78,6 +79,7 @@ const Sequences: FC<{ sequences: SequenceDBType[] }> = ({ sequences }) => {
                                 <Text size="sm">{s.lastRun ? new Date(s.lastRun).toLocaleString() : "Never"}</Text>
                             </Group>
                         ))}
+                        empty={<Text>No running sequences</Text>}
                         footer={
                             <Group position="apart" p={'xs'}>
                                 <Text weight={'bold'}>Sequence</Text>
