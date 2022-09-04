@@ -29,11 +29,12 @@ const Sequence: NextPage = () => {
   const [sequence, setSequence] = useState<SequenceDBType>()
   useEffect(() => {
     if (Array.isArray(router.query.id) || isNaN(Number(router.query.id))) {
+      router.push('/sequences')
       return
     }
     const id = Number(router.query.id)
     sequenceCRUD.get(id)
-      .then(d => setSequence(d.data))
+      .then(d => { d.data ? setSequence(d.data) : router.push('/sequences/') })
       .catch(err => {
         router.push('/sequences')
         return
