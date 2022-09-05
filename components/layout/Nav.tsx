@@ -1,6 +1,6 @@
 import { Navbar } from "@mantine/core"
 import { Dispatch, FC, SetStateAction } from "react"
-import { Dashboard, ClipboardList } from 'tabler-icons-react';
+import { Dashboard, ClipboardList, DeviceDesktopAnalytics } from 'tabler-icons-react';
 import NavButton from "./NavButton";
 
 
@@ -16,6 +16,7 @@ const Nav: FC<NavProps> = ({ opened, setOpened }) => {
         <Navbar p="md" hiddenBreakpoint="sm" hidden={!opened} width={{ sm: 200, lg: 300 }}>
             <NavButton href="/" onClick={close} icon={<Dashboard size={20} />} color="blue" label='Dashboard' />
             <NavButton href="/sequences" onClick={close} icon={<ClipboardList size={20} />} color="teal" label='Sequences' />
+            <NavButton href="/device" onClick={close} icon={<DeviceDesktopAnalytics size={20} />} color="red" label='Device' />
         </Navbar>
     )
 }
