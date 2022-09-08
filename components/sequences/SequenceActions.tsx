@@ -5,8 +5,8 @@ import { FC, useEffect, useState } from "react"
 import { CalendarEvent, CalendarOff, Edit, PlayerPause, PlayerPlay, Trash } from "tabler-icons-react"
 import { sequenceCRUD } from "../../api"
 import { SequenceDBType } from "../../Scheduler/src/db"
+import { LoadingButton } from "../common"
 import { DeviceState, DeviceStateHandler, useSocket } from "../context"
-import LoadingButton from "./LoadingButton"
 import NewSequence from "./NewSequence"
 
 
