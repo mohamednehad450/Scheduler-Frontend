@@ -8,7 +8,8 @@ import { LoadingButton } from "../common";
 
 interface NewPinsProps {
     opened: boolean
-    onClose: () => void
+    initialPin?: PinDbType
+    onClose: (pin?: PinDbType) => void
     usedPins: { [key: PinDbType['channel']]: true }
 }
 
@@ -41,9 +42,9 @@ const channels = [
     40,
 ]
 
-const NewPin: FC<NewPinsProps> = ({ opened, onClose, usedPins: initUsedPins }) => {
+const NewPin: FC<NewPinsProps> = ({ opened, onClose, initialPin, usedPins: initUsedPins }) => {
 
-    const [pin, setPin] = useState<Partial<PinDbType>>({
+    const [pin, setPin] = useState<Partial<PinDbType>>(initialPin || {
         label: '',
         onState: "HIGH"
     })
@@ -65,7 +66,7 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, usedPins: initUsedPins }) =
             centered
             opened={opened}
             onClose={onClose}
-            title="Add new pin"
+            title={initialPin ? "Edit " + initialPin.label : "Add new pin"}
         >
             <Divider mb="sm" />
             <TextInput
@@ -82,10 +83,11 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, usedPins: initUsedPins }) =
                 label="Channel"
                 description="Pick pin channel"
                 required
-                data={channels.filter(c => !usedPins[c]).map(String)}
+                data={channels.filter(c => !usedPins[c] || c === initialPin?.channel).map(String)}
                 onChange={v => v && setPin(p => ({ ...p, channel: Number(v) }))}
                 value={String(pin.channel)}
                 error={err.channel}
+                disabled={!!initialPin}
             />
             <RadioGroup
                 py="xs"
@@ -106,7 +108,7 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, usedPins: initUsedPins }) =
                 >
                     Cancel
                 </Button>
-                <LoadingButton
+                {!initialPin && (<LoadingButton
                     onClick={(onDone) => {
                         if (!pin.label) {
                             setErr(err => ({ ...err, label: 'You must provide a label' }))
@@ -137,7 +139,7 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, usedPins: initUsedPins }) =
                     variant="light"
                 >
                     {"Submit & Add another"}
-                </LoadingButton>
+                </LoadingButton>)}
                 <LoadingButton
                     onClick={(onDone) => {
                         if (!pin.label) {
@@ -148,11 +150,11 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, usedPins: initUsedPins }) =
                         }
 
                         if (pin.label && pin.channel) {
-                            pinsCRUD.add(pin)
-                                .then(() => {
-                                    onDone()
-                                    onClose()
-                                })
+                            const res = initialPin ? pinsCRUD.update(pin.channel, { label: pin.label, onState: pin.onState }) : pinsCRUD.add(pin)
+                            res.then((r) => {
+                                onDone()
+                                initialPin ? onClose(r.data) : onClose()
+                            })
                                 .catch(err => {
                                     onDone()
                                     // TODO
@@ -162,7 +164,7 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, usedPins: initUsedPins }) =
                         }
                     }}
                 >
-                    Submit
+                    {initialPin ? "Save" : "Submit"}
                 </LoadingButton>
             </Group>
         </Modal>
