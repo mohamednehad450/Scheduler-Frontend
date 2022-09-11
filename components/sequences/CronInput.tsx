@@ -55,7 +55,7 @@ const CronInput: FC<CronInputProps> = ({
 
     const [type, setType] = useState(getTypeFromCron(initialValue))
     const [range, setRange] = useState<[number, number]>(getRangeFromCron(initialValue) || [min, max])
-    const [step, setStep] = useState<{ start: number, step: number }>(getStepFromCron(initialValue) || { start: 0, step: 1 })
+    const [step, setStep] = useState<{ start: number, step: number }>(getStepFromCron(initialValue) || { start: min, step: 1 })
     const [collection, setCollection] = useState<number[]>(getCollectionFromCron(initialValue) || [min])
 
     useEffect(() => {
