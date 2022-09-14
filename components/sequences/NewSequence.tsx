@@ -1,9 +1,10 @@
-import { ActionIcon, Button, Divider, Group, LoadingOverlay, Modal, MultiSelect, ScrollArea, Stepper, Switch, Text, TextInput, ThemeIcon } from "@mantine/core";
+import { Button, Divider, Group, Modal, ScrollArea, Stepper, Switch, Text, TextInput, ThemeIcon } from "@mantine/core";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
-import { CircleCheck, Plus } from "tabler-icons-react";
+import { CircleCheck, } from "tabler-icons-react";
 import { cronCRUD, cronSequence, pinsCRUD, sequenceCRUD } from "../../api";
 import { CronDbType, PinDbType, SequenceDBType } from "../../Scheduler/src/db";
+import { LoadingButton } from "../common";
 import CronSelect from "./CronSelect";
 import OrdersInput, { OrderInput } from "./OrdersInput";
 
@@ -34,7 +35,6 @@ const NewSequence: FC<{
     const router = useRouter()
 
 
-    const [loading, setLoading] = useState(false)
     const [sequence, setSequence] = useState<SequenceInput>({
         name: initialSequence?.name || '',
         active: initialSequence?.active || false,
@@ -146,11 +146,11 @@ const NewSequence: FC<{
                 >
                     {["Cancel", "Skip", "Back"][step]}
                 </Button>
-                <Button
+                <LoadingButton
                     styles={{ root: { minWidth: '6rem' } }}
                     m='sm'
                     onClick={[
-                        () => {
+                        (onDone: () => void) => {
                             let err = false
                             if (!sequence.name) {
                                 setError(e => ({ ...e, name: 'You must provide a name.' }))
@@ -161,19 +161,21 @@ const NewSequence: FC<{
                                 setError(e => ({ ...e, orders: 'You must add at least 1 channel' }))
                                 err = true
                             }
-                            if (err) return
-                            setLoading(true)
+                            if (err) {
+                                onDone()
+                                return
+                            }
                             initialSequence ?
                                 sequenceCRUD.update(initialSequence.id, sequence)
                                     .then(({ data: newSeq }) => {
                                         setStep(1)
                                         setTriggers({ seqId: newSeq.id, cronsIds: newSeq.CronSequence.map(c => c.cron.id) })
                                         setNewSequence(newSeq)
-                                        setLoading(false)
+                                        onDone()
                                     })
                                     .catch(err => {
                                         // TODO
-                                        setLoading(false)
+                                        onDone()
                                         return
 
                                     })
@@ -182,21 +184,32 @@ const NewSequence: FC<{
                                         setStep(1)
                                         setTriggers({ seqId: newSeq.id, cronsIds: [] })
                                         setNewSequence(newSeq)
-                                        setLoading(false)
+                                        onDone()
                                     })
                                     .catch(err => {
                                         // TODO
-                                        setLoading(false)
+                                        onDone()
                                         return
                                     })
                         },
-                        () => { triggers.seqId && cronSequence.linkSequencePromise(triggers.seqId, triggers.cronsIds).then(() => setStep(2)) },
-                        () => initialSequence ? onClose(newSequence) : router.push('/sequences/' + triggers.seqId)
+                        (onDone: () => void) => {
+                            triggers.seqId && cronSequence.linkSequencePromise(triggers.seqId, triggers.cronsIds)
+                                .then(() => {
+                                    setStep(2)
+                                    onDone()
+                                })
+                                .catch(err => {
+                                    // TODO
+                                    onDone()
+                                })
+                        },
+                        (onDone: () => void) => initialSequence ?
+                            onClose(newSequence) :
+                            router.push('/sequences/' + triggers.seqId)
                     ][step]}
                 >
-                    <LoadingOverlay visible={loading} />
                     {["Next", "Next", "Done"][step]}
-                </Button>
+                </LoadingButton>
             </Group>
         </Modal>
 
