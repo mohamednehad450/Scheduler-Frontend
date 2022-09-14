@@ -19,7 +19,7 @@ const g = {
 const g2 = {
   sm: 12,
   md: 12,
-  lg: 6,
+  lg: 12,
   xl: 8,
   span: 12
 }
