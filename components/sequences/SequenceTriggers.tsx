@@ -16,8 +16,6 @@ const next = (cron: string, n: number) => {
 
 const SequenceTriggers: FC<SequenceTriggersProps> = ({ cronTriggers }) => {
 
-
-
     return (
         <Container style={{ display: 'flex', flexDirection: 'column', height: "100%" }}>
             <Group pt="xs">
@@ -25,39 +23,40 @@ const SequenceTriggers: FC<SequenceTriggersProps> = ({ cronTriggers }) => {
             </Group>
             <Divider />
             <ScrollArea pt="xs" styles={{ root: { flex: 1 } }}>
-                <Center>
-                    <Text py="xs">Cron Triggers</Text>
-                </Center>
-                <Divider />
-                <Accordion>
-                    {cronTriggers.map(({ cron }) => (
-                        <Accordion.Item key={cron.id} iconPosition="right" label={cron.label} >
-
-                            <Table striped highlightOnHover>
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Time</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {next(cron.cron, 5).map(d => (
-                                        <tr key={d.toString()}>
-                                            <td>
-                                                {d.toDateString()}
-                                            </td>
-                                            <td>
-                                                {d.toLocaleTimeString()}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </Table>
-                        </Accordion.Item>
-                    ))}
+                <Accordion offsetIcon={!cronTriggers.length}>
+                    <Accordion.Item label="Cron Triggers"  >
+                        {cronTriggers.length ? (
+                            <Accordion offsetIcon={false}  >
+                                {cronTriggers.map(({ cron }) => (
+                                    <Accordion.Item key={cron.id} iconPosition="right" label={cron.label} >
+                                        <Table striped highlightOnHover>
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Time</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {next(cron.cron, 5).map(d => (
+                                                    <tr key={d.toString()}>
+                                                        <td>
+                                                            {d.toDateString()}
+                                                        </td>
+                                                        <td>
+                                                            {d.toLocaleTimeString()}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </Table>
+                                    </Accordion.Item>
+                                ))}
+                            </Accordion>
+                        ) : (<Text>No cron triggers added</Text>)}
+                    </Accordion.Item>
                 </Accordion>
-            </ScrollArea>
-        </Container>
+            </ScrollArea >
+        </Container >
     )
 }
 
