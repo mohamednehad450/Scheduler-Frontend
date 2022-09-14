@@ -1,4 +1,4 @@
-import { Divider, Container, Group, ScrollArea, Table, Text, ActionIcon, LoadingOverlay } from "@mantine/core"
+import { Divider, Container, Group, ScrollArea, Table, Text, ActionIcon, LoadingOverlay, useMantineTheme } from "@mantine/core"
 import { FC, useEffect, useState } from "react"
 import { Refresh, Trash } from "tabler-icons-react"
 import { sequenceEvents } from "../../api"
@@ -16,6 +16,7 @@ const capitalizeFirst = (s: string) => {
 }
 const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
 
+    const theme = useMantineTheme()
     const [loading, setLoading] = useState(true)
     const [events, setEvents] = useState<SequenceEventDBType[]>([])
     useEffect(() => {
@@ -68,24 +69,36 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
                 </Group>
             </Group>
             <Divider />
-            <ScrollArea pt="xs" styles={{ root: { flex: 1 } }} >
-                <Table highlightOnHover striped>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Event</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {events.map(e => (
-                            <tr key={e.id}>
-                                <td>{new Date(e.date).toLocaleString()}</td>
-                                <td>{capitalizeFirst(e.eventType)}</td>
+            {events.length ? (
+                <ScrollArea pt="xs" styles={{ root: { flex: 1 } }} >
+                    <Table highlightOnHover striped>
+                        <tbody>
+                            {events.map(e => (
+                                <tr key={e.id}>
+                                    <td>{new Date(e.date).toLocaleString()}</td>
+                                    <td>{capitalizeFirst(e.eventType)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                        <tfoot
+                            style={{
+                                backgroundColor: theme.colorScheme === "light" ? 'white' : 'black',
+                                position: 'sticky',
+                                bottom: 0,
+                            }}
+                        >
+                            <tr>
+                                <th>Date</th>
+                                <th>Event</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </Table>
-            </ScrollArea>
+                        </tfoot>
+                    </Table>
+                </ScrollArea>
+            ) : (
+                <Group position="center" style={{ flex: 1, }}>
+                    <Text>No activities yet</Text>
+                </Group>
+            )}
         </Container>
     )
 }
