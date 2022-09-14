@@ -1,5 +1,6 @@
-import { Divider, Container, Group, ScrollArea, Table, Text } from "@mantine/core"
+import { Divider, Container, Group, ScrollArea, Table, Text, ActionIcon, LoadingOverlay } from "@mantine/core"
 import { FC, useEffect, useState } from "react"
+import { Refresh, Trash } from "tabler-icons-react"
 import { sequenceEvents } from "../../api"
 import type { SequenceDBType, SequenceEventDBType } from "../../Scheduler/src/db"
 
@@ -15,14 +16,56 @@ const capitalizeFirst = (s: string) => {
 }
 const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
 
+    const [loading, setLoading] = useState(true)
     const [events, setEvents] = useState<SequenceEventDBType[]>([])
     useEffect(() => {
-        sequenceEvents.list(sequence.id, (err, events) => !err && events && setEvents(events))
+
+        sequenceEvents.listPromise(sequence.id)
+            .then(d => d.data && setEvents(d.data))
+            .catch(err => {
+                //TODO
+            })
+            .finally(() => {
+                setLoading(false)
+            })
     }, [sequence])
     return (
         <Container style={{ display: 'flex', flexDirection: 'column', height: "100%" }}>
-            <Group pt="xs">
+            <LoadingOverlay visible={loading} />
+            <Group pt="xs" position="apart">
                 <Text size="xl">Activities</Text>
+                <Group>
+                    <ActionIcon size={24} onClick={() => {
+                        setLoading(true)
+                        sequenceEvents.listPromise(sequence.id)
+                            .then(d => {
+                                setEvents(d.data)
+                            })
+                            .catch(err => {
+                                // TODO
+                            })
+                            .finally(() => {
+                                setLoading(false)
+                            })
+                    }} >
+                        <Refresh size={24} />
+                    </ActionIcon>
+                    <ActionIcon color="red" size={24} onClick={() => {
+                        setLoading(true)
+                        sequenceEvents.deleteByObjectPromise(sequence.id)
+                            .then(d => {
+                                setEvents([])
+                            })
+                            .catch(err => {
+                                // TODO
+                            })
+                            .finally(() => {
+                                setLoading(false)
+                            })
+                    }} >
+                        <Trash size={24} />
+                    </ActionIcon>
+                </Group>
             </Group>
             <Divider />
             <ScrollArea pt="xs" styles={{ root: { flex: 1 } }} >
