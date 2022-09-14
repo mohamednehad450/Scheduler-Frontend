@@ -44,9 +44,17 @@ class Events<K, T>  {
 
 
     deletePromise = (id: K) => axios.delete(this.url + "/" + id);
-
-
     delete = (id: K, cb: Callback<void>) => this.deletePromise(id)
+        .then(() => cb(null))
+        .catch(err => cb(err));
+
+    deleteAllPromise = () => axios.delete<void>(this.url + "s");
+    deleteAll = (cb: Callback<void>) => this.deleteAllPromise()
+        .then(() => cb(null))
+        .catch(err => cb(err))
+
+    deleteByObjectPromise = (objId: any) => axios.delete(this.url + "s/" + objId);
+    deleteByObject = (objId: any, cb: Callback<void>) => this.deleteByObjectPromise(objId)
         .then(() => cb(null))
         .catch(err => cb(err));
 
