@@ -1,4 +1,3 @@
-import Card from './Card'
 import OrdersPreview from './OrdersPreview'
 import SequenceActions from './SequenceActions'
 import SequenceActivities from './SequenceActivities'
@@ -9,7 +8,6 @@ import NewSequence from './NewSequence'
 
 export {
     SequenceList,
-    Card,
     OrdersPreview,
     SequenceActions,
     SequenceActivities,

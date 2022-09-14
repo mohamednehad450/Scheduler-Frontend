@@ -1,4 +1,4 @@
-import { Accordion, Center, Divider, Table, Text } from "@mantine/core";
+import { Accordion, Center, Container, Divider, Group, ScrollArea, Table, Text } from "@mantine/core";
 import { FC } from "react";
 import { SequenceDBType } from "../../Scheduler/src/db";
 import { CronJob } from 'cron'
@@ -19,39 +19,45 @@ const SequenceTriggers: FC<SequenceTriggersProps> = ({ cronTriggers }) => {
 
 
     return (
-        <>
-            <Center>
-                <Text py="xs">Cron Triggers</Text>
-            </Center>
+        <Container style={{ display: 'flex', flexDirection: 'column', height: "100%" }}>
+            <Group pt="xs">
+                <Text size="xl">Triggers</Text>
+            </Group>
             <Divider />
-            <Accordion>
-                {cronTriggers.map(({ cron }) => (
-                    <Accordion.Item key={cron.id} iconPosition="right" label={cron.label} >
+            <ScrollArea pt="xs" styles={{ root: { flex: 1 } }}>
+                <Center>
+                    <Text py="xs">Cron Triggers</Text>
+                </Center>
+                <Divider />
+                <Accordion>
+                    {cronTriggers.map(({ cron }) => (
+                        <Accordion.Item key={cron.id} iconPosition="right" label={cron.label} >
 
-                        <Table striped highlightOnHover>
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Time</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {next(cron.cron, 5).map(d => (
-                                    <tr key={d.toString()}>
-                                        <td>
-                                            {d.toDateString()}
-                                        </td>
-                                        <td>
-                                            {d.toLocaleTimeString()}
-                                        </td>
+                            <Table striped highlightOnHover>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </Table>
-                    </Accordion.Item>
-                ))}
-            </Accordion>
-        </>
+                                </thead>
+                                <tbody>
+                                    {next(cron.cron, 5).map(d => (
+                                        <tr key={d.toString()}>
+                                            <td>
+                                                {d.toDateString()}
+                                            </td>
+                                            <td>
+                                                {d.toLocaleTimeString()}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </Table>
+                        </Accordion.Item>
+                    ))}
+                </Accordion>
+            </ScrollArea>
+        </Container>
     )
 }
 

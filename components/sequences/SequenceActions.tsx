@@ -1,4 +1,4 @@
-import { Container, Grid, Group, ThemeIcon } from "@mantine/core"
+import { Container, Divider, Grid, Group, ScrollArea, Text } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { useRouter } from "next/router"
 import { FC, useEffect, useState } from "react"
@@ -56,104 +56,112 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
     const isRunning = runningSequences.some(id => id === sequence.id)
     const router = useRouter()
     return (
-        <Container>
-            <Grid gutter={'sm'}>
-                <Grid.Col {...g}>
-                    <Group direction="column" style={{ alignItems: 'stretch' }}>
-                        <LoadingButton p={0} disabled={isRunning} onClick={(onDone) => {
-                            socket?.emit('run', sequence.id)
-                            socket?.once('run', (id: SequenceDBType['id']) => {
-                                if (id === sequence.id) {
-                                    onDone()
-                                }
-                            })
-                        }}>
-                            <Group>
-                                <PlayerPlay size={16} />
-                                {"Run"}
+        <Container style={{ display: 'flex', flexDirection: 'column', height: "100%" }}>
+            <Group pt="xs">
+                <Text size="xl">Actions </Text>
+            </Group>
+            <Divider />
+            <ScrollArea pt="xs" styles={{ root: { flex: 1 } }}>
+                <Container>
+                    <Grid gutter={'sm'}>
+                        <Grid.Col {...g}>
+                            <Group direction="column" style={{ alignItems: 'stretch' }}>
+                                <LoadingButton p={0} disabled={isRunning} onClick={(onDone) => {
+                                    socket?.emit('run', sequence.id)
+                                    socket?.once('run', (id: SequenceDBType['id']) => {
+                                        if (id === sequence.id) {
+                                            onDone()
+                                        }
+                                    })
+                                }}>
+                                    <Group>
+                                        <PlayerPlay size={16} />
+                                        {"Run"}
+                                    </Group>
+                                </LoadingButton>
+                                <LoadingButton p={0} disabled={!isRunning} onClick={(onDone) => {
+                                    socket?.emit('stop', sequence.id)
+                                    socket?.once('stop', (id: SequenceDBType['id']) => {
+                                        if (id === sequence.id) {
+                                            onDone()
+                                        }
+                                    })
+                                }}>
+                                    <Group>
+                                        <PlayerPause size={16} />
+                                        {' Stop'}
+                                    </Group>
+                                </LoadingButton>
                             </Group>
-                        </LoadingButton>
-                        <LoadingButton p={0} disabled={!isRunning} onClick={(onDone) => {
-                            socket?.emit('stop', sequence.id)
-                            socket?.once('stop', (id: SequenceDBType['id']) => {
-                                if (id === sequence.id) {
-                                    onDone()
-                                }
-                            })
-                        }}>
-                            <Group>
-                                <PlayerPause size={16} />
-                                {' Stop'}
+                        </Grid.Col>
+                        <Grid.Col {...g}>
+                            <Group direction="column" style={{ alignItems: 'stretch' }}>
+                                <LoadingButton p={0} disabled={sequence.active} onClick={(onDone) => {
+                                    sequenceCRUD.update(sequence?.id, { active: true })
+                                        .then(d => {
+                                            onDone()
+                                            onChange(d.data)
+                                        })
+                                        .catch(err => {
+                                            // TODO
+                                            onDone()
+                                        })
+                                }}>
+                                    <Group>
+                                        <CalendarEvent size={16} />
+                                        {"Activate"}
+                                    </Group>
+                                </LoadingButton>
+                                <LoadingButton p={0} disabled={!sequence.active} onClick={(onDone) => {
+                                    sequenceCRUD.update(sequence?.id, { active: false })
+                                        .then(d => {
+                                            onDone()
+                                            onChange(d.data)
+                                        })
+                                        .catch(err => {
+                                            // TODO
+                                            onDone()
+                                        })
+                                }}>
+                                    <Group>
+                                        <CalendarOff size={16} />
+                                        {' Deactivate'}
+                                    </Group>
+                                </LoadingButton>
                             </Group>
-                        </LoadingButton>
-                    </Group>
-                </Grid.Col>
-                <Grid.Col {...g}>
-                    <Group direction="column" style={{ alignItems: 'stretch' }}>
-                        <LoadingButton p={0} disabled={sequence.active} onClick={(onDone) => {
-                            sequenceCRUD.update(sequence?.id, { active: true })
-                                .then(d => {
+                        </Grid.Col>
+                        <Grid.Col {...g2}  >
+                            <Group direction="column" style={{ alignItems: 'stretch' }}>
+                                <LoadingButton p={0} color={"gray"} onClick={(onDone) => {
+                                    setEdit(true)
                                     onDone()
-                                    onChange(d.data)
-                                })
-                                .catch(err => {
-                                    // TODO
-                                    onDone()
-                                })
-                        }}>
-                            <Group>
-                                <CalendarEvent size={16} />
-                                {"Activate"}
+                                }}>
+                                    <Group>
+                                        <Edit size={16} />
+                                        {"Edit"}
+                                    </Group>
+                                </LoadingButton>
+                                <LoadingButton confirm p={0} color={"red"} onClick={(onDone) => {
+                                    sequenceCRUD.remove(sequence?.id)
+                                        .then(() => router.back())
+                                        .catch(err => {
+                                            // TODO
+                                            onDone()
+                                        })
+                                }}>
+                                    <Group>
+                                        <Trash size={16} />
+                                        {"Delete"}
+                                    </Group>
+                                </LoadingButton>
                             </Group>
-                        </LoadingButton>
-                        <LoadingButton p={0} disabled={!sequence.active} onClick={(onDone) => {
-                            sequenceCRUD.update(sequence?.id, { active: false })
-                                .then(d => {
-                                    onDone()
-                                    onChange(d.data)
-                                })
-                                .catch(err => {
-                                    // TODO
-                                    onDone()
-                                })
-                        }}>
-                            <Group>
-                                <CalendarOff size={16} />
-                                {' Deactivate'}
-                            </Group>
-                        </LoadingButton>
-                    </Group>
-                </Grid.Col>
-                <Grid.Col {...g2}  >
-                    <Group direction="column" style={{ alignItems: 'stretch' }}>
-                        <LoadingButton p={0} color={"gray"} onClick={(onDone) => {
-                            setEdit(true)
-                            onDone()
-                        }}>
-                            <Group>
-                                <Edit size={16} />
-                                {"Edit"}
-                            </Group>
-                        </LoadingButton>
-                        <LoadingButton confirm p={0} color={"red"} onClick={(onDone) => {
-                            sequenceCRUD.remove(sequence?.id)
-                                .then(() => router.back())
-                                .catch(err => {
-                                    // TODO
-                                    onDone()
-                                })
-                        }}>
-                            <Group>
-                                <Trash size={16} />
-                                {"Delete"}
-                            </Group>
-                        </LoadingButton>
-                    </Group>
-                </Grid.Col>
-            </Grid>
-            {edit &&
-                <NewSequence onClose={(newSeq) => { setEdit(false); newSeq && onChange(newSeq); }} opened={debouncedEdit} initialSequence={sequence} />
-            }
+                        </Grid.Col>
+                    </Grid>
+                    {edit &&
+                        <NewSequence onClose={(newSeq) => { setEdit(false); newSeq && onChange(newSeq); }} opened={debouncedEdit} initialSequence={sequence} />
+                    }
+                </Container>
+            </ScrollArea>
         </Container>
     )
 }

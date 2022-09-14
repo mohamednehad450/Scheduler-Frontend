@@ -1,10 +1,10 @@
-import { Card as _Card, Container, Grid, LoadingOverlay, Title } from '@mantine/core'
+import { Card, Container, Grid, LoadingOverlay, Title } from '@mantine/core'
 import { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { SequenceDBType } from '../../Scheduler/src/db'
-import { Card, OrdersPreview, SequenceActions, SequenceActivities, SequenceTriggers } from '../../components/sequences'
+import { OrdersPreview, SequenceActions, SequenceActivities, SequenceTriggers } from '../../components/sequences'
 import { sequenceCRUD } from '../../api'
 
 
@@ -52,27 +52,26 @@ const Sequence: NextPage = () => {
         <Title p={'lg'}>{sequence?.name}</Title>
         <Grid gutter="md">
           <Grid.Col {...g2} >
-            <Card
-              title='Orders Preview'
-              body={<OrdersPreview orders={sequence?.orders || []} />} />
+            <Card shadow="lg" p="xs" radius={'md'} style={{ height: '18rem' }}>
+              <OrdersPreview orders={sequence?.orders || []} />
+            </Card>
           </Grid.Col>
           <Grid.Col {...g} >
-            <Card title='Actions' body={(
+            <Card shadow="lg" p="xs" radius={'md'} style={{ height: '18rem' }}>
               <SequenceActions sequence={sequence} onChange={seq => setSequence(seq)} />
-            )} />
+            </Card>
           </Grid.Col>
           <Grid.Col {...g} >
-            <Card
-              title='Triggers'
-              body={<SequenceTriggers cronTriggers={sequence.CronSequence} />}
-            />
-          </Grid.Col>
-          <Grid.Col {...g} >
-            <Card
-              title='Activities'
-              body={<SequenceActivities sequence={sequence} />} />
-          </Grid.Col>
+            <Card shadow="lg" p="xs" radius={'md'} style={{ height: '18rem' }}>
 
+              <SequenceTriggers cronTriggers={sequence.CronSequence} />
+            </Card>
+          </Grid.Col>
+          <Grid.Col {...g} >
+            <Card shadow="lg" p="xs" radius={'md'} style={{ height: '18rem' }}>
+              <SequenceActivities sequence={sequence} />
+            </Card>
+          </Grid.Col>
         </Grid>
       </Container> : <LoadingOverlay visible={true} />}
     </>

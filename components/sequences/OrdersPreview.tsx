@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { SequenceDBType } from '../../Scheduler/src/db'
-import { MediaQuery, Text, useMantineTheme } from '@mantine/core'
+import { Container, Divider, Group, MediaQuery, ScrollArea, Text, useMantineTheme } from '@mantine/core'
 import { scaleBand, scaleLinear } from 'd3-scale'
 import PeriodMark from './PeriodMark'
 import PeriodTrack from './PeriodTrack'
@@ -40,53 +40,61 @@ const OrdersPreview: FC<OrdersPreviewProps> = ({ orders }) => {
     const channel = <T extends { channel: number }>(o: T) => o.channel
 
     return (
-        <svg width={`97%`} style={{ overflow: 'visible' }} height={maxY + yScale.bandwidth()}>
-            <MediaQuery smallerThan={'xs'} styles={{ fontSize: theme.fontSizes.xs }}>
-                <g>
-                    {[...channels.entries()].map(([c, label]) => (
-                        <foreignObject
-                            key={c}
-                            width={100 - marksWidthPercentage + "%"}
-                            height={rowHeight}
-                            x={0}
-                            y={(yScale(c) || 0) - (yScale.bandwidth())}
-                            style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}
-                        >
-                            <Text style={{
-                                lineHeight: rowHeight + "px",
-                                fontSize: "inherit",
-                                overflow: 'clip',
-                                textOverflow: 'ellipsis'
-                            }}
-                            >
-                                {label}
-                            </Text>
-                        </foreignObject>
-                    ))}
-                </g>
-            </MediaQuery>
-            <svg
-                x={(100 - marksWidthPercentage) + '%'}
-                width={marksWidthPercentage + "%"}
-                style={{ overflow: 'visible' }} >
-                {[...channels.keys()].map(c => (
-                    <PeriodTrack yScale={yScale} xScale={xScale} yValue={c} key={c} />
-                ))}
+        <Container style={{ display: 'flex', flexDirection: 'column', height: "100%" }}>
+            <Group pt="xs">
+                <Text size="xl">Orders Preview</Text>
+            </Group>
+            <Divider />
+            <ScrollArea pt="xs" styles={{ root: { flex: 1 } }}>
+                <svg width={`97%`} style={{ overflow: 'visible' }} height={maxY + yScale.bandwidth()}>
+                    <MediaQuery smallerThan={'xs'} styles={{ fontSize: theme.fontSizes.xs }}>
+                        <g>
+                            {[...channels.entries()].map(([c, label]) => (
+                                <foreignObject
+                                    key={c}
+                                    width={100 - marksWidthPercentage + "%"}
+                                    height={rowHeight}
+                                    x={0}
+                                    y={(yScale(c) || 0) - (yScale.bandwidth())}
+                                    style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}
+                                >
+                                    <Text style={{
+                                        lineHeight: rowHeight + "px",
+                                        fontSize: "inherit",
+                                        overflow: 'clip',
+                                        textOverflow: 'ellipsis'
+                                    }}
+                                    >
+                                        {label}
+                                    </Text>
+                                </foreignObject>
+                            ))}
+                        </g>
+                    </MediaQuery>
+                    <svg
+                        x={(100 - marksWidthPercentage) + '%'}
+                        width={marksWidthPercentage + "%"}
+                        style={{ overflow: 'visible' }} >
+                        {[...channels.keys()].map(c => (
+                            <PeriodTrack yScale={yScale} xScale={xScale} yValue={c} key={c} />
+                        ))}
 
-                {orders.map(order => (
-                    <PeriodMark
-                        item={order}
-                        x1Value={offset}
-                        x2Value={duration}
-                        yValue={channel}
-                        xScale={xScale}
-                        yScale={yScale}
-                        key={order.id}
-                    />
-                ))}
-                <PeriodTicks {...{ xScale, yScale }} />
-            </svg>
-        </svg>
+                        {orders.map(order => (
+                            <PeriodMark
+                                item={order}
+                                x1Value={offset}
+                                x2Value={duration}
+                                yValue={channel}
+                                xScale={xScale}
+                                yScale={yScale}
+                                key={order.id}
+                            />
+                        ))}
+                        <PeriodTicks {...{ xScale, yScale }} />
+                    </svg>
+                </svg>
+            </ScrollArea>
+        </Container>
     )
 }
 
