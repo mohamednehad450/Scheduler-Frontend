@@ -1,13 +1,14 @@
-import { Button, LoadingOverlay, ButtonProps, Modal, Group } from "@mantine/core"
+import { Button, LoadingOverlay, ButtonProps, Modal, Group, Text, Divider, Space } from "@mantine/core"
 import { FC, PropsWithChildren, useState } from "react"
 
 
-const LoadingButton: FC<PropsWithChildren<ButtonProps<any> & { onClick: (onDone: () => void) => void, confirm?: boolean }>> = (props) => {
+const LoadingButton: FC<PropsWithChildren<ButtonProps<any> & { onClick?: (onDone: () => void) => void, confirm?: boolean }>> = (props) => {
     const [loading, setLoading] = useState(false)
     const [confirmPrompt, setConfirmPrompt] = useState(false)
     return (
         <>
             <Button {...props} onClick={() => {
+                if (!props.onClick) return
                 if (props.confirm) {
                     setConfirmPrompt(true)
                 }
@@ -19,7 +20,7 @@ const LoadingButton: FC<PropsWithChildren<ButtonProps<any> & { onClick: (onDone:
                 {props.children}
                 <LoadingOverlay visible={loading} />
             </Button>
-            {props.confirm &&
+            {props.confirm && props.onClick && (
                 <Modal
                     opened={confirmPrompt}
                     onClose={() => setConfirmPrompt(false)}
@@ -43,14 +44,14 @@ const LoadingButton: FC<PropsWithChildren<ButtonProps<any> & { onClick: (onDone:
                             onClick={() => {
                                 setConfirmPrompt(false)
                                 setLoading(true)
-                                props.onClick(() => setLoading(false))
+                                props.onClick && props.onClick(() => setLoading(false))
                             }}
                         >
                             Confirm
                         </Button>
                     </Group>
                 </Modal>
-            }
+            )}
         </>
     )
 }
