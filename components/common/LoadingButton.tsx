@@ -25,11 +25,9 @@ const LoadingButton: FC<PropsWithChildren<ButtonProps<any> & { onClick?: (onDone
                     opened={confirmPrompt}
                     onClose={() => setConfirmPrompt(false)}
                     title="Are you sure?"
-                    styles={{ header: { borderBottom: '1px solid #ced4da' } }}
                     centered
                 >
-
-                    <Group>
+                    <Group position="right" mt="lg">
                         <Button
                             color={'gray'}
                             onClick={() => {
