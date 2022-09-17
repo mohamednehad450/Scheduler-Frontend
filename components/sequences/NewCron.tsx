@@ -2,6 +2,7 @@ import { Button, Divider, Group, Modal, TextInput } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import { cronCRUD } from "../../api";
 import { CronDbType } from "../../Scheduler/src/db";
+import { formatHour, getDayName, getMonthName } from "../common";
 import CronInput from "./CronInput";
 
 
@@ -10,18 +11,6 @@ interface NewCronProps {
     onClose: (newCron?: CronDbType) => void
 }
 
-const formatHour = (n: number) => {
-    const prefix = n >= 12 ? " PM" : ' AM'
-    const h = n % 12
-    return h === 0 ? 12 + prefix : h + prefix
-}
-
-const getMonthName = (n: number) => {
-    return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][n]
-}
-const getDayName = (n: number) => {
-    return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][n]
-}
 
 const NewCron: FC<NewCronProps> = ({ opened, onClose }) => {
 

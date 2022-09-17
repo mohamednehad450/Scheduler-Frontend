@@ -1,5 +1,9 @@
 import LoadingButton from "./LoadingButton";
+import { getDayName, formatHour, getMonthName } from "./utils";
 
 export {
-    LoadingButton
+    LoadingButton,
+    getDayName,
+    formatHour,
+    getMonthName,
 }
