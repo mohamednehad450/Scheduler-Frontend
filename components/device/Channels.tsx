@@ -1,7 +1,7 @@
 import { ActionIcon, Button, Container, Divider, Group, ScrollArea, Table, Text } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { FC, useEffect, useState } from "react";
-import { Plus } from "tabler-icons-react";
+import { Plus, Refresh } from "tabler-icons-react";
 import { pinsCRUD } from "../../api";
 import { PinDbType } from "../../Scheduler/src/db";
 import { ChannelChangeHandler, DeviceState, DeviceStateHandler, useSocket } from "../context";
@@ -44,9 +44,14 @@ const Channels: FC = () => {
         <Container my="0" px="sm" py="0" style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch', }} >
             <Group py="xs" position="apart">
                 <Text size='xl'>{"Pins"}</Text>
-                <ActionIcon size={24} onClick={() => setNewPin(true)} >
-                    <Plus size={24} />
-                </ActionIcon>
+                <Group>
+                    <ActionIcon size={24} onClick={() => pinsCRUD.list().then(d => setPins(d.data))} >
+                        <Refresh size={24} />
+                    </ActionIcon>
+                    <ActionIcon size={24} onClick={() => setNewPin(true)} >
+                        <Plus size={24} />
+                    </ActionIcon>
+                </Group>
             </Group>
             <Divider />
             {pins.length ? (
