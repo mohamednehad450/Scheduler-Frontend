@@ -1,10 +1,11 @@
-import { Button, Divider, Group, Modal, TextInput } from "@mantine/core";
+import { Button, Divider, Group, Modal, Text, TextInput, useMantineTheme } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import { cronCRUD } from "../../api";
 import { CronDbType } from "../../Scheduler/src/db";
 import { formatHour, getDayName, getMonthName } from "../common";
 import CronInput from "./CronInput";
-
+import cronstrue from 'cronstrue'
+import { useDebouncedValue } from "@mantine/hooks";
 
 interface NewCronProps {
     opened: boolean
@@ -13,6 +14,8 @@ interface NewCronProps {
 
 
 const NewCron: FC<NewCronProps> = ({ opened, onClose }) => {
+
+    const theme = useMantineTheme()
 
     const [label, setLabel] = useState('')
 
@@ -29,6 +32,7 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose }) => {
     const [monthCron, setMonthCron] = useState('*')
     const [dowCron, setDowCron] = useState('*')
 
+    const [preview] = useDebouncedValue(`${secCron} ${minCron} ${hourCron} ${domCron} ${monthCron} ${dowCron}`, 100)
 
     return (
         <Modal
@@ -49,6 +53,12 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose }) => {
                 required
             />
             <Divider />
+            <Group p="md" direction="column" style={{ zIndex: 1, boxShadow: theme.shadows.xs, position: 'sticky', top: 0, backgroundColor: theme.colorScheme === 'light' ? 'white' : 'black' }}>
+                <Text size="sm" color={'gray'}>{'Preview'}</Text>
+                <Group px="sm">
+                    <Text size="lg">{cronstrue.toString(preview, { monthStartIndexZero: true, })}</Text>
+                </Group>
+            </Group>
             <CronInput
                 label="Second"
                 min={0}
