@@ -88,7 +88,7 @@ const CronInput: FC<CronInputProps> = ({
                 p="md"
             >
                 {getCronType(label).map(({ value, label }) => (
-                    <Radio value={value} label={label} />
+                    <Radio key={value} value={value} label={label} />
                 ))}
             </RadioGroup>
             {type === 'range' ?

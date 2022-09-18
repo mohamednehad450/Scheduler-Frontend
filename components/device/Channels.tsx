@@ -58,6 +58,7 @@ const Channels: FC = () => {
                         <tbody  >
                             {pins.map((p, i) => (
                                 <ChannelRow
+                                    key={p.channel}
                                     onChange={(pin) => setPins(pins => {
                                         pins[i] = pin
                                         return [...pins]
