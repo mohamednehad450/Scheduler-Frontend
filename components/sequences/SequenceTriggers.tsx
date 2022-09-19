@@ -2,16 +2,13 @@ import { Accordion, Center, Container, Divider, Group, ScrollArea, Table, Text }
 import { FC } from "react";
 import { SequenceDBType } from "../../Scheduler/src/db";
 import { CronJob } from 'cron'
+import { nextCronDates } from "../common";
 
 interface SequenceTriggersProps {
     cronTriggers: SequenceDBType['CronSequence']
 }
 
 
-const next = (cron: string, n: number) => {
-    const ds = new CronJob(cron, Function).nextDates(n)
-    return (Array.isArray(ds) ? ds : [ds]).map(d => new Date(d.toMillis()))
-}
 
 
 const SequenceTriggers: FC<SequenceTriggersProps> = ({ cronTriggers }) => {
@@ -37,7 +34,7 @@ const SequenceTriggers: FC<SequenceTriggersProps> = ({ cronTriggers }) => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {next(cron.cron, 5).map(d => (
+                                                {nextCronDates(cron.cron, 5).map(d => (
                                                     <tr key={d.toString()}>
                                                         <td>
                                                             {d.toDateString()}
