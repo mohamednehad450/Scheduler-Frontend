@@ -28,6 +28,7 @@ const Sequence: NextPage = () => {
   const router = useRouter()
   const [sequence, setSequence] = useState<SequenceDBType>()
   useEffect(() => {
+    if (!router.query.id) return
     if (Array.isArray(router.query.id) || isNaN(Number(router.query.id))) {
       router.push('/sequences')
       return
