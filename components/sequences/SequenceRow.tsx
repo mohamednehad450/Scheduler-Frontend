@@ -14,15 +14,21 @@ const stopPropagation: (cb?: MouseEventHandler) => MouseEventHandler = (cb) => (
 const SequenceRow: FC<{
     sequence: SequenceDBType,
     isRunning: boolean,
-    run: (id: SequenceDBType['id']) => void
-    stop: (id: SequenceDBType['id']) => void
+    run: (id: SequenceDBType['id'], onDone?: () => void) => void
+    stop: (id: SequenceDBType['id'], onDone?: () => void) => void
 }> = ({ sequence: initSequence, isRunning, run, stop }) => {
 
     const [sequence, setSequence] = useState(initSequence)
     const [edit, setEdit] = useState(false)
     const [debouncedEdit] = useDebouncedValue(edit, 100)
     const router = useRouter()
-    const toggleRun = stopPropagation(() => isRunning ? stop(sequence.id) : run(sequence.id))
+
+    const updateSequence = () => sequenceCRUD.get(sequence.id)
+        .then(d => d.data && setSequence(d.data))
+        .catch(err => {
+            // TODO
+        })
+    const toggleRun = stopPropagation(() => isRunning ? stop(sequence.id, updateSequence) : run(sequence.id, updateSequence))
     const toggleActive = stopPropagation(() =>
         sequenceCRUD.update(sequence.id, { active: !sequence.active })
             .then(d => d.data && setSequence(d.data))

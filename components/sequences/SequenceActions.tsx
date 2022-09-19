@@ -3,6 +3,7 @@ import { useDebouncedValue } from "@mantine/hooks"
 import { useRouter } from "next/router"
 import { FC, useEffect, useState } from "react"
 import { CalendarEvent, CalendarOff, Edit, PlayerPause, PlayerPlay, Trash } from "tabler-icons-react"
+import { v4 } from "uuid"
 import { sequenceCRUD } from "../../api"
 import { SequenceDBType } from "../../Scheduler/src/db"
 import { LoadingButton } from "../common"
@@ -47,7 +48,7 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
             runningSequences && setRunningSequences(runningSequences)
         }
         socket?.on('state', handleState)
-        socket?.emit('refresh')
+        socket?.emit('state')
         return () => { socket?.removeListener('state', handleState) }
     }, [socket])
 
@@ -67,11 +68,11 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                         <Grid.Col {...g}>
                             <Group direction="column" style={{ alignItems: 'stretch' }}>
                                 <LoadingButton p={0} disabled={isRunning} onClick={(onDone) => {
-                                    socket?.emit('run', sequence.id)
-                                    socket?.once('run', (id: SequenceDBType['id']) => {
-                                        if (id === sequence.id) {
-                                            onDone()
-                                        }
+                                    const actionId = v4()
+                                    socket?.emit('run', actionId, sequence.id)
+                                    socket?.once(actionId, (ok: boolean, err: Error | null) => {
+                                        onDone()
+                                        // TODO: Error handling    
                                     })
                                 }}>
                                     <Group>
@@ -80,11 +81,11 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                                     </Group>
                                 </LoadingButton>
                                 <LoadingButton p={0} disabled={!isRunning} onClick={(onDone) => {
-                                    socket?.emit('stop', sequence.id)
-                                    socket?.once('stop', (id: SequenceDBType['id']) => {
-                                        if (id === sequence.id) {
-                                            onDone()
-                                        }
+                                    const actionId = v4()
+                                    socket?.emit('stop', actionId, sequence.id)
+                                    socket?.once(actionId, (ok: boolean, err: Error | null) => {
+                                        onDone()
+                                        // TODO: Error handling    
                                     })
                                 }}>
                                     <Group>

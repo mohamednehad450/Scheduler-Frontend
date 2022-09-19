@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react'
 import type { SequenceDBType } from '../../Scheduler/src/db'
 import { DeviceState, DeviceStateHandler, useSocket } from '../context'
 import SequenceRow from './SequenceRow'
-
+import { v4 } from 'uuid'
 
 const SequenceList: FC<{ sequences: SequenceDBType[], show: 'running' | 'active' | 'all' }> = ({ sequences, show }) => {
 
@@ -15,7 +15,7 @@ const SequenceList: FC<{ sequences: SequenceDBType[], show: 'running' | 'active'
             runningSequences && setRunningSequences(runningSequences)
         }
         socket?.on('state', handleState)
-        socket?.emit('refresh')
+        socket?.emit('state')
         return () => { socket?.removeListener('state', handleState) }
     }, [socket])
 
@@ -52,8 +52,22 @@ const SequenceList: FC<{ sequences: SequenceDBType[], show: 'running' | 'active'
                     key={String(s.id)}
                     isRunning={runningSequences.some(id => id === s.id)}
                     sequence={s}
-                    run={(id) => socket?.emit('run', id)}
-                    stop={(id) => socket?.emit('stop', id)}
+                    run={(id, onDone) => {
+                        const actionId = v4()
+                        socket?.emit('run', actionId, id)
+                        socket?.once(actionId, (ok: boolean, err: Error | null) => {
+                            onDone && onDone()
+                            // TODO: Error handling    
+                        })
+                    }}
+                    stop={(id, onDone) => {
+                        const actionId = v4()
+                        socket?.emit('stop', actionId, id)
+                        socket?.once(actionId, (ok: boolean, err: Error | null) => {
+                            onDone && onDone()
+                            // TODO: Error handling    
+                        })
+                    }}
                 />)}
             </tbody>
         </Table>

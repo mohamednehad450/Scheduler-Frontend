@@ -21,7 +21,7 @@ const Sequences: FC<{ sequences: SequenceDBType[] }> = ({ sequences }) => {
             runningSequences && setRunningSequences(runningSequences)
         }
         socket?.on('state', handleState)
-        socket?.emit('refresh')
+        socket?.emit('state')
         return () => { socket?.removeListener('state', handleState) }
     }, [socket])
 

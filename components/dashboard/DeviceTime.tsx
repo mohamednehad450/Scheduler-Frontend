@@ -15,8 +15,12 @@ const DeviceTime: FC = () => {
             setTime(new Date(time))
         }
         socket?.on('tick', tick)
+        socket?.emit('tick', null, true)
 
-        return () => { socket?.removeListener('tick', tick); }
+        return () => {
+            socket?.removeListener('tick', tick);
+            socket?.emit('tick', null, false)
+        }
 
     }, [socket])
 

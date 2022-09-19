@@ -20,14 +20,14 @@ const Channels: FC = () => {
 
 
     useEffect(() => {
-        const handleState: DeviceStateHandler = ({ reservedPins, channelsStatus }) => {
+        const handleState: DeviceStateHandler = ({ channelsStatus }) => {
             channelsStatus && setChannelsStatus(channelsStatus)
         }
         const handleChannelChange: ChannelChangeHandler = (change) => setChannelsStatus(old => ({ ...old, ...change }))
         socket?.on('state', handleState)
         socket?.on('channelChange', handleChannelChange)
 
-        socket?.emit('refresh')
+        socket?.emit('state')
         return () => {
             socket?.removeListener('state', handleState)
             socket?.removeListener('channelChange', handleChannelChange)

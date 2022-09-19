@@ -25,7 +25,7 @@ const PinsStatus: FC<{ pins: PinDbType[], sequences: SequenceDBType[] }> = ({ pi
         socket?.on('state', handleState)
         socket?.on('channelChange', handleChannelChange)
 
-        socket?.emit('refresh')
+        socket?.emit('state')
         return () => {
             socket?.removeListener('state', handleState)
             socket?.removeListener('channelChange', handleChannelChange)
