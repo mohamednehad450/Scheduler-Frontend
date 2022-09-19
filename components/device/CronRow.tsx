@@ -6,6 +6,7 @@ import { CronDbType } from "../../Scheduler/src/db";
 import NewCron from "../sequences/NewCron";
 import cronstrue from 'cronstrue'
 import { LoadingButton, nextCronDates } from "../common";
+import { useRouter } from "next/router";
 
 
 
@@ -20,6 +21,8 @@ const CronRow: FC<{
 
     const [edit, setEdit] = useState(false)
     const [debouncedEdit] = useDebouncedValue(edit, 100)
+
+    const router = useRouter()
 
     return (
         <>
@@ -56,6 +59,36 @@ const CronRow: FC<{
                         </Group>
                     </LoadingButton>
                 </Group>
+            </Group>
+            <Divider />
+            <Group direction="column" py="sm">
+                <Text size="sm" color={'gray'}>Linked Sequences</Text>
+                {cron.CronSequence.length ? (<Table highlightOnHover striped>
+                    <thead>
+                        <tr>
+                            <th>Sequence</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {cron.CronSequence.map(({ sequence }) => (
+                            <tr
+                                key={sequence.id}
+                                onClick={() => router.push('/sequences/' + sequence.id)}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <td>
+                                    {sequence.name}
+                                </td>
+                                <td>
+                                    {sequence.active ? "Activated" : 'Deactivated'}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>) :
+                    (<Text>No Linked Sequences</Text>)
+                }
             </Group>
             <Divider />
             <Group direction="column" py="sm">
