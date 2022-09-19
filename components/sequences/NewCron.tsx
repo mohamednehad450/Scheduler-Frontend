@@ -10,14 +10,49 @@ import { useDebouncedValue } from "@mantine/hooks";
 interface NewCronProps {
     opened: boolean
     onClose: (newCron?: CronDbType) => void
+    initCron?: CronDbType
+}
+
+const parseCron = (c: string) => {
+    const arr = c.split(' ')
+    if (arr.length === 5) {
+        return {
+            sec: '0',
+            min: arr[0],
+            hour: arr[1],
+            dom: arr[2],
+            month: arr[3],
+            dow: arr[4],
+        }
+    }
+    if (arr.length === 6) {
+        return {
+            sec: arr[0],
+            min: arr[1],
+            hour: arr[2],
+            dom: arr[3],
+            month: arr[4],
+            dow: arr[5],
+        }
+    }
+    else {
+        return {
+            sec: '*',
+            min: '*',
+            hour: '*',
+            dom: '*',
+            month: '*',
+            dow: '*',
+        }
+    }
 }
 
 
-const NewCron: FC<NewCronProps> = ({ opened, onClose }) => {
+const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
 
     const theme = useMantineTheme()
 
-    const [label, setLabel] = useState('')
+    const [label, setLabel] = useState(initCron?.label)
 
     const [err, setErr] = useState({
         label: ''
@@ -25,18 +60,20 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose }) => {
 
     useEffect(() => { setErr(err => ({ ...err, label: '' })) }, [label])
 
-    const [secCron, setSecCron] = useState('*')
-    const [minCron, setMinCron] = useState('*')
-    const [hourCron, setHourCron] = useState('*')
-    const [domCron, setDomCron] = useState('*')
-    const [monthCron, setMonthCron] = useState('*')
-    const [dowCron, setDowCron] = useState('*')
+    const { sec, min, hour, dom, month, dow } = parseCron(initCron?.cron || '')
+
+    const [secCron, setSecCron] = useState(sec)
+    const [minCron, setMinCron] = useState(min)
+    const [hourCron, setHourCron] = useState(hour)
+    const [domCron, setDomCron] = useState(dom)
+    const [monthCron, setMonthCron] = useState(month)
+    const [dowCron, setDowCron] = useState(dow)
 
     const [preview] = useDebouncedValue(`${secCron} ${minCron} ${hourCron} ${domCron} ${monthCron} ${dowCron}`, 100)
 
     return (
         <Modal
-            title="Add new cron"
+            title={initCron ? 'Edit ' + initCron.label : "Add new cron"}
             opened={opened}
             onClose={onClose}
             centered
@@ -118,24 +155,26 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose }) => {
                 <Button variant="subtle" onClick={() => onClose()}>
                     Cancel
                 </Button>
-                <Button onClick={() => {
-                    if (!label) {
-                        setErr({ label: 'You must provide a label' })
-                        return
-                    }
-                    cronCRUD.add({
-                        label,
-                        cron: [secCron, minCron, hourCron, domCron, monthCron, dowCron].join(' ')
-                    })
-                        .then(d => {
-                            onClose(d.data)
-                        })
-                        .catch(err => {
-                            // TODO
-                        })
-
-                }}>
-                    Submit
+                <Button
+                    onClick={() => {
+                        if (!label) {
+                            setErr({ label: 'You must provide a label' })
+                            return
+                        }
+                        const cronString = [secCron, minCron, hourCron, domCron, monthCron, dowCron].join(' ')
+                        const func = () => initCron ?
+                            cronCRUD.update(initCron.id, { label, cron: cronString }) :
+                            cronCRUD.add({ label, cron: cronString })
+                        func()
+                            .then(d => {
+                                onClose(d.data)
+                            })
+                            .catch(err => {
+                                // TODO
+                            })
+                    }}
+                >
+                    {initCron ? "Save" : "Submit"}
                 </Button>
             </Group>
         </Modal>
