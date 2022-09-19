@@ -1,7 +1,7 @@
 import { Grid, Container, Card } from '@mantine/core'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { Channels, Events } from '../components/device'
+import { Channels, CronTriggers, Events } from '../components/device'
 
 const g = {
     sm: 12,
@@ -23,13 +23,18 @@ const Device: NextPage = () => {
             <Container size={'lg'} m="sm" p="sm">
                 <Grid gutter="md">
                     <Grid.Col {...g} >
-                        <Card shadow="lg" p="xs" radius={'md'} style={{ height: '22rem', }}>
+                        <Card shadow="lg" p="xs" radius={'md'} style={{ height: '26rem', }}>
                             <Channels />
                         </Card>
                     </Grid.Col>
                     <Grid.Col {...g} >
-                        <Card shadow="lg" p="xs" radius={'md'} style={{ height: '22rem', }}>
+                        <Card shadow="lg" p="xs" radius={'md'} style={{ height: '26rem', }}>
                             <Events />
+                        </Card>
+                    </Grid.Col>
+                    <Grid.Col {...g} >
+                        <Card shadow="lg" p="xs" radius={'md'} style={{ height: '26rem', }}>
+                            <CronTriggers />
                         </Card>
                     </Grid.Col>
                 </Grid>
