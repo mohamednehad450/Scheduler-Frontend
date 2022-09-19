@@ -1,3 +1,4 @@
+import { CronJob } from "cron"
 
 const formatHour = (n: number) => {
     const prefix = n >= 12 ? " PM" : ' AM'
@@ -12,4 +13,10 @@ const getDayName = (n: number) => {
     return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][n]
 }
 
-export { formatHour, getDayName, getMonthName }
+
+const nextCronDates = (cron: string, n: number) => {
+    const ds = new CronJob(cron, Function).nextDates(n)
+    return (Array.isArray(ds) ? ds : [ds]).map(d => new Date(d.toMillis()))
+}
+
+export { formatHour, getDayName, getMonthName, nextCronDates }
