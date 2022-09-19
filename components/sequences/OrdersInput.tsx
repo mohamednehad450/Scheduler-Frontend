@@ -181,6 +181,7 @@ const OrdersInput: FC<OrdersInputProps> = ({ orders, onChange, error, pins }) =>
                 onClose={() => setCustomLength(false)}
                 onSubmit={ms => {
                     setMaxX(ms)
+                    onChange(update(channelMap, ms))
                     setCustomLength(false)
                 }}
             />
