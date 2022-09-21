@@ -11,27 +11,31 @@ const stopPropagation: (cb?: MouseEventHandler) => MouseEventHandler = (cb) => (
     e.stopPropagation()
     cb && cb(e)
 }
-const SequenceRow: FC<{
+
+interface SequenceRowProps {
     sequence: SequenceDBType,
     isRunning: boolean,
     run: (id: SequenceDBType['id'], onDone?: () => void) => void
     stop: (id: SequenceDBType['id'], onDone?: () => void) => void
-}> = ({ sequence: initSequence, isRunning, run, stop }) => {
+    onChange: (seq: SequenceDBType) => void
+}
 
-    const [sequence, setSequence] = useState(initSequence)
+
+const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, onChange }) => {
+
     const [edit, setEdit] = useState(false)
     const [debouncedEdit] = useDebouncedValue(edit, 100)
     const router = useRouter()
 
     const updateSequence = () => sequenceCRUD.get(sequence.id)
-        .then(d => d.data && setSequence(d.data))
+        .then(d => d.data && onChange(d.data))
         .catch(err => {
             // TODO
         })
     const toggleRun = stopPropagation(() => isRunning ? stop(sequence.id, updateSequence) : run(sequence.id, updateSequence))
     const toggleActive = stopPropagation(() =>
         sequenceCRUD.update(sequence.id, { active: !sequence.active })
-            .then(d => d.data && setSequence(d.data))
+            .then(d => d.data && onChange(d.data))
             .catch(err => {
                 // TODO
             })
@@ -43,7 +47,7 @@ const SequenceRow: FC<{
                 <NewSequence
                     onClose={(newSeq) => {
                         setEdit(false)
-                        newSeq && setSequence(newSeq)
+                        newSeq && onChange(newSeq)
                     }}
                     opened={debouncedEdit}
                     initialSequence={sequence}

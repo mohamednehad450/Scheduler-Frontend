@@ -7,12 +7,13 @@ import { v4 } from 'uuid'
 
 interface SequenceListProps {
     sequences: SequenceDBType[]
+    onChange: (sequences: SequenceDBType[]) => void
     show: 'running' | 'active' | 'all'
     addNew: () => void
 }
 
 
-const SequenceList: FC<SequenceListProps> = ({ sequences, show, addNew }) => {
+const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show, addNew }) => {
 
     const socket = useSocket()
     const [runningSequences, setRunningSequences] = useState<DeviceState['runningSequences']>([])
@@ -26,7 +27,7 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, show, addNew }) => {
         return () => { socket?.removeListener('state', handleState) }
     }, [socket])
 
-    const list = sequences?.filter(s => {
+    const list = sequences.map((s, i) => ({ ...s, i }))?.filter(s => {
         switch (show) {
             case 'all':
                 return true
@@ -61,6 +62,11 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, show, addNew }) => {
                         key={String(s.id)}
                         isRunning={runningSequences.some(id => id === s.id)}
                         sequence={s}
+                        onChange={(newSeq) => {
+                            const newSequences = [...sequences]
+                            newSequences[s.i] = newSeq
+                            onChange(newSequences)
+                        }}
                         run={(id, onDone) => {
                             const actionId = v4()
                             socket?.emit('run', actionId, id)
