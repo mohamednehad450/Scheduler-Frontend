@@ -54,7 +54,7 @@ const Sequences: NextPage = () => {
                         background: s.colorScheme === 'light' ? s.white : s.black,
                         height: '100%'
                     })}>
-                    <SequenceList sequences={sequences} show={lists[active]} />
+                    <SequenceList sequences={sequences} show={lists[active]} addNew={() => setAdd(true)} />
                 </Container>
             </Container>
             <NewSequence opened={add} onClose={() => setAdd(false)} />
