@@ -1,5 +1,7 @@
+import ConfirmModal from "./ConfirmModal";
 import LoadingButton from "./LoadingButton";
 import { getDayName, formatHour, getMonthName, nextCronDates } from "./utils";
+
 
 export {
     LoadingButton,
@@ -7,4 +9,5 @@ export {
     formatHour,
     getMonthName,
     nextCronDates,
+    ConfirmModal,
 }
