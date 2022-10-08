@@ -2,6 +2,7 @@ import { Divider, Container, Group, ScrollArea, Table, Text, ActionIcon, Loading
 import { FC, useEffect, useState } from "react"
 import { Refresh, Trash } from "tabler-icons-react"
 import { sequenceEvents } from "../../api"
+import { usePrompt } from "../context"
 import type { SequenceDBType, SequenceEventDBType } from "../../Scheduler/src/db"
 
 
@@ -19,8 +20,10 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
     const theme = useMantineTheme()
     const [loading, setLoading] = useState(true)
     const [events, setEvents] = useState<SequenceEventDBType[]>([])
-    useEffect(() => {
 
+    const prompt = usePrompt()
+
+    useEffect(() => {
         sequenceEvents.listByIdPromise(sequence.id)
             .then(d => d.data && setEvents(d.data))
             .catch(err => {
@@ -51,19 +54,21 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
                     }} >
                         <Refresh size={24} />
                     </ActionIcon>
-                    <ActionIcon color="red" size={24} onClick={() => {
-                        setLoading(true)
-                        sequenceEvents.deleteByIdPromise(sequence.id)
-                            .then(d => {
-                                setEvents([])
-                            })
-                            .catch(err => {
-                                // TODO
-                            })
-                            .finally(() => {
-                                setLoading(false)
-                            })
-                    }} >
+                    <ActionIcon
+                        color="red"
+                        size={24}
+                        onClick={() =>
+                            prompt?.confirm((confirmed) => confirmed && sequenceEvents.deleteByIdPromise(sequence.id)
+                                .then(d => {
+                                    setEvents([])
+                                })
+                                .catch(err => {
+                                    // TODO
+                                })
+                                ,
+                                "Clear this sequence events?")
+                        }
+                    >
                         <Trash size={24} />
                     </ActionIcon>
                 </Group>
