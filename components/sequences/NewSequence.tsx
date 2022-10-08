@@ -12,7 +12,7 @@ import OrdersInput, { OrderInput } from "./OrdersInput";
 type SequenceInput = {
     name: string,
     active: boolean,
-    orders: { create: OrderInput[] },
+    orders: OrderInput[],
 }
 
 
@@ -38,9 +38,7 @@ const NewSequence: FC<{
     const [sequence, setSequence] = useState<SequenceInput>({
         name: initialSequence?.name || '',
         active: initialSequence?.active || false,
-        orders: {
-            create: initialSequence?.orders.map(({ offset, duration, channel }) => ({ offset, duration, channel })) || []
-        },
+        orders: initialSequence?.orders.map(({ offset, duration, channel }) => ({ offset, duration, channel })) || []
     })
 
     const [newSequence, setNewSequence] = useState<SequenceDBType>()
@@ -110,9 +108,9 @@ const NewSequence: FC<{
                         </Group>
                         <OrdersInput
                             error={error.orders}
-                            orders={sequence.orders.create}
+                            orders={sequence.orders}
                             pins={pins}
-                            onChange={os => setSequence(s => ({ ...s, orders: { create: os } }))}
+                            onChange={orders => setSequence(s => ({ ...s, orders }))}
                         />
                     </ScrollArea>
                 </Stepper.Step>
@@ -157,7 +155,7 @@ const NewSequence: FC<{
                                 err = true
                             }
 
-                            if (sequence.orders.create.length < 1) {
+                            if (sequence.orders.length < 1) {
                                 setError(e => ({ ...e, orders: 'You must add at least 1 channel' }))
                                 err = true
                             }
