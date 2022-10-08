@@ -4,10 +4,6 @@ const nextConfig = {
   rewrites: async () => {
     return [
       {
-        source: "/api/pins",
-        destination: "http://localhost:8000/pins",
-      },
-      {
         source: "/api/pin",
         destination: "http://localhost:8000/pin",
       },
@@ -16,16 +12,12 @@ const nextConfig = {
         destination: "http://localhost:8000/pin/:id",
       },
       {
-        source: "/api/sequence/events",
-        destination: "http://localhost:8000/sequence/events",
+        source: "/api/events/sequences",
+        destination: "http://localhost:8000/events/sequences",
       },
       {
-        source: "/api/sequence/events/:id",
-        destination: "http://localhost:8000/sequence/events/:id",
-      },
-      {
-        source: "/api/sequences",
-        destination: "http://localhost:8000/sequences",
+        source: "/api/events/sequences/:id",
+        destination: "http://localhost:8000/events/sequences/:id",
       },
       {
         source: "/api/sequence",
@@ -34,10 +26,6 @@ const nextConfig = {
       {
         source: "/api/sequence/:id",
         destination: "http://localhost:8000/sequence/:id",
-      },
-      {
-        source: "/api/crons",
-        destination: "http://localhost:8000/crons",
       },
       {
         source: "/api/cron",

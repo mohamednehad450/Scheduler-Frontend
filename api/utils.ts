@@ -24,7 +24,7 @@ class CRUD<K, T> implements CRUDClass<K, T>{
     set = (id: K, obj: any) => axios.put<T>(this.url + "/" + id, obj);
     update = async (id: K, obj: any) => axios.patch<T>(this.url + "/" + id, obj)
     remove = (id: K) => axios.delete<void>(this.url + "/" + id);
-    list = () => axios.get<T[]>(this.url + 's',);
+    list = () => axios.get<T[]>(this.url);
 }
 
 
@@ -35,37 +35,25 @@ class Events<K, T>  {
         this.url = url
     }
 
-    getPromise = (id: K) => axios.get(this.url + '/' + id);
 
-
-    get = (id: K, cb: Callback<T>) => this.getPromise(id)
-        .then(v => cb(null, v.data))
-        .catch(err => cb(err));
-
-
-    deletePromise = (id: K) => axios.delete(this.url + "/" + id);
-    delete = (id: K, cb: Callback<void>) => this.deletePromise(id)
-        .then(() => cb(null))
-        .catch(err => cb(err));
-
-    deleteAllPromise = () => axios.delete<void>(this.url + "s");
+    deleteAllPromise = () => axios.delete<void>(this.url);
     deleteAll = (cb: Callback<void>) => this.deleteAllPromise()
         .then(() => cb(null))
         .catch(err => cb(err))
 
-    deleteByObjectPromise = (objId: any) => axios.delete(this.url + "s/" + objId);
-    deleteByObject = (objId: any, cb: Callback<void>) => this.deleteByObjectPromise(objId)
+    deleteByIdPromise = (objId: any) => axios.delete(this.url + "/" + objId);
+    deleteById = (objId: any, cb: Callback<void>) => this.deleteByIdPromise(objId)
         .then(() => cb(null))
         .catch(err => cb(err));
 
 
-    listPromise = (id: any) => axios.get(this.url + 's/' + id,);
-    list = (id: any, cb: Callback<T[]>) => this.listPromise(id)
+    listByIdPromise = (id: any) => axios.get(this.url + '/' + id);
+    listById = (id: any, cb: Callback<T[]>) => this.listByIdPromise(id)
         .then(l => cb(null, l.data))
         .catch(err => cb(err));
 
 
-    listAllPromise = () => axios.get(this.url + 's',);
+    listAllPromise = () => axios.get(this.url);
     listAll = (cb: Callback<T[]>) => this.listAllPromise()
         .then(l => cb(null, l.data))
         .catch(err => cb(err));

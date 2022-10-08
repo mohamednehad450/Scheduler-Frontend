@@ -21,7 +21,7 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
     const [events, setEvents] = useState<SequenceEventDBType[]>([])
     useEffect(() => {
 
-        sequenceEvents.listPromise(sequence.id)
+        sequenceEvents.listByIdPromise(sequence.id)
             .then(d => d.data && setEvents(d.data))
             .catch(err => {
                 //TODO
@@ -38,7 +38,7 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
                 <Group>
                     <ActionIcon size={24} onClick={() => {
                         setLoading(true)
-                        sequenceEvents.listPromise(sequence.id)
+                        sequenceEvents.listByIdPromise(sequence.id)
                             .then(d => {
                                 setEvents(d.data)
                             })
@@ -53,7 +53,7 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
                     </ActionIcon>
                     <ActionIcon color="red" size={24} onClick={() => {
                         setLoading(true)
-                        sequenceEvents.deleteByObjectPromise(sequence.id)
+                        sequenceEvents.deleteByIdPromise(sequence.id)
                             .then(d => {
                                 setEvents([])
                             })
