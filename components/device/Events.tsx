@@ -3,6 +3,7 @@ import { FC, useEffect, useState } from "react";
 import { Plus, Refresh, Trash } from "tabler-icons-react";
 import { sequenceEvents } from "../../api";
 import { SequenceEventDBType } from "../../Scheduler/src/db";
+import { usePrompt } from "../context";
 
 
 
@@ -10,6 +11,7 @@ const Events: FC = () => {
 
     const [events, setEvents] = useState<SequenceEventDBType[]>([])
     const [loading, setLoading] = useState(true)
+    const prompt = usePrompt()
 
     useEffect(() => {
         sequenceEvents.listAllPromise()
@@ -45,19 +47,20 @@ const Events: FC = () => {
                     }} >
                         <Refresh size={24} />
                     </ActionIcon>
-                    <ActionIcon color="red" size={24} onClick={() => {
-                        setLoading(true)
-                        sequenceEvents.deleteAllPromise()
-                            .then(d => {
-                                setEvents([])
-                            })
-                            .catch(err => {
-                                // TODO
-                            })
-                            .finally(() => {
-                                setLoading(false)
-                            })
-                    }} >
+                    <ActionIcon
+                        color="red"
+                        size={24}
+                        onClick={() =>
+                            prompt?.confirm((confirmed) =>
+                                confirmed && sequenceEvents.deleteAllPromise()
+                                    .then(d => {
+                                        setEvents([])
+                                    })
+                                    .catch(err => {
+                                        // TODO
+                                    })
+                                , "Clear all events?")}
+                    >
                         <Trash size={24} />
                     </ActionIcon>
                 </Group>
