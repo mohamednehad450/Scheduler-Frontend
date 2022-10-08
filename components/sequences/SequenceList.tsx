@@ -1,9 +1,10 @@
 import { Button, Group, Table, Text } from '@mantine/core'
 import { FC, useEffect, useState } from 'react'
 import type { SequenceDBType } from '../../Scheduler/src/db'
-import { DeviceState, DeviceStateHandler, useSocket } from '../context'
+import { DeviceState, DeviceStateHandler, usePrompt, useSocket } from '../context'
 import SequenceRow from './SequenceRow'
 import { v4 } from 'uuid'
+import { sequenceCRUD } from '../../api'
 
 interface SequenceListProps {
     sequences: SequenceDBType[]
@@ -17,6 +18,8 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show, addNew
 
     const socket = useSocket()
     const [runningSequences, setRunningSequences] = useState<DeviceState['runningSequences']>([])
+
+    const prompt = usePrompt()
 
     useEffect(() => {
         const handleState: DeviceStateHandler = ({ runningSequences }) => {
@@ -58,32 +61,44 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show, addNew
                     </tr>
                 </thead>
                 <tbody >
-                    {list.map(s => <SequenceRow
-                        key={String(s.id)}
-                        isRunning={runningSequences.some(id => id === s.id)}
-                        sequence={s}
-                        onChange={(newSeq) => {
-                            const newSequences = [...sequences]
-                            newSequences[s.i] = newSeq
-                            onChange(newSequences)
-                        }}
-                        run={(id, onDone) => {
-                            const actionId = v4()
-                            socket?.emit('run', actionId, id)
-                            socket?.once(actionId, (ok: boolean, err: Error | null) => {
-                                onDone && onDone()
-                                // TODO: Error handling    
-                            })
-                        }}
-                        stop={(id, onDone) => {
-                            const actionId = v4()
-                            socket?.emit('stop', actionId, id)
-                            socket?.once(actionId, (ok: boolean, err: Error | null) => {
-                                onDone && onDone()
-                                // TODO: Error handling    
-                            })
-                        }}
-                    />)}
+                    {list.map(s => (
+                        <SequenceRow
+                            key={String(s.id)}
+                            isRunning={runningSequences.some(id => id === s.id)}
+                            sequence={s}
+                            remove={(id) =>
+                                prompt?.confirm((confirmed) =>
+                                    confirmed && sequenceCRUD.remove(id)
+                                        .then(() => {
+                                            onChange(sequences.filter((seq) => id !== seq.id))
+                                        })
+                                        .catch((err) => {
+                                            // TODO
+                                        })
+                                )}
+                            onChange={(newSeq) => {
+                                const newSequences = [...sequences]
+                                newSequences[s.i] = newSeq
+                                onChange(newSequences)
+                            }}
+                            run={(id, onDone) => {
+                                const actionId = v4()
+                                socket?.emit('run', actionId, id)
+                                socket?.once(actionId, (ok: boolean, err: Error | null) => {
+                                    onDone && onDone()
+                                    // TODO: Error handling    
+                                })
+                            }}
+                            stop={(id, onDone) => {
+                                const actionId = v4()
+                                socket?.emit('stop', actionId, id)
+                                socket?.once(actionId, (ok: boolean, err: Error | null) => {
+                                    onDone && onDone()
+                                    // TODO: Error handling    
+                                })
+                            }}
+                        />
+                    ))}
                 </tbody>
             </Table>
             ) :

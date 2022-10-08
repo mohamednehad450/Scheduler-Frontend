@@ -17,11 +17,12 @@ interface SequenceRowProps {
     isRunning: boolean,
     run: (id: SequenceDBType['id'], onDone?: () => void) => void
     stop: (id: SequenceDBType['id'], onDone?: () => void) => void
+    remove: (id: SequenceDBType['id']) => void
     onChange: (seq: SequenceDBType) => void
 }
 
 
-const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, onChange }) => {
+const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, remove, onChange }) => {
 
     const [edit, setEdit] = useState(false)
     const [debouncedEdit] = useDebouncedValue(edit, 100)
@@ -100,7 +101,7 @@ const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, onC
                                 <ActionIcon
                                     variant='default'
                                     color={'red'}
-                                    onClick={stopPropagation(() => alert('TO BE IMPLEMENTED'))}
+                                    onClick={stopPropagation(() => remove(sequence.id))}
                                 >
                                     <Trash size={16} />
                                 </ActionIcon>
@@ -133,6 +134,7 @@ const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, onC
                             </Menu.Item>
                             <Menu.Item icon={<Edit size={16} />}>Edit</Menu.Item>
                             <Menu.Item
+                                onClick={() => remove(sequence.id)}
                                 color={"red"}
                                 icon={<Trash size={16} />}
                             >
