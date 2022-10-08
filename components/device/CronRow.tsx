@@ -5,7 +5,7 @@ import { Edit, Trash } from "tabler-icons-react";
 import { CronDbType } from "../../Scheduler/src/db";
 import NewCron from "../sequences/NewCron";
 import cronstrue from 'cronstrue'
-import { LoadingButton, nextCronDates } from "../common";
+import { nextCronDates } from "../common";
 import { useRouter } from "next/router";
 
 
@@ -16,7 +16,7 @@ import { useRouter } from "next/router";
 const CronRow: FC<{
     cron: CronDbType,
     onChange: (cron: CronDbType) => void
-    remove: (id: CronDbType['id']) => Promise<void>
+    remove: (id: CronDbType['id']) => void
 }> = ({ cron, onChange, remove }) => {
 
     const [edit, setEdit] = useState(false)
@@ -52,12 +52,16 @@ const CronRow: FC<{
                             Edit
                         </Group>
                     </Button>
-                    <LoadingButton variant="light" color={'red'} confirm={true} onClick={(onDone) => remove(cron.id).finally(onDone)}>
+                    <Button
+                        variant="light"
+                        color={'red'}
+                        onClick={() => remove(cron.id)}
+                    >
                         <Group position="center">
                             <Trash size="16" />
                             Delete
                         </Group>
-                    </LoadingButton>
+                    </Button>
                 </Group>
             </Group>
             <Divider />

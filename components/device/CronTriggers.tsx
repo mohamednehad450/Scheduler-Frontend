@@ -4,6 +4,7 @@ import { FC, useEffect, useState } from "react";
 import { Plus, Refresh } from "tabler-icons-react";
 import { cronCRUD } from "../../api";
 import { CronDbType } from "../../Scheduler/src/db";
+import { usePrompt } from "../context";
 import NewCron from "../sequences/NewCron";
 import CronRow from "./CronRow";
 
@@ -17,6 +18,8 @@ const CronTriggers: FC = () => {
 
     const [newCron, setNewCron] = useState(false)
     const [debouncedNewCron] = useDebouncedValue(newCron, 100)
+
+    const prompt = usePrompt()
 
     const refresh = () => cronCRUD.list()
         .then(d => setCrons(d.data))
@@ -70,7 +73,16 @@ const CronTriggers: FC = () => {
                                             return [...crons]
                                         })
                                     }}
-                                    remove={id => cronCRUD.remove(id).then(refresh)}
+                                    remove={id =>
+                                        prompt?.confirm(confirmed =>
+                                            confirmed &&
+                                            cronCRUD.remove(id)
+                                                .then(() => setCrons(cs => cs.filter(c => c.id !== id)))
+                                                .catch(err => {
+                                                    // TODO
+                                                })
+                                        )
+                                    }
                                 />
                             </AccordionItem>
                         ))}
