@@ -1,4 +1,4 @@
-import { Container, Divider, Grid, Group, ScrollArea, Text } from "@mantine/core"
+import { Button, Container, Divider, Grid, Group, ScrollArea, Text } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { useRouter } from "next/router"
 import { FC, useEffect, useState } from "react"
@@ -7,7 +7,7 @@ import { v4 } from "uuid"
 import { sequenceCRUD } from "../../api"
 import { SequenceDBType } from "../../Scheduler/src/db"
 import { LoadingButton } from "../common"
-import { DeviceState, DeviceStateHandler, useSocket } from "../context"
+import { DeviceState, DeviceStateHandler, usePrompt, useSocket } from "../context"
 import NewSequence from "./NewSequence"
 
 
@@ -38,6 +38,7 @@ interface SequenceActionsProps {
 
 const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
 
+    const prompt = usePrompt()
     const socket = useSocket()
     const [edit, setEdit] = useState(false)
     const [debouncedEdit] = useDebouncedValue(edit, 100)
@@ -133,28 +134,32 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                         </Grid.Col>
                         <Grid.Col {...g2}  >
                             <Group direction="column" style={{ alignItems: 'stretch' }}>
-                                <LoadingButton p={0} color={"gray"} onClick={(onDone) => {
-                                    setEdit(true)
-                                    onDone()
-                                }}>
+                                <Button p={0} color={"gray"} onClick={() => setEdit(true)}>
                                     <Group>
                                         <Edit size={16} />
                                         {"Edit"}
                                     </Group>
-                                </LoadingButton>
-                                <LoadingButton confirm p={0} color={"red"} onClick={(onDone) => {
-                                    sequenceCRUD.remove(sequence?.id)
-                                        .then(() => router.back())
-                                        .catch(err => {
-                                            // TODO
-                                            onDone()
+                                </Button>
+                                <Button
+                                    p={0}
+                                    color={"red"}
+                                    onClick={() => {
+                                        prompt?.confirm((confirmed) => {
+                                            if (!confirmed) {
+                                                return
+                                            }
+                                            sequenceCRUD.remove(sequence?.id)
+                                                .then(() => router.back())
+                                                .catch(err => {
+                                                    // TODO
+                                                })
                                         })
-                                }}>
+                                    }}>
                                     <Group>
                                         <Trash size={16} />
                                         {"Delete"}
                                     </Group>
-                                </LoadingButton>
+                                </Button>
                             </Group>
                         </Grid.Col>
                     </Grid>
