@@ -1,24 +1,29 @@
-import { Tabs, Container, Title, Group, ActionIcon, } from '@mantine/core'
+import { Tabs, Container, Title, Group, ActionIcon } from '@mantine/core'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { Calendar, CalendarOff, List, Plus, } from 'tabler-icons-react';
-import { NewSequence, SequenceList } from '../../components/sequences'
+import { SequenceList } from '../../components/sequences'
 import { SequenceDBType } from '../../Scheduler/src/db'
 import { sequenceCRUD } from '../../api'
+import { usePrompt } from '../../components/context';
+import { useRouter } from 'next/router';
 
 
 const lists: ('all' | 'active' | 'running')[] = ['all', 'active', 'running']
 const Sequences: NextPage = () => {
 
     const [active, setActive] = useState(0)
-    const [add, setAdd] = useState(false)
-
     const [sequences, setSequences] = useState<SequenceDBType[]>([])
+
+    const router = useRouter()
+    const prompt = usePrompt()
+
     useEffect(() => {
         sequenceCRUD.list()
             .then(d => setSequences(d.data))
     }, [])
+
 
     return (
         <>
@@ -35,7 +40,7 @@ const Sequences: NextPage = () => {
                         variant='outline'
                         m='lg'
                         size={32}
-                        onClick={() => setAdd(true)}
+                        onClick={() => prompt?.newSequence((newSeq) => router.push('/sequences/' + newSeq.id))}
                     >
                         <Plus size={32} />
                     </ActionIcon>
@@ -58,11 +63,9 @@ const Sequences: NextPage = () => {
                         sequences={sequences}
                         onChange={setSequences}
                         show={lists[active]}
-                        addNew={() => setAdd(true)}
                     />
                 </Container>
             </Container>
-            <NewSequence opened={add} onClose={() => setAdd(false)} />
         </>
     )
 }

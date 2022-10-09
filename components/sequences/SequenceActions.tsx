@@ -8,7 +8,6 @@ import { sequenceCRUD } from "../../api"
 import { SequenceDBType } from "../../Scheduler/src/db"
 import { LoadingButton } from "../common"
 import { DeviceState, DeviceStateHandler, usePrompt, useSocket } from "../context"
-import NewSequence from "./NewSequence"
 
 
 const g = {
@@ -40,8 +39,6 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
 
     const prompt = usePrompt()
     const socket = useSocket()
-    const [edit, setEdit] = useState(false)
-    const [debouncedEdit] = useDebouncedValue(edit, 100)
     const [runningSequences, setRunningSequences] = useState<DeviceState['runningSequences']>([])
 
     useEffect(() => {
@@ -134,7 +131,11 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                         </Grid.Col>
                         <Grid.Col {...g2}  >
                             <Group direction="column" style={{ alignItems: 'stretch' }}>
-                                <Button p={0} color={"gray"} onClick={() => setEdit(true)}>
+                                <Button
+                                    p={0}
+                                    color={"gray"}
+                                    onClick={() => prompt?.newSequence((newSeq) => onChange(newSeq), sequence)}
+                                >
                                     <Group>
                                         <Edit size={16} />
                                         {"Edit"}
@@ -163,9 +164,6 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                             </Group>
                         </Grid.Col>
                     </Grid>
-                    {edit &&
-                        <NewSequence onClose={(newSeq) => { setEdit(false); newSeq && onChange(newSeq); }} opened={debouncedEdit} initialSequence={sequence} />
-                    }
                 </Container>
             </ScrollArea>
         </Container>

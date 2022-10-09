@@ -5,20 +5,21 @@ import { DeviceState, DeviceStateHandler, usePrompt, useSocket } from '../contex
 import SequenceRow from './SequenceRow'
 import { v4 } from 'uuid'
 import { sequenceCRUD } from '../../api'
+import { useRouter } from 'next/router'
 
 interface SequenceListProps {
     sequences: SequenceDBType[]
     onChange: (sequences: SequenceDBType[]) => void
     show: 'running' | 'active' | 'all'
-    addNew: () => void
 }
 
 
-const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show, addNew }) => {
+const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
 
     const socket = useSocket()
     const [runningSequences, setRunningSequences] = useState<DeviceState['runningSequences']>([])
 
+    const router = useRouter()
     const prompt = usePrompt()
 
     useEffect(() => {
@@ -106,7 +107,7 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show, addNew
                     {(show === "all" || !sequences.length ? (
                         <Group direction='column' position='center' >
                             <Text>{"No Sequences defined"}</Text>
-                            <Button variant='subtle' onClick={addNew}>
+                            <Button variant='subtle' onClick={() => prompt?.newSequence((newSeq) => router.push('/sequences/' + newSeq.id))}>
                                 Add new Sequence
                             </Button>
                         </Group>
