@@ -1,11 +1,13 @@
 import { createContext, ReactNode, useContext, useState } from "react"
-import { SequenceDBType } from "../../../Scheduler/src/db"
+import { CronDbType, SequenceDBType } from "../../../Scheduler/src/db"
 import { ConfirmModal } from "../../common"
 import { NewSequence } from "../../sequences"
+import NewCron from "../../sequences/NewCron"
 
 type PromptContext = {
     confirm: (onDone: (confirmed: boolean) => void, message?: string) => void
     newSequence: (onDone: (newSeq: SequenceDBType) => void, initialSequence?: SequenceDBType) => void
+    newCron: (onDone: (newCron: CronDbType) => void, initialCron?: CronDbType) => void
 }
 
 const promptContext = createContext<PromptContext | undefined>(undefined)
@@ -21,6 +23,9 @@ const usePromptContext = (): { context: PromptContext, modal: ReactNode } => {
     const [openedNewSeq, setOpenedNewSeq] = useState(false)
     const [newSeq, setNewSeq] = useState<{ initialSequence?: SequenceDBType, onDone: (seq: SequenceDBType) => void }>()
 
+    const [openedNewCron, setOpenedNewCron] = useState(false)
+    const [newCron, setNewCron] = useState<{ initialCron?: CronDbType, onDone: (cron: CronDbType) => void }>()
+
     return {
         context: {
             confirm: (onDone: (confirmed: boolean) => void, message?: string) => {
@@ -33,6 +38,10 @@ const usePromptContext = (): { context: PromptContext, modal: ReactNode } => {
             newSequence: (onDone, initialSequence) => {
                 setOpenedNewSeq(true)
                 setNewSeq({ onDone, initialSequence })
+            },
+            newCron: (onDone: (newCron: CronDbType) => void, initialCron?: CronDbType) => {
+                setOpenedNewCron(true)
+                setNewCron({ onDone, initialCron })
             }
         },
         modal: (
@@ -54,6 +63,15 @@ const usePromptContext = (): { context: PromptContext, modal: ReactNode } => {
                     }}
                     opened={openedNewSeq}
                     initialSequence={newSeq?.initialSequence}
+                />
+                <NewCron
+                    opened={openedNewCron}
+                    initCron={newCron?.initialCron}
+                    onClose={(cron) => {
+                        setOpenedNewCron(false)
+                        cron && newCron?.onDone(cron)
+                        setNewCron(undefined)
+                    }}
                 />
             </>
         )
