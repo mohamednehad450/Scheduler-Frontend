@@ -1,144 +1,115 @@
-import { Group, MultiSelect, NumberInput, RadioGroup, Radio, RangeSlider, Select } from "@mantine/core"
-import { FC, useEffect, useState } from "react"
 
-interface CronInputProps {
-    label: string,
-    min: number,
-    max: number,
-    formatLabel?: (n: number) => string,
-    initialValue: string,
-    onChange: (s: string) => void
+import { Tab, Tabs } from "@mantine/core";
+import { FC, useEffect, useState } from "react";
+import { formatHour, getDayName, getMonthName } from "../common";
+import CronField from "./CronField";
+
+
+const parseCron = (c: string) => {
+    const arr = c.split(' ')
+    if (arr.length === 5) {
+        return {
+            sec: '0',
+            min: arr[0],
+            hour: arr[1],
+            dom: arr[2],
+            month: arr[3],
+            dow: arr[4],
+        }
+    }
+    if (arr.length === 6) {
+        return {
+            sec: arr[0],
+            min: arr[1],
+            hour: arr[2],
+            dom: arr[3],
+            month: arr[4],
+            dow: arr[5],
+        }
+    }
+    else {
+        return {
+            sec: '*',
+            min: '*',
+            hour: '*',
+            dom: '*',
+            month: '*',
+            dow: '*',
+        }
+    }
 }
 
-type CronType = '*' | 'range' | "step" | 'collection'
+const CronInput: FC<{ initCron: string, onChange: (cron: string) => void }> = ({ initCron, onChange }) => {
 
-const getCronType = (name: string): { value: CronType, label: string }[] => [
-    { value: "*", label: 'Every ' + name, },
-    { value: "range", label: 'Range of ' + name, },
-    { value: "step", label: 'Every x ' + name, },
-    { value: "collection", label: 'Specific ' + name, },
-]
+    const { sec, min, hour, dom, month, dow } = parseCron(initCron || '')
 
-const getRange = (start: number, finish: number, formatLabel: (n: number) => string = String): { value: string, label: string }[] =>
-    [...Array(finish - start + 1)].map((_, i) => ({ value: String(i + start), label: formatLabel(i + start) }));
-
-
-const getTypeFromCron = (cron: string) => {
-    if (cron === '*') return "*"
-    if (cron.split('/').length === 2) return 'step'
-    if (cron.split('-').length === 2) return 'range'
-    return 'collection'
-}
-const getRangeFromCron = (cron: string): [number, number] | undefined => {
-    const r = cron.split('-').map(Number)
-    if (r.length === 2) return [r[0], r[1]]
-}
-const getStepFromCron = (cron: string): { start: number, step: number } | undefined => {
-    const s = cron.split('/').map(Number)
-    if (s.length === 2) return { start: s[0], step: s[1] }
-}
-const getCollectionFromCron = (cron: string): number[] | undefined => {
-    const col = cron.split(',').map(Number)
-    if (!isNaN(col.reduce((acc, val) => acc + val, 0))) return [...col]
-}
-
-
-
-const CronInput: FC<CronInputProps> = ({
-    label,
-    min,
-    max,
-    formatLabel = String,
-    initialValue,
-    onChange,
-}) => {
-
-    const [type, setType] = useState(getTypeFromCron(initialValue))
-    const [range, setRange] = useState<[number, number]>(getRangeFromCron(initialValue) || [min, max])
-    const [step, setStep] = useState<{ start: number, step: number }>(getStepFromCron(initialValue) || { start: min, step: 1 })
-    const [collection, setCollection] = useState<number[]>(getCollectionFromCron(initialValue) || [min])
+    const [secCron, setSecCron] = useState(sec)
+    const [minCron, setMinCron] = useState(min)
+    const [hourCron, setHourCron] = useState(hour)
+    const [domCron, setDomCron] = useState(dom)
+    const [monthCron, setMonthCron] = useState(month)
+    const [dowCron, setDowCron] = useState(dow)
 
     useEffect(() => {
-        let str = ''
-        switch (type) {
-            case '*':
-                str = '*'
-                break;
-            case 'range':
-                str = range.join('-')
-                break;
-            case 'step':
-                str = step.start + "/" + step.step
-                break;
-            case 'collection':
-                str = collection.join(',')
-                break;
-        }
-        onChange(str);
-
-    }, [type, range, step, collection, onChange])
+        onChange([secCron, minCron, hourCron, domCron, monthCron, dowCron].join(' '))
+    }, [secCron, minCron, hourCron, domCron, monthCron, dowCron])
 
     return (
-        <>
-            <RadioGroup
-                label={label}
-                required
-                value={type}
-                onChange={setType}
-                p="md"
-            >
-                {getCronType(label).map(({ value, label }) => (
-                    <Radio key={value} value={value} label={label} />
-                ))}
-            </RadioGroup>
-            {type === 'range' ?
-                (
-                    <RangeSlider
-                        p="md"
-                        value={range}
-                        onChange={setRange}
-                        min={min}
-                        max={max}
-                        minRange={1}
-                        step={1}
-                        label={formatLabel}
-                    />
-                ) :
-                type === "step" ?
-                    (
-                        <Group p="md" pt="0">
-                            <Select
-                                style={{ width: "10rem" }}
-                                label="Start"
-                                data={getRange(min, max, formatLabel)}
-                                value={String(step.start)}
-                                onChange={(v) => setStep(s => ({ ...s, start: Number(v) }))}
-                            />
-                            <NumberInput
-                                label="Step"
-                                hideControls
-                                style={{ width: "4rem" }}
-                                min={0}
-                                max={max}
-                                value={step.step}
-                                multiple
-                                onChange={step => step && setStep(s => ({ ...s, step }))}
-                            />
-                        </Group>
-                    ) :
-                    type === "collection" ?
-                        (
-                            <MultiSelect
-                                value={collection.map(String)}
-                                onChange={vs => vs.length && setCollection(vs.map(Number))}
-                                p="md"
-                                data={getRange(min, max, formatLabel)}
-                            />
-                        ) :
-                        null
-            }
-        </>
+        <Tabs py="sm">
+            <Tab label="Seconds">
+                <CronField
+                    min={0}
+                    max={59}
+                    initialValue={secCron}
+                    onChange={(s) => setSecCron(s)}
+                />
+            </Tab>
+            <Tab label="Minutes">
+                <CronField
+                    min={0}
+                    max={59}
+                    initialValue={minCron}
+                    onChange={(s) => setMinCron(s)}
+                />
+            </Tab>
+            <Tab label="Hours">
+                <CronField
+                    min={0}
+                    max={23}
+                    formatLabel={formatHour}
+                    initialValue={hourCron}
+                    onChange={(s) => setHourCron(s)}
+                />
+            </Tab>
+            <Tab label="Day of month">
+                <CronField
+                    min={1}
+                    max={31}
+                    initialValue={domCron}
+                    onChange={(s) => setDomCron(s)}
+                />
+            </Tab>
+            <Tab label="Month">
+                <CronField
+                    min={0}
+                    max={11}
+                    formatLabel={getMonthName}
+                    initialValue={monthCron}
+                    onChange={(s) => setMonthCron(s)}
+                />
+            </Tab>
+            <Tab label="Day of week">
+                <CronField
+                    min={0}
+                    max={6}
+                    formatLabel={getDayName}
+                    initialValue={dowCron}
+                    onChange={(s) => setDowCron(s)}
+                />
+            </Tab>
+        </Tabs>
     )
 }
+
 
 export default CronInput
