@@ -1,11 +1,9 @@
 import { Accordion, AccordionItem, ActionIcon, Button, Container, Divider, Group, ScrollArea, Text, useMantineTheme } from "@mantine/core";
-import { useDebouncedValue } from "@mantine/hooks";
 import { FC, useEffect, useState } from "react";
 import { Plus, Refresh } from "tabler-icons-react";
 import { cronCRUD } from "../../api";
 import { CronDbType } from "../../Scheduler/src/db";
 import { usePrompt } from "../context";
-import NewCron from "../sequences/NewCron";
 import CronRow from "./CronRow";
 
 
@@ -15,9 +13,6 @@ const CronTriggers: FC = () => {
     const theme = useMantineTheme()
 
     const [crons, setCrons] = useState<CronDbType[]>([])
-
-    const [newCron, setNewCron] = useState(false)
-    const [debouncedNewCron] = useDebouncedValue(newCron, 100)
 
     const prompt = usePrompt()
 
@@ -42,7 +37,7 @@ const CronTriggers: FC = () => {
                     </ActionIcon>
                     <ActionIcon
                         size={24}
-                        onClick={() => setNewCron(true)}
+                        onClick={() => prompt?.newCron((cron) => setCrons(cs => [cron, ...cs]))}
                     >
                         <Plus size={24} />
                     </ActionIcon>
@@ -99,21 +94,8 @@ const CronTriggers: FC = () => {
                     }}
                 >
                     <Text>No cron triggers</Text>
-                    <Button onClick={() => setNewCron(true)} variant="subtle">Add new cron</Button>
+                    <Button onClick={() => prompt?.newCron((cron) => setCrons(cs => [cron, ...cs]))} variant="subtle">Add new cron</Button>
                 </div>
-            )}
-            {newCron && (
-                <NewCron
-                    opened={debouncedNewCron}
-                    onClose={() => {
-                        setNewCron(false)
-                        cronCRUD.list()
-                            .then(d => setCrons(d.data))
-                            .catch(err => {
-                                // TODO
-                            })
-                    }}
-                />
             )}
         </Container>
     )
