@@ -3,6 +3,7 @@ import { FC, useEffect, useState } from "react";
 import { pinsCRUD, sequenceCRUD } from "../../api";
 import { PinDbType, SequenceDBType } from "../../Scheduler/src/db";
 import { LoadingButton } from "../common";
+import { usePrompt } from "../context";
 import OrdersInput, { OrderInput } from "./OrdersInput";
 
 
@@ -31,6 +32,9 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
         orders: ''
     })
     const [pins, setPins] = useState<PinDbType[]>([])
+
+
+    const prompt = usePrompt()
 
 
     useEffect(() => {
@@ -126,7 +130,16 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
                             sequenceCRUD.add(sequence)
                         func
                             .then(({ data: newSeq }) => {
-                                onClose(newSeq)
+                                if (initialSequence) {
+                                    onClose(newSeq)
+                                } else {
+                                    onClose()
+                                    prompt?.confirm((confirmed) => {
+                                        confirmed ?
+                                            prompt.linkSequence((seq) => onClose(seq || newSeq), newSeq.id) :
+                                            onClose(newSeq)
+                                    }, 'Link cron triggers to this sequence?')
+                                }
                             })
                             .catch(err => {
                                 // TODO
