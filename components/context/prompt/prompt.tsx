@@ -2,12 +2,17 @@ import { createContext, ReactNode, useContext, useState } from "react"
 import { CronDbType, SequenceDBType } from "../../../Scheduler/src/db"
 import { ConfirmModal } from "../../common"
 import { NewSequence } from "../../sequences"
+import LinkSequence from "../../sequences/LinkSequence"
 import NewCron from "../../sequences/NewCron"
+
+
+
 
 type PromptContext = {
     confirm: (onDone: (confirmed: boolean) => void, message?: string) => void
     newSequence: (onDone: (newSeq: SequenceDBType) => void, initialSequence?: SequenceDBType) => void
     newCron: (onDone: (newCron: CronDbType) => void, initialCron?: CronDbType) => void
+    linkSequence: (onDone: (seq: SequenceDBType) => void, sequenceId: SequenceDBType['id'], initialIds?: CronDbType['id'][],) => void
 }
 
 const promptContext = createContext<PromptContext | undefined>(undefined)
@@ -26,6 +31,9 @@ const usePromptContext = (): { context: PromptContext, modal: ReactNode } => {
     const [openedNewCron, setOpenedNewCron] = useState(false)
     const [newCron, setNewCron] = useState<{ initialCron?: CronDbType, onDone: (cron: CronDbType) => void }>()
 
+    const [openedLinkSequence, setOpenedLinkSequence] = useState(false)
+    const [linkSequence, setLinkSequence] = useState<{ onDone: (seq: SequenceDBType) => void, sequenceId: SequenceDBType['id'], initialIds?: CronDbType['id'][] }>()
+
     return {
         context: {
             confirm: (onDone: (confirmed: boolean) => void, message?: string) => {
@@ -42,7 +50,11 @@ const usePromptContext = (): { context: PromptContext, modal: ReactNode } => {
             newCron: (onDone: (newCron: CronDbType) => void, initialCron?: CronDbType) => {
                 setOpenedNewCron(true)
                 setNewCron({ onDone, initialCron })
-            }
+            },
+            linkSequence: (onDone: (seq: SequenceDBType) => void, sequenceId: SequenceDBType['id'], initialIds?: CronDbType['id'][]) => {
+                setOpenedLinkSequence(true)
+                setLinkSequence({ onDone, sequenceId, initialIds })
+            },
         },
         modal: (
             <>
@@ -72,6 +84,16 @@ const usePromptContext = (): { context: PromptContext, modal: ReactNode } => {
                         cron && newCron?.onDone(cron)
                         setNewCron(undefined)
                     }}
+                />
+                <LinkSequence
+                    opened={openedLinkSequence}
+                    onClose={(seq) => {
+                        setOpenedLinkSequence(false)
+                        seq && linkSequence?.onDone(seq)
+                        setLinkSequence(undefined)
+                    }}
+                    sequenceId={linkSequence?.sequenceId || -1}
+                    initialCrons={linkSequence?.initialIds}
                 />
             </>
         )
