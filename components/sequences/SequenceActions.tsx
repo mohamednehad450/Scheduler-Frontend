@@ -1,8 +1,7 @@
 import { Button, Container, Divider, Grid, Group, ScrollArea, Text } from "@mantine/core"
-import { useDebouncedValue } from "@mantine/hooks"
 import { useRouter } from "next/router"
 import { FC, useEffect, useState } from "react"
-import { CalendarEvent, CalendarOff, Edit, PlayerPause, PlayerPlay, Trash } from "tabler-icons-react"
+import { CalendarEvent, CalendarOff, Edit, Link, PlayerPause, PlayerPlay, Trash } from "tabler-icons-react"
 import { v4 } from "uuid"
 import { sequenceCRUD } from "../../api"
 import { SequenceDBType } from "../../Scheduler/src/db"
@@ -16,6 +15,15 @@ const g = {
     md: 6,
     lg: 6,
     xl: 6,
+    span: 12
+}
+
+const g1 = {
+    xs: 6,
+    sm: 6,
+    md: 6,
+    lg: 6,
+    xl: 12,
     span: 12
 }
 
@@ -129,18 +137,36 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                                 </LoadingButton>
                             </Group>
                         </Grid.Col>
-                        <Grid.Col {...g2}  >
+                        <Grid.Col {...{ ...g1 }}>
                             <Group direction="column" style={{ alignItems: 'stretch' }}>
                                 <Button
                                     p={0}
-                                    color={"gray"}
-                                    onClick={() => prompt?.newSequence((newSeq) => onChange(newSeq), sequence)}
+                                    variant="outline"
+                                    onClick={() => prompt?.linkSequence(s => s && onChange(s), sequence.id, sequence.CronSequence.map(c => c.cron.id))}
+                                >
+                                    <Group>
+                                        <Link size={16} />
+                                        {"Edit Triggers"}
+                                    </Group>
+                                </Button>
+                            </Group>
+                        </Grid.Col>
+                        <Grid.Col {...{ ...g1 }}>
+                            <Group direction="column" style={{ alignItems: 'stretch' }}>
+                                <Button
+                                    p={0}
+                                    variant={'outline'}
+                                    onClick={() => prompt?.newSequence((s) => s && onChange(s), sequence)}
                                 >
                                     <Group>
                                         <Edit size={16} />
-                                        {"Edit"}
+                                        {"Edit Sequence"}
                                     </Group>
                                 </Button>
+                            </Group>
+                        </Grid.Col>
+                        <Grid.Col {...g2}  >
+                            <Group direction="column" style={{ alignItems: 'stretch' }}>
                                 <Button
                                     p={0}
                                     color={"red"}
