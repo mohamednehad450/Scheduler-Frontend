@@ -7,21 +7,22 @@ const url = '/api/link'
 
 class cronSequence {
 
-    linkCronPromise = async (id: CronDbType['id'], sequencesIds: SequenceDBType['id'][]): Promise<void> => {
-        return axios.post(url + "/cron/" + id, sequencesIds)
+    linkCronPromise = async (id: CronDbType['id'], sequencesIds: SequenceDBType['id'][]): Promise<CronDbType> => {
+        return (await axios.post<CronDbType>(url + "/cron/" + id, sequencesIds)).data
     }
-    linkCron = (id: CronDbType['id'], sequencesIds: SequenceDBType['id'][], cb: Callback<void>) => {
+    linkCron = (id: CronDbType['id'], sequencesIds: SequenceDBType['id'][], cb: Callback<CronDbType>) => {
         this.linkCronPromise(id, sequencesIds)
-            .then(() => cb(null))
+            .then(cron => cb(null, cron))
             .catch(err => cb(err))
     }
 
-    linkSequencePromise = async (id: SequenceDBType['id'], cronsIds: CronDbType['id'][]): Promise<void> => {
-        return axios.post(url + "/sequence/" + id, cronsIds)
+    linkSequencePromise = async (id: SequenceDBType['id'], cronsIds: CronDbType['id'][]): Promise<SequenceDBType> => {
+        return (await axios.post<SequenceDBType>(url + "/sequence/" + id, cronsIds)).data
+
     }
-    linkSequence = (id: SequenceDBType['id'], cronsIds: CronDbType['id'][], cb: Callback<void>) => {
+    linkSequence = (id: SequenceDBType['id'], cronsIds: CronDbType['id'][], cb: Callback<SequenceDBType>) => {
         this.linkSequencePromise(id, cronsIds)
-            .then(() => cb(null))
+            .then(sequence => cb(sequence))
             .catch(err => cb(err))
     }
 }
