@@ -38,7 +38,7 @@ const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, rem
             .catch(err => {
                 // TODO
             })
-    const edit = () => prompt?.newSequence(onChange, sequence)
+    const edit = () => prompt?.newSequence((seq) => seq && onChange(seq), sequence)
 
     return (
         <tr onClick={() => router.push(router.route + '/' + sequence.id)} >

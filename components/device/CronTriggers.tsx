@@ -37,7 +37,7 @@ const CronTriggers: FC = () => {
                     </ActionIcon>
                     <ActionIcon
                         size={24}
-                        onClick={() => prompt?.newCron((cron) => setCrons(cs => [cron, ...cs]))}
+                        onClick={() => prompt?.newCron((cron) => cron && setCrons(cs => [cron, ...cs]))}
                     >
                         <Plus size={24} />
                     </ActionIcon>
@@ -94,7 +94,7 @@ const CronTriggers: FC = () => {
                     }}
                 >
                     <Text>No cron triggers</Text>
-                    <Button onClick={() => prompt?.newCron((cron) => setCrons(cs => [cron, ...cs]))} variant="subtle">Add new cron</Button>
+                    <Button onClick={() => prompt?.newCron((cron) => cron && setCrons(cs => [cron, ...cs]))} variant="subtle">Add new cron</Button>
                 </div>
             )}
         </Container>

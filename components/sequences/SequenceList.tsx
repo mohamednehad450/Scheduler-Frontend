@@ -107,7 +107,7 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
                     {(show === "all" || !sequences.length ? (
                         <Group direction='column' position='center' >
                             <Text>{"No Sequences defined"}</Text>
-                            <Button variant='subtle' onClick={() => prompt?.newSequence((newSeq) => router.push('/sequences/' + newSeq.id))}>
+                            <Button variant='subtle' onClick={() => prompt?.newSequence((newSeq) => newSeq && router.push('/sequences/' + newSeq.id))}>
                                 Add new Sequence
                             </Button>
                         </Group>
