@@ -51,7 +51,9 @@ const LinkSequence: FC<LinkSequenceProps> = ({ opened, onClose, initialCrons, se
                 onClick={() => {
                     onClose()
                     prompt?.newCron((cron) => {
-                        prompt.linkSequence(() => { }, sequenceId, [cron.id, ...initialCrons || []])
+                        cron ?
+                            prompt.linkSequence(onClose, sequenceId, [cron.id, ...initialCrons || []]) :
+                            prompt.linkSequence(onClose, sequenceId, initialCrons)
                     })
                 }}
 

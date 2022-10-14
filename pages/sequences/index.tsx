@@ -40,7 +40,7 @@ const Sequences: NextPage = () => {
                             variant='light'
                             size={32}
                             mx="xs"
-                            onClick={() => prompt?.newSequence((newSeq) => router.push('/sequences/' + newSeq.id))}
+                            onClick={() => prompt?.newSequence((newSeq) => newSeq && router.push('/sequences/' + newSeq.id))}
                         >
                             <Plus size={32} />
                         </ActionIcon>
