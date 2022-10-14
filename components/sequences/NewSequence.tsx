@@ -60,15 +60,15 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
 
     return (
         <Modal
-            size={'lg'}
-            centered
+            size={'xl'}
             opened={opened}
             onClose={() => onClose()}
             title={initialSequence ? `Edit ${initialSequence.name}` : "Add New Sequence"}
+            overflow="inside"
         >
             <Divider pt="md" />
             <ScrollArea
-                styles={{ viewport: { height: '24rem' } }}
+                styles={{ viewport: { minHeight: '24rem' } }}
             >
                 <Group p="xs">
                     <TextInput
@@ -87,17 +87,15 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
                     />
                 </Group>
                 <Group p="xs">
-
+                    <OrdersInput
+                        error={error.orders}
+                        orders={sequence.orders}
+                        pins={pins}
+                        onChange={orders => setSequence(s => ({ ...s, orders }))}
+                    />
                 </Group>
-                <OrdersInput
-                    error={error.orders}
-                    orders={sequence.orders}
-                    pins={pins}
-                    onChange={orders => setSequence(s => ({ ...s, orders }))}
-                />
             </ScrollArea>
-
-            <Group position="right">
+            <Group position="right" sx={(theme) => ({ position: 'sticky', bottom: 0, backgroundColor: theme.colorScheme === "dark" ? 'black' : "white" })}>
                 <Button
                     styles={{ root: { minWidth: '6rem' } }}
                     m="sm"
