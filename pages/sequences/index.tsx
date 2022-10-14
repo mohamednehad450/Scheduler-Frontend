@@ -2,7 +2,7 @@ import { Tabs, Container, Title, Group, ActionIcon } from '@mantine/core'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import { Calendar, CalendarOff, List, Plus, } from 'tabler-icons-react';
+import { Calendar, CalendarOff, List, Plus, Refresh, } from 'tabler-icons-react';
 import { SequenceList } from '../../components/sequences'
 import { SequenceDBType } from '../../Scheduler/src/db'
 import { sequenceCRUD } from '../../api'
@@ -12,7 +12,6 @@ import { useRouter } from 'next/router';
 
 const lists: ('all' | 'active' | 'running')[] = ['all', 'active', 'running']
 const Sequences: NextPage = () => {
-
     const [active, setActive] = useState(0)
     const [sequences, setSequences] = useState<SequenceDBType[]>([])
 
@@ -35,16 +34,30 @@ const Sequences: NextPage = () => {
             <Container size={'lg'} p="0" style={{ height: '100%', display: 'flex', flexDirection: 'column', }} >
                 <Group position='apart'>
                     <Title p={'lg'}>Sequences</Title>
-                    <ActionIcon
-                        color={'gray'}
-                        variant='outline'
-                        m='lg'
-                        size={32}
-                        onClick={() => prompt?.newSequence((newSeq) => router.push('/sequences/' + newSeq.id))}
-                    >
-                        <Plus size={32} />
-                    </ActionIcon>
-
+                    <Group>
+                        <ActionIcon
+                            color={'gray'}
+                            variant='light'
+                            size={32}
+                            mx="xs"
+                            onClick={() => prompt?.newSequence((newSeq) => router.push('/sequences/' + newSeq.id))}
+                        >
+                            <Plus size={32} />
+                        </ActionIcon>
+                        <ActionIcon
+                            color={'gray'}
+                            variant='light'
+                            size={32}
+                            mx="xs"
+                            onClick={() => {
+                                setSequences([])
+                                sequenceCRUD.list()
+                                    .then(d => setSequences(d.data))
+                            }}
+                        >
+                            <Refresh size={32} />
+                        </ActionIcon>
+                    </Group>
                 </Group>
                 <Tabs variant='outline' active={active} onTabChange={setActive} tabPadding={0} >
                     <Tabs.Tab label="All" icon={<List size={16} />} />
