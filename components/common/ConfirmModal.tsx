@@ -1,8 +1,14 @@
 import { Button, Modal, Group } from "@mantine/core"
-import { FC, PropsWithChildren } from "react"
+import { FC, PropsWithChildren, useEffect, useState } from "react"
 
 
-const ConfirmModal: FC<PropsWithChildren<{ onDone: (confirm: boolean) => void, opened: boolean, message?: string }>> = ({ onDone, opened, message }) => {
+const ConfirmModal: FC<PropsWithChildren<{ onDone: (confirm: boolean) => void, opened: boolean, message?: string }>> = ({ onDone, opened, message: initMessage }) => {
+
+    const [message, setMessage] = useState(initMessage)
+
+    useEffect(() => {
+        if (opened) setMessage(initMessage)
+    }, [opened])
     return (
         <Modal
             opened={opened}
