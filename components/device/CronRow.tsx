@@ -1,41 +1,25 @@
 import { Button, Divider, Group, Table, Text } from "@mantine/core";
-import { useDebouncedValue } from "@mantine/hooks";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { Edit, Trash } from "tabler-icons-react";
 import { CronDbType } from "../../Scheduler/src/db";
-import NewCron from "../sequences/NewCron";
 import cronstrue from 'cronstrue'
 import { nextCronDates } from "../common";
 import { useRouter } from "next/router";
+import { usePrompt } from "../context";
 
-
-
-
-
-
-const CronRow: FC<{
+interface CronRowProps {
     cron: CronDbType,
     onChange: (cron: CronDbType) => void
     remove: (id: CronDbType['id']) => void
-}> = ({ cron, onChange, remove }) => {
+}
 
-    const [edit, setEdit] = useState(false)
-    const [debouncedEdit] = useDebouncedValue(edit, 100)
+const CronRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
 
     const router = useRouter()
+    const prompt = usePrompt()
 
     return (
         <>
-            {edit && (
-                <NewCron
-                    opened={debouncedEdit}
-                    initCron={cron}
-                    onClose={(c) => {
-                        setEdit(false)
-                        c && onChange(c)
-                    }}
-                />
-            )}
             <Group direction="column" py="sm">
                 <Text size="sm" color={'gray'}>Preview</Text>
                 <Text>
@@ -46,7 +30,7 @@ const CronRow: FC<{
             <Group direction="column" py="sm">
                 <Text size="sm" color={'gray'}>Actions</Text>
                 <Group>
-                    <Button variant="light" onClick={() => setEdit(true)}>
+                    <Button variant="light" onClick={() => prompt?.newCron(newCron => newCron && onChange(newCron), cron)}>
                         <Group position="center">
                             <Edit size="16" />
                             Edit
