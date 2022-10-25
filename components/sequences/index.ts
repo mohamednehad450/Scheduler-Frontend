@@ -3,7 +3,8 @@ import SequenceActions from './SequenceActions'
 import SequenceActivities from './SequenceActivities'
 import SequenceList from './SequenceList'
 import SequenceTriggers from './SequenceTriggers'
-import NewSequence from './NewSequence'
+import PeriodMark from './PeriodMark'
+import PeriodTrack from './PeriodTrack'
 
 
 export {
@@ -12,5 +13,6 @@ export {
     SequenceActions,
     SequenceActivities,
     SequenceTriggers,
-    NewSequence,
+    PeriodMark,
+    PeriodTrack,
 }

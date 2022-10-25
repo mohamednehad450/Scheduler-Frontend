@@ -3,8 +3,7 @@ import { useMove, } from "@mantine/hooks"
 import { scaleBand, scaleLinear } from "d3-scale"
 import { FC, useEffect, useRef } from "react"
 import { Minus, Plus } from "tabler-icons-react"
-import PeriodMark from "./PeriodMark"
-import PeriodTrack from "./PeriodTrack"
+import { PeriodMark, PeriodTrack } from "../sequences"
 
 
 type Value = [number, number]

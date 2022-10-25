@@ -1,9 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from "react"
 import { CronDbType, SequenceDBType } from "../../../Scheduler/src/db"
-import { ConfirmModal } from "../../common"
-import { NewSequence } from "../../sequences"
-import LinkSequence from "../../sequences/LinkSequence"
-import NewCron from "../../sequences/NewCron"
+import { ConfirmModal, NewSequence, NewCron, LinkSequence } from "../../modals"
 
 interface PromptArgs {
     confirm: [onDone: (confirmed: boolean) => void, message?: string]
@@ -11,7 +8,6 @@ interface PromptArgs {
     newCron: [onDone: (newCron?: CronDbType) => void, initialCron?: CronDbType]
     linkSequence: [onDone: (seq?: SequenceDBType) => void, sequenceId: SequenceDBType['id'], initialIds?: CronDbType['id'][]]
 }
-
 
 
 type PromptContext = {
