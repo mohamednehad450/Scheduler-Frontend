@@ -21,7 +21,7 @@ const SequenceTriggers: FC<SequenceTriggersProps> = ({ cronTriggers }) => {
                     <Tab label="Cron" >
                         <Accordion>
                             {cronTriggers.map(({ cron }) => (
-                                <AccordionItem label={cron.label} iconPosition="right" >
+                                <AccordionItem label={cron.label} iconPosition="right" key={cron.id} >
                                     <Table striped highlightOnHover>
                                         <thead>
                                             <tr>
