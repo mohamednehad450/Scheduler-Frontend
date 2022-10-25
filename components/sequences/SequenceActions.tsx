@@ -73,38 +73,31 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                     <Grid gutter={'sm'}>
                         <Grid.Col {...g}>
                             <Group direction="column" style={{ alignItems: 'stretch' }}>
-                                <LoadingButton p={0} disabled={isRunning} onClick={(onDone) => {
+                                <LoadingButton p={0} onClick={(onDone) => {
                                     const actionId = v4()
-                                    socket?.emit('run', actionId, sequence.id)
+                                    socket?.emit(isRunning ? 'stop' : 'run', actionId, sequence.id)
                                     socket?.once(actionId, (ok: boolean, err: Error | null) => {
                                         onDone()
                                         // TODO: Error handling    
                                     })
                                 }}>
                                     <Group>
-                                        <PlayerPlay size={16} />
-                                        {"Run"}
-                                    </Group>
-                                </LoadingButton>
-                                <LoadingButton p={0} disabled={!isRunning} onClick={(onDone) => {
-                                    const actionId = v4()
-                                    socket?.emit('stop', actionId, sequence.id)
-                                    socket?.once(actionId, (ok: boolean, err: Error | null) => {
-                                        onDone()
-                                        // TODO: Error handling    
-                                    })
-                                }}>
-                                    <Group>
-                                        <PlayerPause size={16} />
-                                        {' Stop'}
+                                        {isRunning ?
+                                            (<PlayerPause size={16} />) :
+                                            (<PlayerPlay size={16} />)
+                                        }
+                                        {isRunning ?
+                                            "Stop" :
+                                            "Run"
+                                        }
                                     </Group>
                                 </LoadingButton>
                             </Group>
                         </Grid.Col>
                         <Grid.Col {...g}>
                             <Group direction="column" style={{ alignItems: 'stretch' }}>
-                                <LoadingButton p={0} disabled={sequence.active} onClick={(onDone) => {
-                                    sequenceCRUD.update(sequence?.id, { active: true })
+                                <LoadingButton p={0} onClick={(onDone) => {
+                                    sequenceCRUD.update(sequence?.id, { active: !sequence.active })
                                         .then(d => {
                                             onDone()
                                             onChange(d.data)
@@ -115,24 +108,14 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                                         })
                                 }}>
                                     <Group>
-                                        <CalendarEvent size={16} />
-                                        {"Activate"}
-                                    </Group>
-                                </LoadingButton>
-                                <LoadingButton p={0} disabled={!sequence.active} onClick={(onDone) => {
-                                    sequenceCRUD.update(sequence?.id, { active: false })
-                                        .then(d => {
-                                            onDone()
-                                            onChange(d.data)
-                                        })
-                                        .catch(err => {
-                                            // TODO
-                                            onDone()
-                                        })
-                                }}>
-                                    <Group>
-                                        <CalendarOff size={16} />
-                                        {' Deactivate'}
+                                        {sequence.active ?
+                                            (<CalendarOff size={16} />) :
+                                            (<CalendarEvent size={16} />)
+                                        }
+                                        {sequence.active ?
+                                            "Deactivate" :
+                                            "Activate"
+                                        }
                                     </Group>
                                 </LoadingButton>
                             </Group>
