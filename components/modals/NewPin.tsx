@@ -61,11 +61,19 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, initialPin, usedPins: initU
         })
     }, [pin])
 
+    useEffect(() => {
+        setUsedPins(initUsedPins)
+        setPin(initialPin || {
+            label: '',
+            onState: "HIGH"
+        })
+    }, [opened])
+
     return (
         <Modal
             centered
             opened={opened}
-            onClose={onClose}
+            onClose={() => onClose()}
             title={initialPin ? "Edit " + initialPin.label : "Add new pin"}
         >
             <Divider mb="sm" />
