@@ -18,7 +18,6 @@ const g = {
 
 const Home: NextPage = () => {
 
-  const [pins, setPins] = useState<PinDbType[]>([])
   const [sequences, setSequences] = useState<SequenceDBType[]>([])
   const socket = useSocket()
 
@@ -26,9 +25,8 @@ const Home: NextPage = () => {
     if (!socket) return
     sequenceCRUD.list()
       .then(d => setSequences(d.data))
-    pinsCRUD.list()
-      .then(d => setPins(d.data))
   }, [socket])
+
   return (
     <>
       <Head>
@@ -42,7 +40,7 @@ const Home: NextPage = () => {
             <DeviceTime />
           </Grid.Col>
           <Grid.Col {...g} >
-            <PinsStatus pins={pins} sequences={sequences} />
+            <PinsStatus sequences={sequences} />
           </Grid.Col>
           <Grid.Col {...g} >
             <Sequences sequences={sequences} />

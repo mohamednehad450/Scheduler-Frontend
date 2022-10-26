@@ -1,21 +1,27 @@
 import { Button, Card, Group, LoadingOverlay, Tabs, Text } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
+import { pinsCRUD } from "../../api";
 import { PinDbType, SequenceDBType } from "../../Scheduler/src/db";
-import { DeviceState, DeviceStateHandler, ChannelChangeHandler, useSocket } from "../context";
+import { DeviceState, DeviceStateHandler, ChannelChangeHandler, useSocket, usePrompt } from "../context";
 import PinStatusRow from "./PinStatusRow";
 import ScrollList from "./ScrollList";
 
 
 
-const PinsStatus: FC<{ pins: PinDbType[], sequences: SequenceDBType[] }> = ({ pins, sequences }) => {
+const PinsStatus: FC<{ sequences: SequenceDBType[] }> = ({ sequences }) => {
 
     const socket = useSocket()
+    const prompt = usePrompt()
 
-
+    const [pins, setPins] = useState<PinDbType[]>([])
     const [channelsStatus, setChannelsStatus] = useState<DeviceState['channelsStatus']>()
     const [reservedPins, setReservedPins] = useState<DeviceState['reservedPins']>()
 
     useEffect(() => {
+        if (!socket) return
+        pinsCRUD.list()
+            .then(d => setPins(d.data))
+
         const handleState: DeviceStateHandler = ({ reservedPins, channelsStatus }) => {
             channelsStatus && setChannelsStatus(channelsStatus)
             reservedPins && setReservedPins(reservedPins)
@@ -32,6 +38,7 @@ const PinsStatus: FC<{ pins: PinDbType[], sequences: SequenceDBType[] }> = ({ pi
         }
     }, [socket])
 
+
     return (
         <Card shadow="sm" p="sm" radius={'md'} style={{ height: '18rem', }}  >
             <Tabs variant="default">
@@ -43,7 +50,15 @@ const PinsStatus: FC<{ pins: PinDbType[], sequences: SequenceDBType[] }> = ({ pi
                         empty={
                             <>
                                 <Text>No pins defined</Text>
-                                <Button onClick={() => alert('to be implemented')} variant="subtle">Add new pin</Button>
+                                <Button
+                                    onClick={() => prompt?.newPin(
+                                        () => pinsCRUD.list().then(d => setPins(d.data)),
+                                        pins.reduce((acc, pin) => ({ ...acc, [pin.channel]: true }), {})
+                                    )}
+                                    variant="subtle"
+                                >
+                                    Add new pin
+                                </Button>
                             </>
                         }
                         footer={
