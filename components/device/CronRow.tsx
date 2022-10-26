@@ -1,6 +1,6 @@
 import { Button, Divider, Group, Table, Text } from "@mantine/core";
 import { FC } from "react";
-import { Edit, Trash } from "tabler-icons-react";
+import { Edit, Link, Trash } from "tabler-icons-react";
 import { CronDbType } from "../../Scheduler/src/db";
 import cronstrue from 'cronstrue'
 import { nextCronDates } from "../common";
@@ -34,6 +34,12 @@ const CronRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
                         <Group position="center">
                             <Edit size="16" />
                             Edit
+                        </Group>
+                    </Button>
+                    <Button variant="light" onClick={() => prompt?.linkCron(newCron => newCron && onChange(newCron), cron.id, cron.CronSequence.map(s => s.sequence.id))}>
+                        <Group position="center">
+                            <Link size="16" />
+                            Link
                         </Group>
                     </Button>
                     <Button
