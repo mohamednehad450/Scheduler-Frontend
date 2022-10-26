@@ -1,11 +1,12 @@
 import { createContext, ReactNode, useContext, useState } from "react"
-import { CronDbType, SequenceDBType } from "../../../Scheduler/src/db"
-import { ConfirmModal, NewSequence, NewCron, LinkSequence, LinkCron } from "../../modals"
+import { CronDbType, PinDbType, SequenceDBType } from "../../../Scheduler/src/db"
+import { ConfirmModal, NewSequence, NewCron, LinkSequence, LinkCron, NewPin } from "../../modals"
 
 interface PromptArgs {
     confirm: [onDone: (confirmed: boolean) => void, message?: string]
     newSequence: [onDone: (newSeq?: SequenceDBType) => void, initialSequence?: SequenceDBType]
     newCron: [onDone: (newCron?: CronDbType) => void, initialCron?: CronDbType]
+    newPin: [onDone: (newPin?: PinDbType) => void, usedPins: { [key: PinDbType['channel']]: true }, initialPin?: PinDbType]
     linkSequence: [onDone: (seq?: SequenceDBType) => void, sequenceId: SequenceDBType['id'], initialIds?: CronDbType['id'][]]
     linkCron: [onDone: (cron?: CronDbType) => void, cronId: CronDbType['id'], initialIds?: SequenceDBType['id'][]]
 }
@@ -15,6 +16,7 @@ type PromptContext = {
     confirm: (...args: PromptArgs['confirm']) => void
     newSequence: (...args: PromptArgs['newSequence']) => void
     newCron: (...args: PromptArgs['newCron']) => void
+    newPin: (...args: PromptArgs['newPin']) => void
     linkSequence: (...args: PromptArgs['linkSequence']) => void
     linkCron: (...args: PromptArgs['linkCron']) => void
 }
@@ -43,6 +45,9 @@ const usePromptContext = (): { context: PromptContext, modal: ReactNode } => {
     const [openedLinkCron, setOpenedLinkCron] = useState(false)
     const [linkCron, setLinkCron] = useState<PromptArgs['linkCron']>()
 
+    const [openedNewPin, setOpenedNewPin] = useState(false)
+    const [newPin, setNewPin] = useState<PromptArgs['newPin']>()
+
     return {
         context: {
             confirm: (...args) => {
@@ -65,6 +70,10 @@ const usePromptContext = (): { context: PromptContext, modal: ReactNode } => {
                 setOpenedLinkCron(true)
                 setLinkCron(args)
             },
+            newPin: (...args) => {
+                setOpenedNewPin(true)
+                setNewPin(args)
+            }
         },
         modal: (
             <>
@@ -94,6 +103,16 @@ const usePromptContext = (): { context: PromptContext, modal: ReactNode } => {
                         newCron?.[0](cron)
                         setNewCron(undefined)
                     }}
+                />
+                <NewPin
+                    opened={openedNewPin}
+                    initialPin={newPin?.[2]}
+                    onClose={(pin) => {
+                        setOpenedNewPin(false)
+                        newPin?.[0](pin)
+                        setNewPin(undefined)
+                    }}
+                    usedPins={newPin?.[1] || {}}
                 />
                 <LinkSequence
                     opened={openedLinkSequence}
