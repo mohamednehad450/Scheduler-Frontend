@@ -1,9 +1,8 @@
 import { Menu, MenuItem, useMantineTheme } from "@mantine/core";
-import { useDebouncedValue } from "@mantine/hooks";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { Circle, Edit, Trash } from "tabler-icons-react";
 import { PinDbType } from "../../Scheduler/src/db";
-import NewPin from "./NewPin";
+import { usePrompt } from "../context";
 
 interface ChannelRowProps {
     pin: PinDbType
@@ -16,9 +15,7 @@ interface ChannelRowProps {
 const ChannelRow: FC<ChannelRowProps> = ({ pin, isRunning, remove, onChange }) => {
 
     const theme = useMantineTheme()
-    const [editPin, setEditPin] = useState(false)
-    const [debouncedEditPin] = useDebouncedValue(editPin, 100)
-
+    const prompt = usePrompt()
 
     return (
         <>
@@ -30,7 +27,7 @@ const ChannelRow: FC<ChannelRowProps> = ({ pin, isRunning, remove, onChange }) =
                 <td>
                     <Menu>
                         <MenuItem
-                            onClick={() => setEditPin(true)}
+                            onClick={() => prompt?.newPin((newPin) => newPin && onChange(newPin), {}, pin)}
                             icon={<Edit size={16} />}
                         >
                             Edit
@@ -45,17 +42,6 @@ const ChannelRow: FC<ChannelRowProps> = ({ pin, isRunning, remove, onChange }) =
                     </Menu>
                 </td>
             </tr>
-            {editPin && (
-                <NewPin
-                    opened={debouncedEditPin}
-                    onClose={(pin) => {
-                        setEditPin(false)
-                        pin && onChange(pin)
-                    }}
-                    usedPins={{}}
-                    initialPin={pin}
-                />
-            )}
         </>
     )
 }

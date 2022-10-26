@@ -1,12 +1,10 @@
 import { ActionIcon, Button, Container, Divider, Group, ScrollArea, Table, Text } from "@mantine/core";
-import { useDebouncedValue } from "@mantine/hooks";
 import { FC, useEffect, useState } from "react";
-import { Plus, Refresh } from "tabler-icons-react";
+import { Alarm, Plus, Refresh } from "tabler-icons-react";
 import { pinsCRUD } from "../../api";
 import { PinDbType } from "../../Scheduler/src/db";
-import { ChannelChangeHandler, DeviceState, DeviceStateHandler, useSocket } from "../context";
+import { ChannelChangeHandler, DeviceState, DeviceStateHandler, usePrompt, useSocket } from "../context";
 import ChannelRow from "./ChannelRow";
-import NewPin from "./NewPin";
 
 
 const Channels: FC = () => {
@@ -14,9 +12,8 @@ const Channels: FC = () => {
     const [pins, setPins] = useState<PinDbType[]>([])
     const [channelsStatus, setChannelsStatus] = useState<DeviceState['channelsStatus']>([])
 
-    const [newPin, setNewPin] = useState(false)
-    const [debouncedNewPin] = useDebouncedValue(newPin, 100)
     const socket = useSocket()
+    const prompt = usePrompt()
 
 
     useEffect(() => {
@@ -48,7 +45,15 @@ const Channels: FC = () => {
                     <ActionIcon size={24} onClick={() => pinsCRUD.list().then(d => setPins(d.data))} >
                         <Refresh size={24} />
                     </ActionIcon>
-                    <ActionIcon size={24} onClick={() => setNewPin(true)} >
+                    <ActionIcon
+                        size={24}
+                        onClick={() =>
+                            prompt?.newPin(
+                                () => pinsCRUD.list().then(d => setPins(d.data)),
+                                pins.reduce((acc, pin) => ({ ...acc, [pin.channel]: true }), {})
+                            )
+                        }
+                    >
                         <Plus size={24} />
                     </ActionIcon>
                 </Group>
@@ -103,22 +108,18 @@ const Channels: FC = () => {
                     }}
                 >
                     <Text>No pins defined</Text>
-                    <Button onClick={() => setNewPin(true)} variant="subtle">Define new pins</Button>
+                    <Button
+                        onClick={() =>
+                            prompt?.newPin(
+                                () => pinsCRUD.list().then(d => setPins(d.data)),
+                                pins.reduce((acc, pin) => ({ ...acc, [pin.channel]: true }), {})
+                            )
+                        }
+                        variant="subtle"
+                    >
+                        Define new pins
+                    </Button>
                 </div>
-            )}
-            {newPin && (
-                <NewPin
-                    opened={debouncedNewPin}
-                    onClose={() => {
-                        setNewPin(false)
-                        pinsCRUD.list()
-                            .then(d => setPins(d.data))
-                            .catch(err => {
-                                // TODO
-                            })
-                    }}
-                    usedPins={pins.reduce((acc, pin) => ({ ...acc, [pin.channel]: true }), {})}
-                />
             )}
         </Container>
     )
