@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react"
 import { io, Socket } from "socket.io-client"
 import type { PinDbType, SequenceDBType } from "../../../Scheduler/src/db"
 import os from 'os'
+import { useAuth } from "../auth"
 
 enum ACTIONS {
     RUN = "run",
@@ -40,9 +41,10 @@ const useSocket = () => useContext(socketContext)
 const useSocketContext = (): Socket | undefined => {
 
     const [socket, setSocket] = useState<Socket>()
-
+    const auth = useAuth()
     useEffect(() => {
-        const s = io(`http://${os.hostname()}:8000`)
+        if (auth?.state !== "signedIn") return
+        const s = io(`http://${os.hostname()}:8000`, { auth: { token: auth?.token }, })
         s.on('connect', () => {
             setSocket(s)
         })
@@ -53,7 +55,7 @@ const useSocketContext = (): Socket | undefined => {
             s.removeAllListeners()
             setSocket(undefined)
         }
-    }, [])
+    }, [auth?.token, auth?.state])
 
 
     return socket
