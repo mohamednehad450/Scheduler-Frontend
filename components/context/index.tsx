@@ -1,4 +1,6 @@
 import { FC, PropsWithChildren } from "react";
+import { ProvideAuth, useAuth } from "./auth";
+import { ProvideCRUD, useCRUD } from "./CRUD";
 import { ProvidePrompt, usePrompt } from "./prompt";
 import { ProvideSocket, useSocket, TickHandler, DeviceState, DeviceStateHandler, ChannelChangeHandler, } from './socket'
 
@@ -6,11 +8,15 @@ import { ProvideSocket, useSocket, TickHandler, DeviceState, DeviceStateHandler,
 const AppContext: FC<PropsWithChildren<{}>> = ({ children }) => {
 
     return (
-        <ProvidePrompt>
-            <ProvideSocket>
-                {children}
-            </ProvideSocket>
-        </ProvidePrompt>
+        <ProvideAuth>
+            <ProvideCRUD>
+                <ProvidePrompt>
+                    <ProvideSocket>
+                        {children}
+                    </ProvideSocket>
+                </ProvidePrompt>
+            </ProvideCRUD>
+        </ProvideAuth>
     )
 }
 
@@ -18,8 +24,9 @@ export {
     AppContext,
     useSocket,
     usePrompt,
+    useAuth,
+    useCRUD,
 }
-
 export type {
     DeviceState,
     DeviceStateHandler,
