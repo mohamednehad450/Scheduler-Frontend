@@ -1,9 +1,9 @@
 import { Divider, Container, Group, ScrollArea, Table, Text, ActionIcon, LoadingOverlay, useMantineTheme } from "@mantine/core"
 import { FC, useEffect, useState } from "react"
 import { Refresh, Trash } from "tabler-icons-react"
-import { sequenceEvents } from "../../api"
 import { usePrompt } from "../context"
 import type { SequenceDBType, SequenceEventDBType } from "../../Scheduler/src/db"
+import { useCRUD } from "../context"
 
 
 interface SequenceActivitiesProps {
@@ -23,8 +23,11 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
 
     const prompt = usePrompt()
 
+    const crud = useCRUD()
+
+
     useEffect(() => {
-        sequenceEvents.listByIdPromise(sequence.id)
+        crud?.sequenceEvents?.listById(sequence.id)
             .then(d => d.data && setEvents(d.data))
             .catch(err => {
                 //TODO
@@ -32,7 +35,7 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
             .finally(() => {
                 setLoading(false)
             })
-    }, [sequence])
+    }, [sequence, crud])
     return (
         <Container style={{ display: 'flex', flexDirection: 'column', height: "100%" }}>
             <LoadingOverlay visible={loading} />
@@ -41,7 +44,7 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
                 <Group>
                     <ActionIcon size={24} onClick={() => {
                         setLoading(true)
-                        sequenceEvents.listByIdPromise(sequence.id)
+                        crud?.sequenceEvents?.listById(sequence.id)
                             .then(d => {
                                 setEvents(d.data)
                             })
@@ -58,7 +61,7 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
                         color="red"
                         size={24}
                         onClick={() =>
-                            prompt?.confirm((confirmed) => confirmed && sequenceEvents.deleteByIdPromise(sequence.id)
+                            prompt?.confirm((confirmed) => confirmed && crud?.sequenceEvents?.deleteById(sequence.id)
                                 .then(d => {
                                     setEvents([])
                                 })

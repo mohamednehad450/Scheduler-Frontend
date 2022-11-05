@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { SequenceDBType } from '../../Scheduler/src/db'
 import { OrdersPreview, SequenceActions, SequenceActivities, SequenceTriggers } from '../../components/sequences'
-import { sequenceCRUD } from '../../api'
+import { useCRUD } from '../../components/context'
 
 
 
@@ -25,8 +25,13 @@ const g2 = {
 }
 
 const Sequence: NextPage = () => {
+
   const router = useRouter()
   const [sequence, setSequence] = useState<SequenceDBType>()
+
+  const crud = useCRUD()
+
+
   useEffect(() => {
     if (!router.query.id) return
     if (Array.isArray(router.query.id) || isNaN(Number(router.query.id))) {
@@ -34,13 +39,13 @@ const Sequence: NextPage = () => {
       return
     }
     const id = Number(router.query.id)
-    sequenceCRUD.get(id)
+    crud?.sequenceCRUD?.get(id)
       .then(d => { d.data ? setSequence(d.data) : router.push('/sequences/') })
       .catch(err => {
         router.push('/sequences')
         return
       })
-  }, [router.query])
+  }, [router.query, crud])
 
   return (
     <>

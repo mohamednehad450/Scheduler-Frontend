@@ -1,8 +1,8 @@
 import { Button, Divider, Group, Modal, Radio, RadioGroup, Select, TextInput } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
-import { pinsCRUD } from "../../api";
 import { PinDbType } from "../../Scheduler/src/db";
 import { LoadingButton } from "../common";
+import { useCRUD } from "../context";
 
 
 
@@ -53,6 +53,8 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, initialPin, usedPins: initU
         channel: '',
         label: '',
     })
+
+    const crud = useCRUD()
 
     useEffect(() => {
         setErr({
@@ -126,7 +128,7 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, initialPin, usedPins: initU
                         }
 
                         if (pin.label && pin.channel) {
-                            pinsCRUD.add(pin)
+                            crud?.pinsCRUD?.add(pin)
                                 .then((d) => {
                                     onDone()
                                     setPin({
@@ -158,8 +160,8 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, initialPin, usedPins: initU
                         }
 
                         if (pin.label && pin.channel) {
-                            const res = initialPin ? pinsCRUD.update(pin.channel, { label: pin.label, onState: pin.onState }) : pinsCRUD.add(pin)
-                            res.then((r) => {
+                            const res = initialPin ? crud?.pinsCRUD?.update(pin.channel, { label: pin.label, onState: pin.onState }) : crud?.pinsCRUD?.add(pin)
+                            res && res.then((r) => {
                                 onDone()
                                 initialPin ? onClose(r.data) : onClose()
                             })

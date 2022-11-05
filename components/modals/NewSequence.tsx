@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from "react";
 import { pinsCRUD, sequenceCRUD } from "../../api";
 import { PinDbType, SequenceDBType } from "../../Scheduler/src/db";
 import { LoadingButton } from "../common";
-import { usePrompt } from "../context";
+import { useCRUD, usePrompt } from "../context";
 import OrdersInput, { OrderInput } from "./OrdersInput";
 
 
@@ -33,13 +33,14 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
     })
     const [pins, setPins] = useState<PinDbType[]>([])
 
+    const crud = useCRUD()
 
     const prompt = usePrompt()
 
 
     useEffect(() => {
         if (opened) {
-            pinsCRUD.list()
+            crud?.pinsCRUD?.list()
                 .then(d => setPins(d.data))
             setSequence({
                 name: initialSequence?.name || '',
@@ -51,7 +52,7 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
                 orders: '',
             })
         }
-    }, [opened])
+    }, [opened, crud])
 
 
     useEffect(() => {
@@ -126,9 +127,9 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
                             return
                         }
                         const func = initialSequence ?
-                            sequenceCRUD.update(initialSequence.id, sequence) :
-                            sequenceCRUD.add(sequence)
-                        func
+                            crud?.sequenceCRUD?.update(initialSequence.id, sequence) :
+                            crud?.sequenceCRUD?.add(sequence)
+                        func && func
                             .then(({ data: newSeq }) => {
                                 if (initialSequence) {
                                     onClose(newSeq)

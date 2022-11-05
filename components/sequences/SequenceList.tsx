@@ -4,8 +4,8 @@ import type { SequenceDBType } from '../../Scheduler/src/db'
 import { DeviceState, DeviceStateHandler, usePrompt, useSocket } from '../context'
 import SequenceRow from './SequenceRow'
 import { v4 } from 'uuid'
-import { sequenceCRUD } from '../../api'
 import { useRouter } from 'next/router'
+import { useCRUD } from '../context'
 
 interface SequenceListProps {
     sequences: SequenceDBType[]
@@ -18,6 +18,8 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
 
     const socket = useSocket()
     const [runningSequences, setRunningSequences] = useState<DeviceState['runningSequences']>([])
+
+    const crud = useCRUD()
 
     const router = useRouter()
     const prompt = usePrompt()
@@ -69,7 +71,7 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
                             sequence={s}
                             remove={(id) =>
                                 prompt?.confirm((confirmed) =>
-                                    confirmed && sequenceCRUD.remove(id)
+                                    confirmed && crud?.sequenceCRUD?.remove(id)
                                         .then(() => {
                                             onChange(sequences.filter((seq) => id !== seq.id))
                                         })

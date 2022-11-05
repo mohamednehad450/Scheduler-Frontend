@@ -1,9 +1,9 @@
 import { Button, Divider, Group, Modal, Text, TextInput, useMantineTheme } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
-import { cronCRUD } from "../../api";
 import { CronDbType } from "../../Scheduler/src/db";
 import cronstrue from 'cronstrue'
 import CronInput from "./CronInput";
+import { useCRUD } from "../context";
 
 interface NewCronProps {
     opened: boolean
@@ -15,6 +15,7 @@ interface NewCronProps {
 const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
 
     const theme = useMantineTheme()
+    const crud = useCRUD()
 
     const [label, setLabel] = useState(initCron?.label || '')
     const [cron, setCron] = useState(initCron?.cron || '* * * * *')
@@ -70,12 +71,11 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
                             return
                         }
 
-                        const func = () => initCron ?
-                            cronCRUD.update(initCron.id, { label, cron }) :
-                            cronCRUD.add({ label, cron })
-                        func()
+                        const func = async () => initCron ? crud?.cronCRUD?.update(initCron.id, { label, cron }) : crud?.cronCRUD?.add({ label, cron });
+
+                        func && func()
                             .then(d => {
-                                onClose(d.data)
+                                d?.data && onClose(d.data)
                             })
                             .catch(err => {
                                 // TODO

@@ -1,9 +1,8 @@
 import { ActionIcon, Container, Divider, Group, LoadingOverlay, ScrollArea, Table, Text } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
-import { Plus, Refresh, Trash } from "tabler-icons-react";
-import { sequenceEvents } from "../../api";
+import { Refresh, Trash } from "tabler-icons-react";
 import { SequenceEventDBType } from "../../Scheduler/src/db";
-import { usePrompt } from "../context";
+import { useCRUD, usePrompt } from "../context";
 
 
 
@@ -13,8 +12,10 @@ const Events: FC = () => {
     const [loading, setLoading] = useState(true)
     const prompt = usePrompt()
 
+    const crud = useCRUD()
+
     useEffect(() => {
-        sequenceEvents.listAllPromise()
+        crud?.sequenceEvents?.listAll()
             .then(d => {
                 setEvents(d.data)
             })
@@ -24,7 +25,7 @@ const Events: FC = () => {
             .finally(() => {
                 setLoading(false)
             })
-    }, [])
+    }, [crud])
 
     return (
         <Container my="0" px="sm" py="0" style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch', }} >
@@ -34,7 +35,7 @@ const Events: FC = () => {
                 <Group>
                     <ActionIcon size={24} onClick={() => {
                         setLoading(true)
-                        sequenceEvents.listAllPromise()
+                        crud?.sequenceEvents?.listAll()
                             .then(d => {
                                 setEvents(d.data)
                             })
@@ -52,7 +53,7 @@ const Events: FC = () => {
                         size={24}
                         onClick={() =>
                             prompt?.confirm((confirmed) =>
-                                confirmed && sequenceEvents.deleteAllPromise()
+                                confirmed && crud?.sequenceEvents?.deleteAll()
                                     .then(d => {
                                         setEvents([])
                                     })

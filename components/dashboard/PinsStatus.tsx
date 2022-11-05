@@ -1,8 +1,7 @@
 import { Button, Card, Group, LoadingOverlay, Tabs, Text } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
-import { pinsCRUD } from "../../api";
 import { PinDbType, SequenceDBType } from "../../Scheduler/src/db";
-import { DeviceState, DeviceStateHandler, ChannelChangeHandler, useSocket, usePrompt } from "../context";
+import { DeviceState, DeviceStateHandler, ChannelChangeHandler, useSocket, usePrompt, useAuth, useCRUD } from "../context";
 import PinStatusRow from "./PinStatusRow";
 import ScrollList from "./ScrollList";
 
@@ -12,6 +11,7 @@ const PinsStatus: FC<{ sequences: SequenceDBType[] }> = ({ sequences }) => {
 
     const socket = useSocket()
     const prompt = usePrompt()
+    const crud = useCRUD()
 
     const [pins, setPins] = useState<PinDbType[]>([])
     const [channelsStatus, setChannelsStatus] = useState<DeviceState['channelsStatus']>()
@@ -19,7 +19,7 @@ const PinsStatus: FC<{ sequences: SequenceDBType[] }> = ({ sequences }) => {
 
     useEffect(() => {
         if (!socket) return
-        pinsCRUD.list()
+        crud?.pinsCRUD?.list()
             .then(d => setPins(d.data))
 
         const handleState: DeviceStateHandler = ({ reservedPins, channelsStatus }) => {
@@ -36,7 +36,7 @@ const PinsStatus: FC<{ sequences: SequenceDBType[] }> = ({ sequences }) => {
             socket?.removeListener('state', handleState)
             socket?.removeListener('channelChange', handleChannelChange)
         }
-    }, [socket])
+    }, [socket, crud])
 
 
     return (
@@ -52,7 +52,7 @@ const PinsStatus: FC<{ sequences: SequenceDBType[] }> = ({ sequences }) => {
                                 <Text>No pins defined</Text>
                                 <Button
                                     onClick={() => prompt?.newPin(
-                                        () => pinsCRUD.list().then(d => setPins(d.data)),
+                                        () => crud?.pinsCRUD?.list().then(d => setPins(d.data)),
                                         pins.reduce((acc, pin) => ({ ...acc, [pin.channel]: true }), {})
                                     )}
                                     variant="subtle"

@@ -3,10 +3,10 @@ import { useRouter } from "next/router"
 import { FC, useEffect, useState } from "react"
 import { CalendarEvent, CalendarOff, Edit, Link, PlayerPause, PlayerPlay, Trash } from "tabler-icons-react"
 import { v4 } from "uuid"
-import { sequenceCRUD } from "../../api"
 import { SequenceDBType } from "../../Scheduler/src/db"
 import { LoadingButton } from "../common"
 import { DeviceState, DeviceStateHandler, usePrompt, useSocket } from "../context"
+import { useCRUD } from "../context"
 
 
 const g = {
@@ -47,6 +47,9 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
 
     const prompt = usePrompt()
     const socket = useSocket()
+
+    const crud = useCRUD()
+
     const [runningSequences, setRunningSequences] = useState<DeviceState['runningSequences']>([])
 
     useEffect(() => {
@@ -97,7 +100,7 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                         <Grid.Col {...g}>
                             <Group direction="column" style={{ alignItems: 'stretch' }}>
                                 <LoadingButton p={0} onClick={(onDone) => {
-                                    sequenceCRUD.update(sequence?.id, { active: !sequence.active })
+                                    crud?.sequenceCRUD?.update(sequence?.id, { active: !sequence.active })
                                         .then(d => {
                                             onDone()
                                             onChange(d.data)
@@ -158,7 +161,7 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                                             if (!confirmed) {
                                                 return
                                             }
-                                            sequenceCRUD.remove(sequence?.id)
+                                            crud?.sequenceCRUD?.remove(sequence?.id)
                                                 .then(() => router.back())
                                                 .catch(err => {
                                                     // TODO

@@ -1,10 +1,9 @@
 import { Group, Text, ActionIcon, Tooltip, MediaQuery, Menu } from '@mantine/core'
-import { FC, MouseEventHandler, useState } from 'react'
+import { FC, MouseEventHandler } from 'react'
 import { Calendar, CalendarOff, Edit, PlayerPause, PlayerPlay, Trash, } from 'tabler-icons-react';
 import type { SequenceDBType } from '../../Scheduler/src/db'
 import { useRouter } from 'next/router';
-import { sequenceCRUD } from '../../api';
-import { usePrompt } from '../context';
+import { useCRUD, usePrompt } from '../context';
 
 const stopPropagation: (cb?: MouseEventHandler) => MouseEventHandler = (cb) => (e) => {
     e.stopPropagation()
@@ -25,15 +24,16 @@ const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, rem
 
     const router = useRouter()
     const prompt = usePrompt()
+    const crud = useCRUD()
 
-    const updateSequence = () => sequenceCRUD.get(sequence.id)
+    const updateSequence = () => crud?.sequenceCRUD?.get(sequence.id)
         .then(d => d.data && onChange(d.data))
         .catch(err => {
             // TODO
         })
     const toggleRun = () => isRunning ? stop(sequence.id, updateSequence) : run(sequence.id, updateSequence)
     const toggleActive = () =>
-        sequenceCRUD.update(sequence.id, { active: !sequence.active })
+        crud?.sequenceCRUD?.update(sequence.id, { active: !sequence.active })
             .then(d => d.data && onChange(d.data))
             .catch(err => {
                 // TODO

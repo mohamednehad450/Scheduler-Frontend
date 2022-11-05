@@ -5,9 +5,9 @@ import { useEffect, useState } from 'react'
 import { Calendar, CalendarOff, List, Plus, Refresh, } from 'tabler-icons-react';
 import { SequenceList } from '../../components/sequences'
 import { SequenceDBType } from '../../Scheduler/src/db'
-import { sequenceCRUD } from '../../api'
 import { usePrompt } from '../../components/context';
 import { useRouter } from 'next/router';
+import { useCRUD } from '../../components/context';
 
 
 const lists: ('all' | 'active' | 'running')[] = ['all', 'active', 'running']
@@ -17,11 +17,12 @@ const Sequences: NextPage = () => {
 
     const router = useRouter()
     const prompt = usePrompt()
+    const crud = useCRUD()
 
     useEffect(() => {
-        sequenceCRUD.list()
+        crud?.sequenceCRUD?.list()
             .then(d => setSequences(d.data))
-    }, [])
+    }, [crud])
 
 
     return (
@@ -51,7 +52,7 @@ const Sequences: NextPage = () => {
                             mx="xs"
                             onClick={() => {
                                 setSequences([])
-                                sequenceCRUD.list()
+                                crud?.sequenceCRUD?.list()
                                     .then(d => setSequences(d.data))
                             }}
                         >

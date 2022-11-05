@@ -2,10 +2,10 @@ import { Grid, Container, } from '@mantine/core'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import { pinsCRUD, sequenceCRUD } from '../api'
+import { useCRUD } from '../components/context'
 import { useSocket } from '../components/context'
 import { DeviceTime, PinsStatus, Sequences } from '../components/dashboard'
-import { PinDbType, SequenceDBType } from '../Scheduler/src/db'
+import { SequenceDBType } from '../Scheduler/src/db'
 
 const g = {
   sm: 12,
@@ -21,11 +21,13 @@ const Home: NextPage = () => {
   const [sequences, setSequences] = useState<SequenceDBType[]>([])
   const socket = useSocket()
 
+  const crud = useCRUD()
+
   useEffect(() => {
     if (!socket) return
-    sequenceCRUD.list()
+    crud?.sequenceCRUD?.list()
       .then(d => setSequences(d.data))
-  }, [socket])
+  }, [socket, crud])
 
   return (
     <>

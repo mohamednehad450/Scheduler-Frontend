@@ -1,9 +1,8 @@
 import { Accordion, AccordionItem, ActionIcon, Button, Container, Divider, Group, ScrollArea, Text, useMantineTheme } from "@mantine/core";
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { Plus, Refresh } from "tabler-icons-react";
-import { cronCRUD } from "../../api";
 import { CronDbType } from "../../Scheduler/src/db";
-import { usePrompt } from "../context";
+import { useCRUD, usePrompt } from "../context";
 import CronRow from "./CronRow";
 
 
@@ -15,13 +14,14 @@ const CronTriggers: FC = () => {
     const [crons, setCrons] = useState<CronDbType[]>([])
 
     const prompt = usePrompt()
+    const crud = useCRUD()
 
-    const refresh = () => cronCRUD.list()
-        .then(d => setCrons(d.data))
+    const refresh = useCallback(() => crud?.cronCRUD?.list()
+        .then(d => setCrons(d.data)), [crud])
 
     useEffect(() => {
         refresh()
-    }, [])
+    }, [refresh])
 
 
     return (
@@ -71,7 +71,7 @@ const CronTriggers: FC = () => {
                                     remove={id =>
                                         prompt?.confirm(confirmed =>
                                             confirmed &&
-                                            cronCRUD.remove(id)
+                                            crud?.cronCRUD?.remove(id)
                                                 .then(() => setCrons(cs => cs.filter(c => c.id !== id)))
                                                 .catch(err => {
                                                     // TODO

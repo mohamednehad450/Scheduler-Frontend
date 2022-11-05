@@ -1,9 +1,8 @@
 import { ActionIcon, Button, Container, Divider, Group, ScrollArea, Table, Text } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
-import { Alarm, Plus, Refresh } from "tabler-icons-react";
-import { pinsCRUD } from "../../api";
+import { Plus, Refresh } from "tabler-icons-react";
 import { PinDbType } from "../../Scheduler/src/db";
-import { ChannelChangeHandler, DeviceState, DeviceStateHandler, usePrompt, useSocket } from "../context";
+import { ChannelChangeHandler, DeviceState, DeviceStateHandler, useCRUD, usePrompt, useSocket } from "../context";
 import ChannelRow from "./ChannelRow";
 
 
@@ -14,6 +13,7 @@ const Channels: FC = () => {
 
     const socket = useSocket()
     const prompt = usePrompt()
+    const crud = useCRUD()
 
 
     useEffect(() => {
@@ -32,9 +32,9 @@ const Channels: FC = () => {
     }, [socket])
 
     useEffect(() => {
-        pinsCRUD.list()
+        crud?.pinsCRUD?.list()
             .then(d => setPins(d.data))
-    }, [])
+    }, [crud])
 
 
     return (
@@ -42,14 +42,14 @@ const Channels: FC = () => {
             <Group py="xs" position="apart">
                 <Text size='xl'>{"Pins"}</Text>
                 <Group>
-                    <ActionIcon size={24} onClick={() => pinsCRUD.list().then(d => setPins(d.data))} >
+                    <ActionIcon size={24} onClick={() => crud?.pinsCRUD?.list().then(d => setPins(d.data))} >
                         <Refresh size={24} />
                     </ActionIcon>
                     <ActionIcon
                         size={24}
                         onClick={() =>
                             prompt?.newPin(
-                                () => pinsCRUD.list().then(d => setPins(d.data)),
+                                () => crud?.pinsCRUD?.list().then(d => setPins(d.data)),
                                 pins.reduce((acc, pin) => ({ ...acc, [pin.channel]: true }), {})
                             )
                         }
@@ -75,7 +75,7 @@ const Channels: FC = () => {
                                     })}
                                     pin={p}
                                     remove={(id) =>
-                                        pinsCRUD.remove(id)
+                                        crud?.pinsCRUD?.remove(id)
                                             .then(() => setPins(pins =>
                                                 pins.filter(({ channel }) => id !== channel)))
                                             .catch(() => {
@@ -111,7 +111,7 @@ const Channels: FC = () => {
                     <Button
                         onClick={() =>
                             prompt?.newPin(
-                                () => pinsCRUD.list().then(d => setPins(d.data)),
+                                () => crud?.pinsCRUD?.list().then(d => setPins(d.data)),
                                 pins.reduce((acc, pin) => ({ ...acc, [pin.channel]: true }), {})
                             )
                         }

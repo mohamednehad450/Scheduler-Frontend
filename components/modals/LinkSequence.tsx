@@ -1,8 +1,7 @@
 import { Button, Group, Modal, MultiSelect } from "@mantine/core"
 import { FC, useEffect, useState } from "react"
-import { cronCRUD, cronSequence } from "../../api"
 import { CronDbType, SequenceDBType } from "../../Scheduler/src/db"
-import { usePrompt } from "../context"
+import { useCRUD, usePrompt } from "../context"
 
 
 interface LinkSequenceProps {
@@ -19,15 +18,16 @@ const LinkSequence: FC<LinkSequenceProps> = ({ opened, onClose, initialCrons, se
     const [cronsIds, setCronsIds] = useState<CronDbType['id'][]>(initialCrons || [])
 
     const prompt = usePrompt()
+    const crud = useCRUD()
 
     useEffect(() => {
         if (opened) {
-            cronCRUD.list()
+            crud?.cronCRUD?.list()
                 .then(({ data }) => setCrons(data))
             setCronsIds(initialCrons || [])
         }
 
-    }, [opened])
+    }, [opened, crud])
 
     return (
         <Modal
@@ -65,7 +65,7 @@ const LinkSequence: FC<LinkSequenceProps> = ({ opened, onClose, initialCrons, se
                     Cancel
                 </Button>
                 <Button
-                    onClick={() => cronSequence.linkSequencePromise(sequenceId, cronsIds).then(onClose)}
+                    onClick={() => crud?.cronSequence?.linkSequence(sequenceId, cronsIds).then(r => onClose(r.data))}
                 >
                     {"Submit"}
                 </Button>
