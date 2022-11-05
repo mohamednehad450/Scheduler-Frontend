@@ -48,7 +48,7 @@ const useAuthContext = (): AuthContext | undefined => {
 
 
     const login = async (username: string, password: string) => {
-        auth.login({ username, password })
+        return auth.login({ username, password })
             .then(d => {
                 setState('signedIn')
                 setUsername(d.data.username)
@@ -65,7 +65,7 @@ const useAuthContext = (): AuthContext | undefined => {
     }
 
     const register = async (username: string, password: string) => {
-        auth.register({ username, password })
+        return auth.register({ username, password })
             .then(d => {
                 setState('signedIn')
                 setUsername(d.data.username)
