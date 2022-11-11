@@ -1,14 +1,14 @@
 import { createContext, ReactNode, useContext, useState } from "react"
-import { CronDbType, PinDbType, SequenceDBType } from "../../../Scheduler/src/db"
+import { Cron, Pin, Sequence } from "../../common"
 import { ConfirmModal, NewSequence, NewCron, LinkSequence, LinkCron, NewPin } from "../../modals"
 
 interface PromptArgs {
     confirm: [onDone: (confirmed: boolean) => void, message?: string]
-    newSequence: [onDone: (newSeq?: SequenceDBType) => void, initialSequence?: SequenceDBType]
-    newCron: [onDone: (newCron?: CronDbType) => void, initialCron?: CronDbType]
-    newPin: [onDone: (newPin?: PinDbType) => void, usedPins: { [key: PinDbType['channel']]: true }, initialPin?: PinDbType]
-    linkSequence: [onDone: (seq?: SequenceDBType) => void, sequenceId: SequenceDBType['id'], initialIds?: CronDbType['id'][]]
-    linkCron: [onDone: (cron?: CronDbType) => void, cronId: CronDbType['id'], initialIds?: SequenceDBType['id'][]]
+    newSequence: [onDone: (newSeq?: Sequence) => void, initialSequence?: Sequence]
+    newCron: [onDone: (newCron?: Cron) => void, initialCron?: Cron]
+    newPin: [onDone: (newPin?: Pin) => void, usedPins: { [key: Pin['channel']]: true }, initialPin?: Pin]
+    linkSequence: [onDone: (seq?: Sequence) => void, sequenceId: Sequence['id'], initialIds?: Cron['id'][]]
+    linkCron: [onDone: (cron?: Cron) => void, cronId: Cron['id'], initialIds?: Sequence['id'][]]
 }
 
 

@@ -1,21 +1,21 @@
 import { Button, Group, Modal, MultiSelect } from "@mantine/core"
 import { FC, useEffect, useState } from "react"
-import { CronDbType, SequenceDBType } from "../../Scheduler/src/db"
+import { Cron, Sequence } from "../common"
 import { useCRUD } from "../context"
 
 
 interface LinkCronProps {
     opened: boolean
-    onClose: (cron?: CronDbType) => void
-    cronId: CronDbType['id']
-    initialSequences?: SequenceDBType['id'][]
+    onClose: (cron?: Cron) => void
+    cronId: Cron['id']
+    initialSequences?: Sequence['id'][]
 }
 
 
 const LinkCron: FC<LinkCronProps> = ({ opened, onClose, initialSequences, cronId }) => {
 
-    const [sequences, setSequences] = useState<SequenceDBType[]>([])
-    const [sequencesIds, setSequencesIds] = useState<SequenceDBType['id'][]>(initialSequences || [])
+    const [sequences, setSequences] = useState<Sequence[]>([])
+    const [sequencesIds, setSequencesIds] = useState<Sequence['id'][]>(initialSequences || [])
 
     const crud = useCRUD()
 

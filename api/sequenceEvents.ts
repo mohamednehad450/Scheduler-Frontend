@@ -1,6 +1,6 @@
 import { Events, } from "./utils";
-import type { SequenceEventDBType, } from '../Scheduler/src/db'
+import type { SequenceEvent } from '../components/common'
 
 const url = '/api/events/sequences'
 
-export default new Events<SequenceEventDBType['id'], SequenceEventDBType>(url) 
+export default new Events<SequenceEvent['id'], SequenceEvent>(url) 

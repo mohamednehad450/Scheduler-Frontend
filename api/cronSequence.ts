@@ -1,5 +1,5 @@
 import axios from "axios"
-import { CronDbType, SequenceDBType } from "../Scheduler/src/db"
+import { Cron, Sequence } from "../components/common"
 
 const url = '/api/link'
 
@@ -8,11 +8,11 @@ const url = '/api/link'
 
 class CronSequence {
 
-    linkCron = (id: CronDbType['id'], sequencesIds: SequenceDBType['id'][], token: string) =>
-        axios.post<CronDbType>(url + "/cron/" + id, sequencesIds, { params: { token } })
+    linkCron = (id: Cron['id'], sequencesIds: Sequence['id'][], token: string) =>
+        axios.post<Cron>(url + "/cron/" + id, sequencesIds, { params: { token } })
 
-    linkSequence = (id: SequenceDBType['id'], cronsIds: CronDbType['id'][], token: string) =>
-        axios.post<SequenceDBType>(url + "/sequence/" + id, cronsIds, { params: { token } })
+    linkSequence = (id: Sequence['id'], cronsIds: Cron['id'][], token: string) =>
+        axios.post<Sequence>(url + "/sequence/" + id, cronsIds, { params: { token } })
 
 }
 

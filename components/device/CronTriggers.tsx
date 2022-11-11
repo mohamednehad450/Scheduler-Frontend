@@ -1,7 +1,7 @@
 import { Accordion, AccordionItem, ActionIcon, Button, Container, Divider, Group, ScrollArea, Text, useMantineTheme } from "@mantine/core";
 import { FC, useCallback, useEffect, useState } from "react";
 import { Plus, Refresh } from "tabler-icons-react";
-import { CronDbType } from "../../Scheduler/src/db";
+import { Cron } from "../common";
 import { useCRUD, usePrompt } from "../context";
 import CronRow from "./CronRow";
 
@@ -11,7 +11,7 @@ const CronTriggers: FC = () => {
 
     const theme = useMantineTheme()
 
-    const [crons, setCrons] = useState<CronDbType[]>([])
+    const [crons, setCrons] = useState<Cron[]>([])
 
     const prompt = usePrompt()
     const crud = useCRUD()

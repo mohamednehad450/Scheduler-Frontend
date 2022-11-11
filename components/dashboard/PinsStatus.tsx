@@ -1,19 +1,19 @@
 import { Button, Card, Group, LoadingOverlay, Tabs, Text } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
-import { PinDbType, SequenceDBType } from "../../Scheduler/src/db";
+import { Pin, Sequence } from "../common";
 import { DeviceState, DeviceStateHandler, ChannelChangeHandler, useSocket, usePrompt, useAuth, useCRUD } from "../context";
 import PinStatusRow from "./PinStatusRow";
 import ScrollList from "./ScrollList";
 
 
 
-const PinsStatus: FC<{ sequences: SequenceDBType[] }> = ({ sequences }) => {
+const PinsStatus: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
 
     const socket = useSocket()
     const prompt = usePrompt()
     const crud = useCRUD()
 
-    const [pins, setPins] = useState<PinDbType[]>([])
+    const [pins, setPins] = useState<Pin[]>([])
     const [channelsStatus, setChannelsStatus] = useState<DeviceState['channelsStatus']>()
     const [reservedPins, setReservedPins] = useState<DeviceState['reservedPins']>()
 

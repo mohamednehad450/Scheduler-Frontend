@@ -1,16 +1,15 @@
 import { Button, Divider, Group, Modal, Radio, RadioGroup, Select, TextInput } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
-import { PinDbType } from "../../Scheduler/src/db";
-import { LoadingButton } from "../common";
+import { LoadingButton, Pin } from "../common";
 import { useCRUD } from "../context";
 
 
 
 interface NewPinsProps {
     opened: boolean
-    initialPin?: PinDbType
-    onClose: (pin?: PinDbType) => void
-    usedPins: { [key: PinDbType['channel']]: true }
+    initialPin?: Pin
+    onClose: (pin?: Pin) => void
+    usedPins: { [key: Pin['channel']]: true }
 }
 
 const channels = [
@@ -44,7 +43,7 @@ const channels = [
 
 const NewPin: FC<NewPinsProps> = ({ opened, onClose, initialPin, usedPins: initUsedPins }) => {
 
-    const [pin, setPin] = useState<Partial<PinDbType>>(initialPin || {
+    const [pin, setPin] = useState<Partial<Pin>>(initialPin || {
         label: '',
         onState: "HIGH"
     })

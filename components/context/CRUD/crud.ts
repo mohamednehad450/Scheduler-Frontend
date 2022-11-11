@@ -7,7 +7,7 @@ import {
     sequenceCRUD as sequenceCRUDNoAuth,
     sequenceEvents as sequenceEventsNoAuth,
 } from "../../../api";
-import { CronDbType, PinDbType, SequenceDBType, SequenceEventDBType, } from "../../../Scheduler/src/db";
+import { Cron, Sequence, SequenceEvent, Pin } from "../../common";
 
 
 interface CRUD<K, T> {
@@ -26,18 +26,18 @@ interface Events<K, T> {
     listAll: () => Promise<{ data: T[] }>
 }
 
-interface CronSequence {
-    linkCron: (id: CronDbType['id'], sequencesIds: SequenceDBType['id'][]) => Promise<{ data: CronDbType }>
-    linkSequence: (id: SequenceDBType['id'], cronsIds: CronDbType['id'][]) => Promise<{ data: SequenceDBType }>
+interface CronSequenceCRUD {
+    linkCron: (id: Cron['id'], sequencesIds: Sequence['id'][]) => Promise<{ data: Cron }>
+    linkSequence: (id: Sequence['id'], cronsIds: Cron['id'][]) => Promise<{ data: Sequence }>
 }
 
 
 interface CRUDContext {
-    pinsCRUD?: CRUD<PinDbType['channel'], PinDbType>
-    sequenceCRUD?: CRUD<SequenceDBType['id'], SequenceDBType>
-    cronCRUD?: CRUD<CronDbType['id'], CronDbType>
-    sequenceEvents?: Events<SequenceEventDBType['id'], SequenceEventDBType>
-    cronSequence?: CronSequence
+    pinsCRUD?: CRUD<Pin['channel'], Pin>
+    sequenceCRUD?: CRUD<Sequence['id'], Sequence>
+    cronCRUD?: CRUD<Cron['id'], Cron>
+    sequenceEvents?: Events<SequenceEvent['id'], SequenceEvent>
+    cronSequence?: CronSequenceCRUD
 }
 
 

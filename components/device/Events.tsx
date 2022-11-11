@@ -1,14 +1,14 @@
 import { ActionIcon, Container, Divider, Group, LoadingOverlay, ScrollArea, Table, Text } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import { Refresh, Trash } from "tabler-icons-react";
-import { SequenceEventDBType } from "../../Scheduler/src/db";
+import { SequenceEvent } from "../common";
 import { useCRUD, usePrompt } from "../context";
 
 
 
 const Events: FC = () => {
 
-    const [events, setEvents] = useState<SequenceEventDBType[]>([])
+    const [events, setEvents] = useState<SequenceEvent[]>([])
     const [loading, setLoading] = useState(true)
     const prompt = usePrompt()
 

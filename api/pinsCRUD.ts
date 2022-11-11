@@ -1,6 +1,6 @@
 import { CRUD } from "./utils";
-import type { PinDbType, } from '../Scheduler/src/db'
+import type { Pin, } from '../components/common'
 
 const url = `/api/pin`
 
-export default new CRUD<PinDbType['channel'], PinDbType>(url)
+export default new CRUD<Pin['channel'], Pin>(url)

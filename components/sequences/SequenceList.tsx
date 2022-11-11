@@ -1,6 +1,6 @@
 import { Button, Group, Table, Text } from '@mantine/core'
 import { FC, useEffect, useState } from 'react'
-import type { SequenceDBType } from '../../Scheduler/src/db'
+import type { Sequence } from '../common'
 import { DeviceState, DeviceStateHandler, usePrompt, useSocket } from '../context'
 import SequenceRow from './SequenceRow'
 import { v4 } from 'uuid'
@@ -8,8 +8,8 @@ import { useRouter } from 'next/router'
 import { useCRUD } from '../context'
 
 interface SequenceListProps {
-    sequences: SequenceDBType[]
-    onChange: (sequences: SequenceDBType[]) => void
+    sequences: Sequence[]
+    onChange: (sequences: Sequence[]) => void
     show: 'running' | 'active' | 'all'
 }
 

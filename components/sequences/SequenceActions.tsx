@@ -3,8 +3,7 @@ import { useRouter } from "next/router"
 import { FC, useEffect, useState } from "react"
 import { CalendarEvent, CalendarOff, Edit, Link, PlayerPause, PlayerPlay, Trash } from "tabler-icons-react"
 import { v4 } from "uuid"
-import { SequenceDBType } from "../../Scheduler/src/db"
-import { LoadingButton } from "../common"
+import { LoadingButton, Sequence } from "../common"
 import { DeviceState, DeviceStateHandler, usePrompt, useSocket } from "../context"
 import { useCRUD } from "../context"
 
@@ -38,8 +37,8 @@ const g2 = {
 
 
 interface SequenceActionsProps {
-    sequence: SequenceDBType
-    onChange: (s: SequenceDBType) => void
+    sequence: Sequence
+    onChange: (s: Sequence) => void
 }
 
 

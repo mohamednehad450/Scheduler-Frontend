@@ -1,14 +1,14 @@
 import { Button, Divider, Group, Modal, Text, TextInput, useMantineTheme } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
-import { CronDbType } from "../../Scheduler/src/db";
+import { Cron } from "../common";
 import cronstrue from 'cronstrue'
 import CronInput from "./CronInput";
 import { useCRUD } from "../context";
 
 interface NewCronProps {
     opened: boolean
-    onClose: (newCron?: CronDbType) => void
-    initCron?: CronDbType
+    onClose: (newCron?: Cron) => void
+    initCron?: Cron
 }
 
 

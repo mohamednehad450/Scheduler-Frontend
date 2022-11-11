@@ -1,7 +1,7 @@
 import { Group, Text, ActionIcon, Tooltip, MediaQuery, Menu } from '@mantine/core'
 import { FC, MouseEventHandler } from 'react'
 import { Calendar, CalendarOff, Edit, PlayerPause, PlayerPlay, Trash, } from 'tabler-icons-react';
-import type { SequenceDBType } from '../../Scheduler/src/db'
+import type { Sequence } from '../common'
 import { useRouter } from 'next/router';
 import { useCRUD, usePrompt } from '../context';
 
@@ -11,12 +11,12 @@ const stopPropagation: (cb?: MouseEventHandler) => MouseEventHandler = (cb) => (
 }
 
 interface SequenceRowProps {
-    sequence: SequenceDBType,
+    sequence: Sequence,
     isRunning: boolean,
-    run: (id: SequenceDBType['id'], onDone?: () => void) => void
-    stop: (id: SequenceDBType['id'], onDone?: () => void) => void
-    remove: (id: SequenceDBType['id']) => void
-    onChange: (seq: SequenceDBType) => void
+    run: (id: Sequence['id'], onDone?: () => void) => void
+    stop: (id: Sequence['id'], onDone?: () => void) => void
+    remove: (id: Sequence['id']) => void
+    onChange: (seq: Sequence) => void
 }
 
 

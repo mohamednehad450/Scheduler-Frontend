@@ -1,16 +1,16 @@
 import { Button, Divider, Group, Table, Text } from "@mantine/core";
 import { FC } from "react";
 import { Edit, Link, Trash } from "tabler-icons-react";
-import { CronDbType } from "../../Scheduler/src/db";
+import { Cron } from "../common";
 import cronstrue from 'cronstrue'
 import { nextCronDates } from "../common";
 import { useRouter } from "next/router";
 import { usePrompt } from "../context";
 
 interface CronRowProps {
-    cron: CronDbType,
-    onChange: (cron: CronDbType) => void
-    remove: (id: CronDbType['id']) => void
+    cron: Cron,
+    onChange: (cron: Cron) => void
+    remove: (id: Cron['id']) => void
 }
 
 const CronRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {

@@ -1,14 +1,14 @@
 import { Menu, MenuItem, useMantineTheme } from "@mantine/core";
 import { FC } from "react";
 import { Circle, Edit, Trash } from "tabler-icons-react";
-import { PinDbType } from "../../Scheduler/src/db";
+import { Pin } from "../common";
 import { usePrompt } from "../context";
 
 interface ChannelRowProps {
-    pin: PinDbType
+    pin: Pin
     isRunning: boolean
-    remove: (id: PinDbType['channel']) => void
-    onChange: (pin: PinDbType) => void
+    remove: (id: Pin['channel']) => void
+    onChange: (pin: Pin) => void
 }
 
 

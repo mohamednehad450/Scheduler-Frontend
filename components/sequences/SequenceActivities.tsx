@@ -2,12 +2,12 @@ import { Divider, Container, Group, ScrollArea, Table, Text, ActionIcon, Loading
 import { FC, useEffect, useState } from "react"
 import { Refresh, Trash } from "tabler-icons-react"
 import { usePrompt } from "../context"
-import type { SequenceDBType, SequenceEventDBType } from "../../Scheduler/src/db"
+import type { Sequence, SequenceEvent } from "../common"
 import { useCRUD } from "../context"
 
 
 interface SequenceActivitiesProps {
-    sequence: SequenceDBType
+    sequence: Sequence
 }
 
 const capitalizeFirst = (s: string) => {
@@ -19,7 +19,7 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
 
     const theme = useMantineTheme()
     const [loading, setLoading] = useState(true)
-    const [events, setEvents] = useState<SequenceEventDBType[]>([])
+    const [events, setEvents] = useState<SequenceEvent[]>([])
 
     const prompt = usePrompt()
 

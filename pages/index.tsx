@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { useCRUD } from '../components/context'
 import { useSocket } from '../components/context'
 import { DeviceTime, PinsStatus, Sequences } from '../components/dashboard'
-import { SequenceDBType } from '../Scheduler/src/db'
+import { Sequence } from '../components/common'
 
 const g = {
   sm: 12,
@@ -18,7 +18,7 @@ const g = {
 
 const Home: NextPage = () => {
 
-  const [sequences, setSequences] = useState<SequenceDBType[]>([])
+  const [sequences, setSequences] = useState<Sequence[]>([])
   const socket = useSocket()
 
   const crud = useCRUD()

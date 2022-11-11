@@ -1,6 +1,6 @@
 import { CRUD, } from "./utils";
-import type { SequenceDBType, } from '../Scheduler/src/db'
+import type { Sequence } from '../components/common'
 
 const url = '/api/sequence'
 
-export default new CRUD<SequenceDBType['id'], SequenceDBType>(url)
+export default new CRUD<Sequence['id'], Sequence>(url)

@@ -4,7 +4,7 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { Calendar, CalendarOff, List, Plus, Refresh, } from 'tabler-icons-react';
 import { SequenceList } from '../../components/sequences'
-import { SequenceDBType } from '../../Scheduler/src/db'
+import { Sequence } from '../../components/common'
 import { usePrompt } from '../../components/context';
 import { useRouter } from 'next/router';
 import { useCRUD } from '../../components/context';
@@ -13,7 +13,7 @@ import { useCRUD } from '../../components/context';
 const lists: ('all' | 'active' | 'running')[] = ['all', 'active', 'running']
 const Sequences: NextPage = () => {
     const [active, setActive] = useState(0)
-    const [sequences, setSequences] = useState<SequenceDBType[]>([])
+    const [sequences, setSequences] = useState<Sequence[]>([])
 
     const router = useRouter()
     const prompt = usePrompt()

@@ -1,10 +1,9 @@
 import { Accordion, AccordionItem, Container, Divider, Group, ScrollArea, Tab, Table, Tabs, Text } from "@mantine/core";
 import { FC } from "react";
-import { SequenceDBType } from "../../Scheduler/src/db";
-import { nextCronDates } from "../common";
+import { nextCronDates, Sequence } from "../common";
 
 interface SequenceTriggersProps {
-    cronTriggers: SequenceDBType['CronSequence']
+    cronTriggers: Sequence['CronSequence']
 }
 
 

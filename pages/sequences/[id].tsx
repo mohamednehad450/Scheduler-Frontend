@@ -3,7 +3,7 @@ import { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { SequenceDBType } from '../../Scheduler/src/db'
+import { Sequence } from '../../components/common'
 import { OrdersPreview, SequenceActions, SequenceActivities, SequenceTriggers } from '../../components/sequences'
 import { useCRUD } from '../../components/context'
 
@@ -27,7 +27,7 @@ const g2 = {
 const Sequence: NextPage = () => {
 
   const router = useRouter()
-  const [sequence, setSequence] = useState<SequenceDBType>()
+  const [sequence, setSequence] = useState<Sequence>()
 
   const crud = useCRUD()
 

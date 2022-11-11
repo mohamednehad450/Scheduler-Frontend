@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react"
 import { auth, cronSequence, CRUD, Events } from "../../../api"
-import { CronDbType, SequenceDBType } from "../../../Scheduler/src/db"
+import { Cron, Sequence } from '../../common'
 
 interface AuthContext {
     token: string
@@ -128,8 +128,8 @@ const useCronSequenceWithAuth = (cs: typeof cronSequence) => {
     const token = auth.token
 
     return {
-        linkCron: (id: CronDbType['id'], sequencesIds: SequenceDBType['id'][]) => cs.linkCron(id, sequencesIds, token),
-        linkSequence: (id: SequenceDBType['id'], cronsIds: CronDbType['id'][]) => cs.linkSequence(id, cronsIds, token),
+        linkCron: (id: Cron['id'], sequencesIds: Sequence['id'][]) => cs.linkCron(id, sequencesIds, token),
+        linkSequence: (id: Sequence['id'], cronsIds: Cron['id'][]) => cs.linkSequence(id, cronsIds, token),
     }
 }
 

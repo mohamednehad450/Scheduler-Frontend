@@ -1,14 +1,14 @@
 import { ActionIcon, Button, Container, Divider, Group, ScrollArea, Table, Text } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import { Plus, Refresh } from "tabler-icons-react";
-import { PinDbType } from "../../Scheduler/src/db";
+import { Pin } from "../common";
 import { ChannelChangeHandler, DeviceState, DeviceStateHandler, useCRUD, usePrompt, useSocket } from "../context";
 import ChannelRow from "./ChannelRow";
 
 
 const Channels: FC = () => {
 
-    const [pins, setPins] = useState<PinDbType[]>([])
+    const [pins, setPins] = useState<Pin[]>([])
     const [channelsStatus, setChannelsStatus] = useState<DeviceState['channelsStatus']>([])
 
     const socket = useSocket()

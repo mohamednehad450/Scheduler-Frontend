@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { SequenceDBType } from '../../Scheduler/src/db'
+import { Sequence } from '../common'
 import { Container, Divider, Group, MediaQuery, ScrollArea, Text, useMantineTheme } from '@mantine/core'
 import { scaleBand, scaleLinear } from 'd3-scale'
 import PeriodMark from './PeriodMark'
@@ -7,7 +7,7 @@ import PeriodTrack from './PeriodTrack'
 import PeriodTicks from './PeriodTicks'
 
 interface OrdersPreviewProps {
-    orders: SequenceDBType['orders']
+    orders: Sequence['orders']
 }
 
 

@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react"
 import { io, Socket } from "socket.io-client"
-import type { PinDbType, SequenceDBType } from "../../../Scheduler/src/db"
+import type { Pin, Sequence } from "../../../components/common"
 import os from 'os'
 import { useAuth } from "../auth"
 
@@ -11,9 +11,9 @@ enum ACTIONS {
 }
 
 type DeviceState = {
-    runningSequences: SequenceDBType['id'][]
-    channelsStatus: { [key: PinDbType['channel']]: boolean },
-    reservedPins: { pin: PinDbType, sequenceId: SequenceDBType['id'] }[]
+    runningSequences: Sequence['id'][]
+    channelsStatus: { [key: Pin['channel']]: boolean },
+    reservedPins: { pin: Pin, sequenceId: Sequence['id'] }[]
 }
 
 type DeviceStateHandler = (state: Partial<DeviceState>) => void

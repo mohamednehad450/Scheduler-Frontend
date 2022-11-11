@@ -1,8 +1,6 @@
 import { Button, Divider, Group, Modal, ScrollArea, Switch, TextInput } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
-import { pinsCRUD, sequenceCRUD } from "../../api";
-import { PinDbType, SequenceDBType } from "../../Scheduler/src/db";
-import { LoadingButton } from "../common";
+import { Pin, Sequence, LoadingButton } from "../common";
 import { useCRUD, usePrompt } from "../context";
 import OrdersInput, { OrderInput } from "./OrdersInput";
 
@@ -15,8 +13,8 @@ type SequenceInput = {
 
 interface NewSequenceProps {
     opened: boolean,
-    onClose: (newSeq?: SequenceDBType) => void,
-    initialSequence?: SequenceDBType
+    onClose: (newSeq?: Sequence) => void,
+    initialSequence?: Sequence
 }
 
 
@@ -31,7 +29,7 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
         name: '',
         orders: ''
     })
-    const [pins, setPins] = useState<PinDbType[]>([])
+    const [pins, setPins] = useState<Pin[]>([])
 
     const crud = useCRUD()
 

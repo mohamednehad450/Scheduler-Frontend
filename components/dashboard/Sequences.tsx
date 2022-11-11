@@ -1,12 +1,12 @@
 import { Card, Divider, Group, Tabs, Text, } from "@mantine/core";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
-import { SequenceDBType } from "../../Scheduler/src/db";
+import { Sequence } from "../common";
 import { DeviceState, DeviceStateHandler, useSocket } from "../context";
 import ScrollList from "./ScrollList";
 
 
-const Sequences: FC<{ sequences: SequenceDBType[] }> = ({ sequences }) => {
+const Sequences: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
 
     const socket = useSocket()
     const router = useRouter()

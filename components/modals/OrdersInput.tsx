@@ -1,12 +1,12 @@
 import { ActionIcon, Group, Select, } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import { Plus } from "tabler-icons-react";
-import { PinDbType } from "../../Scheduler/src/db";
+import { Pin } from "../common";
 import DurationInput from "./DurationInput";
 import TrackInput from "./TrackInput";
 
 export type OrderInput = {
-    channel: PinDbType['channel']
+    channel: Pin['channel']
     duration: number
     offset: number
 }
@@ -14,7 +14,7 @@ export type OrderInput = {
 
 interface OrdersInputProps {
     orders: OrderInput[],
-    pins: PinDbType[]
+    pins: Pin[]
     onChange: (os: OrderInput[]) => void
     error?: string
 }
@@ -41,7 +41,7 @@ const formatTimeLabel = (ms: number): string => {
 
 }
 
-const update = (map: { [key: PinDbType['channel']]: [number, number][] }, maxX: number): OrderInput[] =>
+const update = (map: { [key: Pin['channel']]: [number, number][] }, maxX: number): OrderInput[] =>
     [...Object.keys(map)]
         .flatMap((channel) =>
             map[Number(channel)].map(([x1, x2]) => ({ channel: Number(channel), duration: Math.round((x2 - x1) * maxX), offset: Math.round(x1 * maxX) })));
@@ -70,7 +70,7 @@ const sortOrder = (a: [number, number], b: [number, number]) => a[0] > b[0] ? 1 
 const OrdersInput: FC<OrdersInputProps> = ({ orders, onChange, error, pins }) => {
 
 
-    const [channelMap, setChannelMap] = useState<{ [key: PinDbType['channel']]: [number, number][] }>({})
+    const [channelMap, setChannelMap] = useState<{ [key: Pin['channel']]: [number, number][] }>({})
     const [maxX, setMaxX] = useState(Math.max(...(orders.length ? orders.map(o => o.duration + o.offset) : [30 * 60 * 1000])))
     const [step, setStep] = useState(1000)
     const [sequenceLength, setSequenceLength] = useState<{ value: string, label: string }[]>([...defaultSequenceLength])
@@ -81,7 +81,7 @@ const OrdersInput: FC<OrdersInputProps> = ({ orders, onChange, error, pins }) =>
 
     // Sort orders by channel 
     useEffect(() => {
-        const map: { [key: PinDbType['channel']]: [number, number][] } = {}
+        const map: { [key: Pin['channel']]: [number, number][] } = {}
         orders.forEach(o => {
             if (map[o.channel]) {
                 map[o.channel] = map[o.channel].concat([[o.offset / maxX, (o.offset + o.duration) / maxX]]).sort(sortOrder)
