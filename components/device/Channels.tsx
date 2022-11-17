@@ -42,6 +42,9 @@ const Channels: FC = () => {
             <Group py="xs" position="apart">
                 <Text size='xl'>{"Pins"}</Text>
                 <Group>
+                    <Button onClick={() => prompt?.confirm((confirmed) => confirmed && socket?.emit('reset'))} variant="subtle">
+                        Reset all pins
+                    </Button>
                     <ActionIcon size={24} onClick={() => crud?.pinsCRUD?.list().then(d => setPins(d.data))} >
                         <Refresh size={24} />
                     </ActionIcon>
