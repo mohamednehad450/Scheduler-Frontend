@@ -1,0 +1,24 @@
+services:
+  frontend:
+    image: mohamednehad450/scheduler-frontend:1.0
+    ports:
+      - "3000:3000"
+    networks:
+      - backend
+  backend:
+    image: mohamednehad450/scheduler-backend:1.0
+    ports:
+      - "8000:8000"
+    volumes:
+      - /sys:/sys # Expose the GPIO interface
+      - db:/server/prisma
+    networks:
+      - backend
+    environment:
+      - TOKEN_KEY=<YOUR TOKEN KEY HERE>
+volumes:
+  db:
+    driver: local
+
+networks:
+  backend: {}
