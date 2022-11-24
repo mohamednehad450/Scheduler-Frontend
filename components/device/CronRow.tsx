@@ -78,7 +78,7 @@ const CronRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
                                     {sequence.name}
                                 </td>
                                 <td>
-                                    {sequence.active ? t("activated") : t('deactivated')}
+                                    {sequence.active ? `${t("activated")}` : t('deactivated')}
                                 </td>
                             </tr>
                         ))}

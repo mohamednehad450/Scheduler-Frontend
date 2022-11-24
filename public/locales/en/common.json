@@ -38,7 +38,7 @@
     "ran_at": "Ran at",
     "sequences_title": "Sequences - Pi Scheduler",
     "all": "All",
-    "activated": "Activated",
+    "the_activated": "Activated",
     "running": "Running",
     "name": "Name",
     "last_run": "Last Run",
@@ -138,5 +138,7 @@
     "pick_pin_channel": "Pick pin channel",
     "select_pin_on_state": "Select pin on state",
     "required_channel": "You must select a channel",
-    "submit_add_another": "Submit & add another"
+    "submit_add_another": "Submit & add another",
+    "activated": "Activated",
+    "deactivated": "Deactivated"
 }

@@ -38,7 +38,7 @@
     "ran_at": "وقت البدأ",
     "sequences_title": "التسلسلات - مؤقت باي",
     "all": "الكل",
-    "activated": "المفعلة",
+    "the_activated": "المفعلة",
     "running": "الجارية",
     "name": "الاسم",
     "last_run": "آخر تشغيلة",
@@ -138,5 +138,7 @@
     "pick_pin_channel": "اختر رقم القناة",
     "select_pin_on_state": "اختر حالة تشغيل القناة",
     "required_channel": "يجب اخيار رقم القناة",
-    "submit_add_another": "حفظ واضافة اخرى"
+    "submit_add_another": "حفظ واضافة اخرى",
+    "activated": "مفعل",
+    "deactivated": "معطل"
 }

@@ -65,7 +65,7 @@ const Sequences: NextPage = () => {
                 </Group>
                 <Tabs variant='outline' active={active} onTabChange={setActive} tabPadding={0} >
                     <Tabs.Tab label={t("all")} icon={<List size={16} />} />
-                    <Tabs.Tab label={t("activated")} icon={<Calendar size={16} />} />
+                    <Tabs.Tab label={t("the_activated")} icon={<Calendar size={16} />} />
                     <Tabs.Tab label={t("running")} icon={<CalendarOff size={16} />} />
                 </Tabs>
                 <Container
