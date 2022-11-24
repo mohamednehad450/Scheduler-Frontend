@@ -16,9 +16,12 @@
     "cron": "^2.1.0",
     "cronstrue": "^2.11.0",
     "d3-scale": "^4.0.2",
+    "i18next": "^22.0.6",
     "next": "12.1.6",
+    "next-i18next": "^13.0.0",
     "react": "18.1.0",
     "react-dom": "18.1.0",
+    "react-i18next": "^12.0.0",
     "socket.io-client": "^4.5.1",
     "tabler-icons-react": "^1.48.1",
     "uuid": "^9.0.0"
