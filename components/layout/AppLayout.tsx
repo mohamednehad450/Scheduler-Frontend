@@ -4,6 +4,7 @@ import Nav from "./Nav";
 import Header from "./Header";
 import { useAuth } from "../context";
 import SignInCard from "./SignInCard";
+import { useTranslation, } from "react-i18next";
 
 
 const AppLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
@@ -13,29 +14,21 @@ const AppLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
     const [opened, setOpened] = useState(false)
 
     return (
-        <MantineProvider
-            withGlobalStyles
-            withNormalizeCSS
-            theme={{
-                /** Put your mantine theme override here */
-                colorScheme: 'light',
+        <AppShell
+            styles={{
+                root: { direction: theme.dir },
+                main: {
+                    background: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
+                },
             }}
+            navbarOffsetBreakpoint="sm"
+            fixed
+            navbar={auth?.state === "signedIn" ? (<Nav opened={opened} setOpened={setOpened} />) : undefined}
+            header={<Header opened={opened} setOpened={setOpened} />}
+            padding={0}
         >
-            <AppShell
-                styles={{
-                    main: {
-                        background: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
-                    },
-                }}
-                navbarOffsetBreakpoint="sm"
-                fixed
-                navbar={auth?.state === "signedIn" ? (<Nav opened={opened} setOpened={setOpened} />) : undefined}
-                header={<Header opened={opened} setOpened={setOpened} />}
-                padding={0}
-            >
-                {auth?.state === "signedIn" ? children : <SignInCard />}
-            </AppShell>
-        </MantineProvider>
+            {auth?.state === "signedIn" ? children : <SignInCard />}
+        </AppShell>
     )
 }
 

@@ -6,6 +6,7 @@ import cronstrue from 'cronstrue'
 import { nextCronDates } from "../common";
 import { useRouter } from "next/router";
 import { usePrompt } from "../context";
+import { useTranslation } from "react-i18next";
 
 interface CronRowProps {
     cron: Cron,
@@ -18,28 +19,30 @@ const CronRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
     const router = useRouter()
     const prompt = usePrompt()
 
+    const { t } = useTranslation()
+
     return (
         <>
             <Group direction="column" py="sm">
-                <Text size="sm" color={'gray'}>Preview</Text>
+                <Text size="sm" color={'gray'}>{t("schedule_description")}</Text>
                 <Text>
                     {cronstrue.toString(cron.cron, { monthStartIndexZero: true })}
                 </Text>
             </Group>
             <Divider />
             <Group direction="column" py="sm">
-                <Text size="sm" color={'gray'}>Actions</Text>
+                <Text size="sm" color={'gray'}>{t("actions")}</Text>
                 <Group>
                     <Button variant="light" onClick={() => prompt?.newCron(newCron => newCron && onChange(newCron), cron)}>
                         <Group position="center">
                             <Edit size="16" />
-                            Edit
+                            {t('edit')}
                         </Group>
                     </Button>
                     <Button variant="light" onClick={() => prompt?.linkCron(newCron => newCron && onChange(newCron), cron.id, cron.CronSequence.map(s => s.sequence.id))}>
                         <Group position="center">
                             <Link size="16" />
-                            Link
+                            {t("link")}
                         </Group>
                     </Button>
                     <Button
@@ -49,19 +52,19 @@ const CronRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
                     >
                         <Group position="center">
                             <Trash size="16" />
-                            Delete
+                            {t("delete")}
                         </Group>
                     </Button>
                 </Group>
             </Group>
             <Divider />
             <Group direction="column" py="sm">
-                <Text size="sm" color={'gray'}>Linked Sequences</Text>
+                <Text size="sm" color={'gray'}>{t("linked_sequences")}</Text>
                 {cron.CronSequence.length ? (<Table highlightOnHover striped>
                     <thead>
                         <tr>
-                            <th>Sequence</th>
-                            <th>Status</th>
+                            <th style={{ textAlign: 'start' }}>{t("sequence")}</th>
+                            <th style={{ textAlign: 'start' }}>{t("status")}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -75,23 +78,23 @@ const CronRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
                                     {sequence.name}
                                 </td>
                                 <td>
-                                    {sequence.active ? "Activated" : 'Deactivated'}
+                                    {sequence.active ? t("activated") : t('deactivated')}
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </Table>) :
-                    (<Text>No Linked Sequences</Text>)
+                    (<Text>{t("no_linked_sequences")}</Text>)
                 }
             </Group>
             <Divider />
             <Group direction="column" py="sm">
-                <Text size="sm" color={'gray'}>Next Trigger dates</Text>
+                <Text size="sm" color={'gray'}>{t("next_trigger_dates")}</Text>
                 <Table highlightOnHover striped>
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>Time</th>
+                            <th style={{ textAlign: 'start' }}>{t('date')}</th>
+                            <th style={{ textAlign: 'start' }}>{t("time")}</th>
                         </tr>
                     </thead>
                     <tbody>

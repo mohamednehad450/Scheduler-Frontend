@@ -4,6 +4,7 @@ import { Calendar, CalendarOff, Edit, PlayerPause, PlayerPlay, Trash, } from 'ta
 import type { Sequence } from '../common'
 import { useRouter } from 'next/router';
 import { useCRUD, usePrompt } from '../context';
+import { useTranslation } from 'react-i18next';
 
 const stopPropagation: (cb?: MouseEventHandler) => MouseEventHandler = (cb) => (e) => {
     e.stopPropagation()
@@ -25,6 +26,7 @@ const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, rem
     const router = useRouter()
     const prompt = usePrompt()
     const crud = useCRUD()
+    const { t } = useTranslation()
 
     const updateSequence = () => crud?.sequenceCRUD?.get(sequence.id)
         .then(d => d.data && onChange(d.data))
@@ -46,15 +48,15 @@ const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, rem
                 <Text weight={'bold'}>{sequence.name}</Text>
             </td>
             <td>
-                <Text >{sequence.lastRun ? new Date(sequence.lastRun).toLocaleString() : 'Never'}</Text>
+                <Text >{sequence.lastRun ? new Date(sequence.lastRun).toLocaleString() : t('never_run')}</Text>
             </td>
             <td>
-                <Text >{sequence.CronSequence.length ? sequence.CronSequence.length + " triggers" : "no triggers"} </Text>
+                <Text >{sequence.CronSequence.length ? sequence.CronSequence.length + " " + t('triggers') : t('zero_triggers')} </Text>
             </td>
             <td onClick={stopPropagation()}>
                 <MediaQuery smallerThan={'md'} styles={{ display: 'none' }}>
                     <Group>
-                        <Tooltip label={isRunning ? 'Stop' : "Run"} withArrow>
+                        <Tooltip label={isRunning ? t('stop') : t('run')} withArrow>
                             <ActionIcon
                                 variant="default"
                                 onClick={toggleRun}
@@ -65,7 +67,7 @@ const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, rem
                                 }
                             </ActionIcon>
                         </Tooltip>
-                        <Tooltip label={sequence.active ? 'Deactivate' : "Activate"} withArrow>
+                        <Tooltip label={sequence.active ? t('deactivate') : t("activate")} withArrow>
                             <ActionIcon
                                 variant='default'
                                 onClick={toggleActive}
@@ -76,7 +78,7 @@ const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, rem
                                 }
                             </ActionIcon>
                         </Tooltip>
-                        <Tooltip label={"Edit"} withArrow>
+                        <Tooltip label={t('edit')} withArrow>
                             <ActionIcon
                                 variant='default'
                                 onClick={edit}
@@ -84,7 +86,7 @@ const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, rem
                                 <Edit size={16} />
                             </ActionIcon>
                         </Tooltip>
-                        <Tooltip label={"Delete"} withArrow>
+                        <Tooltip label={t('delete')} withArrow>
                             <ActionIcon
                                 variant='default'
                                 color={'red'}
@@ -97,7 +99,7 @@ const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, rem
                 </MediaQuery>
                 <MediaQuery largerThan={'md'} styles={{ display: 'none' }} >
                     <Menu >
-                        <Menu.Label>Actions</Menu.Label>
+                        <Menu.Label>{t("actions")}</Menu.Label>
                         <Menu.Item
                             onClick={toggleRun}
                             icon={isRunning ?
@@ -105,7 +107,7 @@ const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, rem
                                 < PlayerPlay size={16} />
                             }
                         >
-                            {isRunning ? "Stop" : "Run"}
+                            {isRunning ? t("stop") : t("run")}
                         </Menu.Item>
                         <Menu.Item
                             onClick={toggleActive}
@@ -115,22 +117,22 @@ const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, rem
                             }
                         >
                             {sequence.active ?
-                                "Deactivate" :
-                                "Activate"
+                                t("deactivate") :
+                                t("activate")
                             }
                         </Menu.Item>
                         <Menu.Item
                             onClick={edit}
                             icon={<Edit size={16} />}
                         >
-                            Edit
+                            {t("edit")}
                         </Menu.Item>
                         <Menu.Item
                             onClick={() => remove(sequence.id)}
                             color={"red"}
                             icon={<Trash size={16} />}
                         >
-                            Delete
+                            {t("delete")}
                         </Menu.Item>
                     </Menu>
                 </MediaQuery>

@@ -1,5 +1,6 @@
 import { Accordion, AccordionItem, ActionIcon, Button, Container, Divider, Group, ScrollArea, Text, useMantineTheme } from "@mantine/core";
 import { FC, useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus, Refresh } from "tabler-icons-react";
 import { Cron } from "../common";
 import { useCRUD, usePrompt } from "../context";
@@ -10,6 +11,7 @@ import CronRow from "./CronRow";
 const CronTriggers: FC = () => {
 
     const theme = useMantineTheme()
+    const { t } = useTranslation()
 
     const [crons, setCrons] = useState<Cron[]>([])
 
@@ -27,7 +29,7 @@ const CronTriggers: FC = () => {
     return (
         <Container my="0" px="sm" py="0" style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch', }} >
             <Group py="xs" position="apart">
-                <Text size='xl'>{"Cron Triggers"}</Text>
+                <Text size='xl'>{t("schedules")}</Text>
                 <Group>
                     <ActionIcon
                         size={24}
@@ -93,8 +95,8 @@ const CronTriggers: FC = () => {
                         justifyContent: 'center',
                     }}
                 >
-                    <Text>No cron triggers</Text>
-                    <Button onClick={() => prompt?.newCron((cron) => cron && setCrons(cs => [cron, ...cs]))} variant="subtle">Add new cron</Button>
+                    <Text>{t('no_schedules_defined')}</Text>
+                    <Button onClick={() => prompt?.newCron((cron) => cron && setCrons(cs => [cron, ...cs]))} variant="subtle">{t("add_new_schedule")}</Button>
                 </div>
             )}
         </Container>

@@ -1,5 +1,6 @@
 import { Button, Divider, Group, Modal, ScrollArea, Switch, TextInput } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Pin, Sequence, LoadingButton } from "../common";
 import { useCRUD, usePrompt } from "../context";
 import OrdersInput, { OrderInput } from "./OrdersInput";
@@ -35,6 +36,8 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
 
     const prompt = usePrompt()
 
+    const { t } = useTranslation()
+
 
     useEffect(() => {
         if (opened) {
@@ -66,7 +69,7 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
             size={'xl'}
             opened={opened}
             onClose={() => onClose()}
-            title={initialSequence ? `Edit ${initialSequence.name}` : "Add New Sequence"}
+            title={initialSequence ? `${t('edit')} ${initialSequence.name}` : t('add_new_sequence')}
             overflow="inside"
         >
             <Divider pt="md" />
@@ -78,15 +81,16 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
                         required
                         value={sequence.name}
                         onChange={(e) => setSequence(s => ({ ...s, name: e.target.value }))}
-                        label="Name"
+                        label={t("name")}
                         error={error.name}
                     />
                     <Switch
                         px="md"
                         mt="xl"
+                        dir="ltr"
                         checked={sequence.active}
                         onChange={(e) => setSequence(s => ({ ...s, active: e.target.checked }))}
-                        label="Active"
+                        label={t("active")}
                     />
                 </Group>
                 <Group p="xs">
@@ -105,7 +109,7 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
                     variant='subtle'
                     onClick={() => onClose()}
                 >
-                    Cancel
+                    {t("cancel")}
                 </Button>
                 <LoadingButton
                     styles={{ root: { minWidth: '6rem' } }}
@@ -113,11 +117,11 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
                     onClick={(onDone) => {
                         let err = false
                         if (!sequence.name) {
-                            setError(e => ({ ...e, name: 'You must provide a name.' }))
+                            setError(e => ({ ...e, name: t("required_name") }))
                             err = true
                         }
                         if (sequence.orders.length < 1) {
-                            setError(e => ({ ...e, orders: 'You must add at least 1 channel' }))
+                            setError(e => ({ ...e, orders: t("min_orders") }))
                             err = true
                         }
                         if (err) {
@@ -137,7 +141,7 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
                                         confirmed ?
                                             prompt.linkSequence((seq) => onClose(seq || newSeq), newSeq.id) :
                                             onClose(newSeq)
-                                    }, 'Link cron triggers to this sequence?')
+                                    }, `${t("link_sequence_schedule")}`)
                                 }
                             })
                             .catch(err => {
@@ -146,7 +150,7 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
                             .finally(() => onDone())
                     }}
                 >
-                    Submit
+                    {t("submit")}
                 </LoadingButton>
             </Group>
         </Modal>

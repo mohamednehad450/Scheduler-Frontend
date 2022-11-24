@@ -1,12 +1,13 @@
 import { Grid, Container, } from '@mantine/core'
-import type { NextPage } from 'next'
+import type { GetStaticProps, NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { useCRUD } from '../components/context'
 import { useSocket } from '../components/context'
 import { DeviceTime, PinsStatus, Sequences } from '../components/dashboard'
 import { Sequence } from '../components/common'
-
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next'
 const g = {
   sm: 12,
   md: 6,
@@ -23,6 +24,8 @@ const Home: NextPage = () => {
 
   const crud = useCRUD()
 
+  const { t } = useTranslation()
+
   useEffect(() => {
     if (!socket) return
     crud?.sequenceCRUD?.list()
@@ -33,7 +36,7 @@ const Home: NextPage = () => {
     <>
       <Head>
         <title>
-          Scheduler: Dashboard
+          {t('dashboard_title')}
         </title>
       </Head>
       <Container size={'lg'} m="sm" p="sm">
@@ -52,5 +55,11 @@ const Home: NextPage = () => {
     </>
   )
 }
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: {
+    ...await serverSideTranslations(locale ?? 'en', ['common']),
+  },
+})
 
 export default Home

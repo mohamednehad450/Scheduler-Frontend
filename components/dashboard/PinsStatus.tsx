@@ -1,5 +1,6 @@
 import { Button, Card, Group, LoadingOverlay, Tabs, Text } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Pin, Sequence } from "../common";
 import { DeviceState, DeviceStateHandler, ChannelChangeHandler, useSocket, usePrompt, useAuth, useCRUD } from "../context";
 import PinStatusRow from "./PinStatusRow";
@@ -12,6 +13,8 @@ const PinsStatus: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
     const socket = useSocket()
     const prompt = usePrompt()
     const crud = useCRUD()
+
+    const { t } = useTranslation()
 
     const [pins, setPins] = useState<Pin[]>([])
     const [channelsStatus, setChannelsStatus] = useState<DeviceState['channelsStatus']>()
@@ -42,14 +45,14 @@ const PinsStatus: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
     return (
         <Card shadow="sm" p="sm" radius={'md'} style={{ height: '18rem', }}  >
             <Tabs variant="default">
-                <Tabs.Tab label="All Pins">
+                <Tabs.Tab label={t("all_pins")}>
                     <ScrollList
                         body={pins.length && pins.map(s => (
                             <PinStatusRow key={s.channel} label={s.label} running={!!channelsStatus && channelsStatus[s.channel]} />
                         ))}
                         empty={
                             <>
-                                <Text>No pins defined</Text>
+                                <Text>{t("no_pins_defined")}</Text>
                                 <Button
                                     onClick={() => prompt?.newPin(
                                         () => crud?.pinsCRUD?.list().then(d => setPins(d.data)),
@@ -57,19 +60,19 @@ const PinsStatus: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
                                     )}
                                     variant="subtle"
                                 >
-                                    Add new pin
+                                    {t("add_new_pin")}
                                 </Button>
                             </>
                         }
                         footer={
                             <Group position="apart" p={'xs'}>
-                                <Text weight={'bold'}>Pin</Text>
-                                <Text weight={'bold'} >Status</Text>
+                                <Text weight={'bold'}>{t('pin')}</Text>
+                                <Text weight={'bold'} >{t('status')}</Text>
                             </Group >
                         }
                     />
                 </Tabs.Tab>
-                <Tabs.Tab label="Reserved Pins">
+                <Tabs.Tab label={t('reserved_pins')}>
                     <ScrollList
                         body={reservedPins?.length && reservedPins.map((s) => (
                             <Group key={s.pin.channel} p={'xs'} position="apart" style={{ borderBottom: "2px solid #e9ecef" }}>
@@ -77,11 +80,11 @@ const PinsStatus: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
                                 <Text size="sm">{sequences.find(seq => s.sequenceId === seq.id)?.name || "NULL"}</Text>
                             </Group>
                         ))}
-                        empty={<Text>No reserved pins</Text>}
+                        empty={<Text>{t("no_reserved_pins")}</Text>}
                         footer={
                             <Group position="apart" p={'xs'}>
-                                <Text weight={'bold'}>Pin</Text>
-                                <Text weight={'bold'} >Sequence</Text>
+                                <Text weight={'bold'}>{t('pin')}</Text>
+                                <Text weight={'bold'} >{t('sequence')}</Text>
                             </Group >
                         }
                     />

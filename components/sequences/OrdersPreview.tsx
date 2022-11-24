@@ -5,6 +5,7 @@ import { scaleBand, scaleLinear } from 'd3-scale'
 import PeriodMark from './PeriodMark'
 import PeriodTrack from './PeriodTrack'
 import PeriodTicks from './PeriodTicks'
+import { useTranslation } from 'react-i18next'
 
 interface OrdersPreviewProps {
     orders: Sequence['orders']
@@ -14,6 +15,7 @@ interface OrdersPreviewProps {
 const OrdersPreview: FC<OrdersPreviewProps> = ({ orders }) => {
 
     const theme = useMantineTheme()
+    const { t } = useTranslation()
 
     const marksWidthPercentage = 80
     const rowHeight = 24
@@ -42,7 +44,7 @@ const OrdersPreview: FC<OrdersPreviewProps> = ({ orders }) => {
     return (
         <Container style={{ display: 'flex', flexDirection: 'column', height: "100%" }}>
             <Group pt="xs">
-                <Text size="xl">Orders Preview</Text>
+                <Text size="xl">{t("orders_previews")}</Text>
             </Group>
             <Divider />
             <ScrollArea pt="xs" styles={{ root: { flex: 1 } }}>

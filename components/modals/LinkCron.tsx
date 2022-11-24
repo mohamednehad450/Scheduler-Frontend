@@ -1,5 +1,6 @@
 import { Button, Group, Modal, MultiSelect } from "@mantine/core"
 import { FC, useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { Cron, Sequence } from "../common"
 import { useCRUD } from "../context"
 
@@ -19,6 +20,8 @@ const LinkCron: FC<LinkCronProps> = ({ opened, onClose, initialSequences, cronId
 
     const crud = useCRUD()
 
+    const { t } = useTranslation()
+
     useEffect(() => {
         if (opened) {
             crud?.sequenceCRUD?.list()
@@ -30,7 +33,7 @@ const LinkCron: FC<LinkCronProps> = ({ opened, onClose, initialSequences, cronId
 
     return (
         <Modal
-            title={"Link Sequences to Cron Triggers"}
+            title={t('link_sequences')}
             opened={opened}
             onClose={() => onClose()}
             size="lg"
@@ -40,18 +43,18 @@ const LinkCron: FC<LinkCronProps> = ({ opened, onClose, initialSequences, cronId
                 size="md"
                 data={sequences.map(c => ({ value: String(c.id), label: c.name })) || []}
                 value={sequencesIds.map(String)}
-                label="Sequences"
-                placeholder="- Select Sequences"
+                label={t("sequences")}
+                placeholder={`${t("select_sequences")}`}
                 onChange={(SequencesIds) => setSequencesIds(SequencesIds.map(Number))}
             />
             <Group p={'md'} position="right">
                 <Button variant="subtle" onClick={() => onClose()}>
-                    Cancel
+                    {t("cancel")}
                 </Button>
                 <Button
                     onClick={() => crud?.cronSequence?.linkCron(cronId, sequencesIds).then((r) => onClose(r.data))}
                 >
-                    {"Submit"}
+                    {t("submit")}
                 </Button>
             </Group>
         </Modal>

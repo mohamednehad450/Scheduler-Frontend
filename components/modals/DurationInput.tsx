@@ -1,5 +1,6 @@
 import { Button, Divider, Group, Modal, NumberInput, Text } from "@mantine/core";
 import { FC, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 
 interface DurationInputProps {
@@ -11,6 +12,7 @@ interface DurationInputProps {
 
 const DurationInput: FC<DurationInputProps> = ({ opened, onClose, onSubmit }) => {
 
+    const { t } = useTranslation()
 
     const [duration, setDuration] = useState({
         h: 0,
@@ -20,11 +22,11 @@ const DurationInput: FC<DurationInputProps> = ({ opened, onClose, onSubmit }) =>
     })
 
     return (
-        <Modal title="Custom length" centered opened={opened} onClose={onClose}>
+        <Modal title={t('custom_length')} centered opened={opened} onClose={onClose}>
             <Divider />
             <Group pt="md">
                 <NumberInput
-                    label="Hours"
+                    label={t('hour')}
                     styles={{ root: { width: '4rem' } }}
                     defaultValue={0}
                     hideControls
@@ -35,7 +37,7 @@ const DurationInput: FC<DurationInputProps> = ({ opened, onClose, onSubmit }) =>
                 />
                 <Text pt="xl">:</Text>
                 <NumberInput
-                    label="Minutes"
+                    label={t('minute')}
                     min={0}
                     max={59}
                     styles={{ root: { width: '4rem' } }}
@@ -48,7 +50,7 @@ const DurationInput: FC<DurationInputProps> = ({ opened, onClose, onSubmit }) =>
                 />
                 <Text pt="xl">:</Text>
                 <NumberInput
-                    label="Seconds"
+                    label={t('second')}
                     min={0}
                     max={59}
                     styles={{ root: { width: '4rem' } }}
@@ -61,7 +63,7 @@ const DurationInput: FC<DurationInputProps> = ({ opened, onClose, onSubmit }) =>
                 />
                 <Text pt="xl">.</Text>
                 <NumberInput
-                    label="ms"
+                    label={t('ms')}
                     min={0}
                     max={1000}
                     styles={{ root: { width: '4rem' } }}
@@ -73,12 +75,15 @@ const DurationInput: FC<DurationInputProps> = ({ opened, onClose, onSubmit }) =>
                 />
             </Group>
             <Group pt="xl">
-                <Button variant="subtle" onClick={onClose}>Cancel</Button>
-                <Button onClick={() => {
-                    onSubmit(duration.h * 60 * 60 * 1000 + duration.m * 60 * 1000 + duration.s * 1000 + duration.ms)
-                }}>Submit</Button>
+                <Button variant="subtle" onClick={onClose}>{t('cancel')}</Button>
+                <Button
+                    onClick={() => {
+                        onSubmit(duration.h * 60 * 60 * 1000 + duration.m * 60 * 1000 + duration.s * 1000 + duration.ms)
+                    }}
+                >
+                    {t("submit")}
+                </Button>
             </Group>
-
         </Modal>
     )
 }

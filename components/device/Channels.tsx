@@ -1,5 +1,6 @@
 import { ActionIcon, Button, Container, Divider, Group, ScrollArea, Table, Text } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus, Refresh } from "tabler-icons-react";
 import { Pin } from "../common";
 import { ChannelChangeHandler, DeviceState, DeviceStateHandler, useCRUD, usePrompt, useSocket } from "../context";
@@ -14,6 +15,7 @@ const Channels: FC = () => {
     const socket = useSocket()
     const prompt = usePrompt()
     const crud = useCRUD()
+    const { t } = useTranslation()
 
 
     useEffect(() => {
@@ -40,10 +42,10 @@ const Channels: FC = () => {
     return (
         <Container my="0" px="sm" py="0" style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch', }} >
             <Group py="xs" position="apart">
-                <Text size='xl'>{"Pins"}</Text>
+                <Text size='xl'>{t('pins')}</Text>
                 <Group>
                     <Button onClick={() => prompt?.confirm((confirmed) => confirmed && socket?.emit('reset'))} variant="subtle">
-                        Reset all pins
+                        {t("rest_pins")}
                     </Button>
                     <ActionIcon size={24} onClick={() => crud?.pinsCRUD?.list().then(d => setPins(d.data))} >
                         <Refresh size={24} />
@@ -91,11 +93,11 @@ const Channels: FC = () => {
                         </tbody>
                         <tfoot style={{ position: 'sticky', bottom: 0, background: 'white' }}>
                             <tr>
-                                <th>Label</th>
-                                <th>Channel</th>
-                                <th>On state</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th style={{ textAlign: 'start' }}>{t("label")}</th>
+                                <th style={{ textAlign: 'start' }}>{t("channel")}</th>
+                                <th style={{ textAlign: 'start' }}>{t("on_state")}</th>
+                                <th style={{ textAlign: 'start' }}>{t("status")}</th>
+                                <th style={{ textAlign: 'start' }}>{t("actions")}</th>
                             </tr>
                         </tfoot>
                     </Table>
@@ -110,7 +112,7 @@ const Channels: FC = () => {
                         justifyContent: 'center',
                     }}
                 >
-                    <Text>No pins defined</Text>
+                    <Text>{t('no_pins_defined')}</Text>
                     <Button
                         onClick={() =>
                             prompt?.newPin(
@@ -120,7 +122,7 @@ const Channels: FC = () => {
                         }
                         variant="subtle"
                     >
-                        Define new pins
+                        {t('add_new_pin')}
                     </Button>
                 </div>
             )}

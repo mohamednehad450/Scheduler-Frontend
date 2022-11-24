@@ -1,11 +1,13 @@
 import { Button, Card, Center, Container, Tab, Tabs, TextInput, Text, LoadingOverlay } from "@mantine/core"
+import { DefaultTFuncReturn } from "i18next";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context";
 
 type FormError = {
-    username: string
-    password: string
-    confirm: string
+    username: DefaultTFuncReturn
+    password: DefaultTFuncReturn
+    confirm: DefaultTFuncReturn
 }
 
 
@@ -19,7 +21,7 @@ const SignInCard = () => {
     const [confirm, setConfirm] = useState('')
 
     const [formError, setFormError] = useState<Partial<FormError>>({})
-    const [signError, setSignError] = useState('')
+    const [signError, setSignError] = useState<DefaultTFuncReturn>('')
 
     useEffect(() => {
         setFormError({})
@@ -33,6 +35,8 @@ const SignInCard = () => {
     }, [activeTab])
 
     const auth = useAuth()
+
+    const { t } = useTranslation()
 
     return (
         <Container>
@@ -48,7 +52,7 @@ const SignInCard = () => {
                                     setSignError('')
                                 }}
                             >
-                                <Tab label='Sign in'>
+                                <Tab label={t('sign_in')}>
                                     <form
                                         onSubmit={(e) => {
                                             e.preventDefault()
@@ -56,16 +60,16 @@ const SignInCard = () => {
                                                 .catch(err => {
                                                     const status = err?.response?.status || 0
                                                     if (status === 404) {
-                                                        setFormError(err => ({ ...err, username: 'Incorrect username' }))
+                                                        setFormError(err => ({ ...err, username: t('incorrect_username') }))
                                                         return
                                                     }
                                                     if (status === 403) {
-                                                        setFormError(err => ({ ...err, password: 'Incorrect password' }))
+                                                        setFormError(err => ({ ...err, password: t('incorrect_password') }))
                                                         return
                                                     }
                                                     if (status === 409) {
                                                         setActiveTab(1)
-                                                        setSignError('Admin account is not registered yet.')
+                                                        setSignError(t('admin_not_registered'))
 
                                                     }
                                                 })
@@ -77,7 +81,7 @@ const SignInCard = () => {
                                             mt="xs"
                                             type="text"
                                             required
-                                            label="Username"
+                                            label={t("username")}
                                             error={formError.username}
                                         />
                                         <TextInput
@@ -86,31 +90,31 @@ const SignInCard = () => {
                                             mt="xs"
                                             type="password"
                                             required
-                                            label="Password"
+                                            label={t("password")}
                                             error={formError.password}
                                         />
                                         <Text size="sm" mt="xs" color={'red'}>{signError}</Text>
                                         <Button my="md" type="submit">
-                                            Sign in
+                                            {t('sign_in')}
                                         </Button>
 
 
                                     </form>
                                 </Tab>
-                                <Tab label='Register'>
+                                <Tab label={t('register')}>
                                     <form onSubmit={(e) => {
                                         e.preventDefault()
                                         const regex = new RegExp(/^(?=[^A-Z]*[A-Z])(?=[^a-z]*[a-z])(?=[^0-9]*[0-9]).{6,}$/)
                                         if (confirm !== password) {
-                                            setFormError(err => ({ ...err, confirm: 'Passwords must match' }))
+                                            setFormError(err => ({ ...err, confirm: t('password_match') }))
                                             return
                                         }
                                         if (password.length < 6) {
-                                            setFormError(err => ({ ...err, password: 'Passwords must be at least 6 characters long' }))
+                                            setFormError(err => ({ ...err, password: t('password_short') }))
                                             return
                                         }
                                         if (!regex.test(password)) {
-                                            setFormError(err => ({ ...err, password: 'Passwords must have at least 1 upper case letter and 1 number' }))
+                                            setFormError(err => ({ ...err, password: t('password_weak') }))
                                             return
                                         }
                                         auth?.register(username, password)
@@ -118,10 +122,10 @@ const SignInCard = () => {
                                                 const status = err?.response?.status || 0
                                                 if (status === 409) {
                                                     setActiveTab(0)
-                                                    setSignError('Admin account is already registered')
+                                                    setSignError(t('admin_registered'))
                                                 }
                                                 else {
-                                                    setSignError('Failed to register admin account: unknown error')
+                                                    setSignError(t('unknown_error'))
                                                 }
                                             })
 
@@ -133,7 +137,7 @@ const SignInCard = () => {
                                             my="xs"
                                             type="text"
                                             required
-                                            label="Username"
+                                            label={t("username")}
                                             error={formError.username}
                                         />
                                         <TextInput
@@ -142,7 +146,7 @@ const SignInCard = () => {
                                             my="xs"
                                             type="password"
                                             required
-                                            label="Password"
+                                            label={t("password")}
                                             error={formError.password}
 
                                         />
@@ -152,13 +156,13 @@ const SignInCard = () => {
                                             my="xs"
                                             type="password"
                                             required
-                                            label="Confirm password"
+                                            label={t('confirm_password')}
                                             error={formError.confirm}
                                         />
                                         <Text size="sm" mt="xs" color={'red'}>{signError}</Text>
                                         <Button type="submit" my="md"
                                         >
-                                            Register
+                                            {t('register')}
                                         </Button>
                                     </form>
                                 </Tab>

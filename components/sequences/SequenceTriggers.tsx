@@ -1,5 +1,6 @@
 import { Accordion, AccordionItem, Container, Divider, Group, ScrollArea, Tab, Table, Tabs, Text } from "@mantine/core";
 import { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { nextCronDates, Sequence } from "../common";
 
 interface SequenceTriggersProps {
@@ -9,23 +10,25 @@ interface SequenceTriggersProps {
 
 const SequenceTriggers: FC<SequenceTriggersProps> = ({ cronTriggers }) => {
 
+    const { t } = useTranslation()
+
     return (
         <Container style={{ display: 'flex', flexDirection: 'column', height: "100%" }}>
             <Group pt="xs">
-                <Text size="xl">Triggers</Text>
+                <Text size="xl">{t("triggers")}</Text>
             </Group>
             <Divider />
             <ScrollArea pt="xs" styles={{ root: { flex: 1 } }}>
                 <Tabs>
-                    <Tab label="Cron" >
+                    <Tab label={t('schedules')} >
                         <Accordion>
                             {cronTriggers.map(({ cron }) => (
                                 <AccordionItem label={cron.label} iconPosition="right" key={cron.id} >
                                     <Table striped highlightOnHover>
                                         <thead>
                                             <tr>
-                                                <th>Date</th>
-                                                <th>Time</th>
+                                                <th style={{ textAlign: 'start' }}>{t('date')}</th>
+                                                <th style={{ textAlign: 'start' }}>{t("time")}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -45,7 +48,7 @@ const SequenceTriggers: FC<SequenceTriggersProps> = ({ cronTriggers }) => {
                             ))}
                         </Accordion>
                     </Tab>
-                    <Tab label="Sensors" disabled></Tab>
+                    <Tab label={t('sensors')} disabled></Tab>
                 </Tabs>
             </ScrollArea >
         </Container >

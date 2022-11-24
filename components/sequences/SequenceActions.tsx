@@ -1,6 +1,7 @@
 import { Button, Container, Divider, Grid, Group, ScrollArea, Text } from "@mantine/core"
 import { useRouter } from "next/router"
 import { FC, useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { CalendarEvent, CalendarOff, Edit, Link, PlayerPause, PlayerPlay, Trash } from "tabler-icons-react"
 import { v4 } from "uuid"
 import { LoadingButton, Sequence } from "../common"
@@ -64,10 +65,11 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
 
     const isRunning = runningSequences.some(id => id === sequence.id)
     const router = useRouter()
+    const { t } = useTranslation()
     return (
         <Container style={{ display: 'flex', flexDirection: 'column', height: "100%" }}>
             <Group pt="xs">
-                <Text size="xl">Actions </Text>
+                <Text size="xl">{t('actions')}</Text>
             </Group>
             <Divider />
             <ScrollArea pt="xs" styles={{ root: { flex: 1 } }}>
@@ -89,8 +91,8 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                                             (<PlayerPlay size={16} />)
                                         }
                                         {isRunning ?
-                                            "Stop" :
-                                            "Run"
+                                            t('stop') :
+                                            t('run')
                                         }
                                     </Group>
                                 </LoadingButton>
@@ -115,8 +117,8 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                                             (<CalendarEvent size={16} />)
                                         }
                                         {sequence.active ?
-                                            "Deactivate" :
-                                            "Activate"
+                                            t('deactivate') :
+                                            t('activate')
                                         }
                                     </Group>
                                 </LoadingButton>
@@ -131,7 +133,7 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                                 >
                                     <Group>
                                         <Link size={16} />
-                                        {"Edit Triggers"}
+                                        {t('edit_triggers')}
                                     </Group>
                                 </Button>
                             </Group>
@@ -145,7 +147,7 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                                 >
                                     <Group>
                                         <Edit size={16} />
-                                        {"Edit Sequence"}
+                                        {t('edit_sequence')}
                                     </Group>
                                 </Button>
                             </Group>
@@ -169,7 +171,7 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                                     }}>
                                     <Group>
                                         <Trash size={16} />
-                                        {"Delete"}
+                                        {t('delete')}
                                     </Group>
                                 </Button>
                             </Group>

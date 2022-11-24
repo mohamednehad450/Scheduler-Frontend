@@ -1,11 +1,13 @@
 import { Card, Container, Grid, LoadingOverlay, Title } from '@mantine/core'
-import { NextPage } from 'next'
+import { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Sequence } from '../../components/common'
 import { OrdersPreview, SequenceActions, SequenceActivities, SequenceTriggers } from '../../components/sequences'
 import { useCRUD } from '../../components/context'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslation } from 'react-i18next'
 
 
 
@@ -30,6 +32,7 @@ const Sequence: NextPage = () => {
   const [sequence, setSequence] = useState<Sequence>()
 
   const crud = useCRUD()
+  const { t } = useTranslation()
 
 
   useEffect(() => {
@@ -50,8 +53,7 @@ const Sequence: NextPage = () => {
   return (
     <>
       <Head>
-        <title>({sequence?.name}) - Scheduler</title>
-        <meta name="description" content="" />
+        <title>({sequence?.name}) - {t('scheduler')}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {sequence ? <Container size={'lg'} m="sm" p="sm">
@@ -83,5 +85,11 @@ const Sequence: NextPage = () => {
     </>
   )
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
+  props: {
+    ...await serverSideTranslations(locale ?? 'en', ['common']),
+  },
+})
 
 export default Sequence

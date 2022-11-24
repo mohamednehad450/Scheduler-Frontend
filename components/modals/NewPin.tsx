@@ -1,5 +1,6 @@
 import { Button, Divider, Group, Modal, Radio, RadioGroup, Select, TextInput } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { LoadingButton, Pin } from "../common";
 import { useCRUD } from "../context";
 
@@ -54,6 +55,7 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, initialPin, usedPins: initU
     })
 
     const crud = useCRUD()
+    const { t } = useTranslation()
 
     useEffect(() => {
         setErr({
@@ -75,13 +77,13 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, initialPin, usedPins: initU
             centered
             opened={opened}
             onClose={() => onClose()}
-            title={initialPin ? "Edit " + initialPin.label : "Add new pin"}
+            title={initialPin ? "Edit " + initialPin.label : t("add_new_pin")}
         >
             <Divider mb="sm" />
             <TextInput
                 py="xs"
-                label="Label"
-                description="Choose pin label"
+                label={t("label")}
+                description={t("choose_pin_label")}
                 required
                 value={pin.label}
                 error={err.label}
@@ -89,8 +91,8 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, initialPin, usedPins: initU
             />
             <Select
                 py="xs"
-                label="Channel"
-                description="Pick pin channel"
+                label={t("channel")}
+                description={t("pick_pin_channel")}
                 required
                 data={channels.filter(c => !usedPins[c] || c === initialPin?.channel).map(String)}
                 onChange={v => v && setPin(p => ({ ...p, channel: Number(v) }))}
@@ -100,14 +102,14 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, initialPin, usedPins: initU
             />
             <RadioGroup
                 py="xs"
-                label="On State"
-                description="Select pin on state"
+                label={t('on_state')}
+                description={t("select_pin_on_state")}
                 required
                 value={pin.onState}
                 onChange={onState => setPin(p => ({ ...p, onState }))}
             >
-                <Radio value="HIGH" label="High" />
-                <Radio value="LOW" label="Low" />
+                <Radio value="HIGH" label={t('HIGH')} />
+                <Radio value="LOW" label={t('LOW')} />
             </RadioGroup>
 
             <Group position="right" py="xs">
@@ -115,15 +117,15 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, initialPin, usedPins: initU
                     onClick={() => onClose()}
                     variant="subtle"
                 >
-                    Cancel
+                    {t("cancel")}
                 </Button>
                 {!initialPin && (<LoadingButton
                     onClick={(onDone) => {
                         if (!pin.label) {
-                            setErr(err => ({ ...err, label: 'You must provide a label' }))
+                            setErr(err => ({ ...err, label: t('required_name') }))
                         }
                         if (!pin.channel) {
-                            setErr(err => ({ ...err, channel: 'You must select a channel' }))
+                            setErr(err => ({ ...err, channel: t('required_channel') }))
                         }
 
                         if (pin.label && pin.channel) {
@@ -147,15 +149,15 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, initialPin, usedPins: initU
                     }}
                     variant="light"
                 >
-                    {"Submit & Add another"}
+                    {t("submit_add_another")}
                 </LoadingButton>)}
                 <LoadingButton
                     onClick={(onDone) => {
                         if (!pin.label) {
-                            setErr(err => ({ ...err, label: 'You must provide a label' }))
+                            setErr(err => ({ ...err, label: t('required_name') }))
                         }
                         if (!pin.channel) {
-                            setErr(err => ({ ...err, channel: 'You must select a channel' }))
+                            setErr(err => ({ ...err, channel: t('required_channel') }))
                         }
 
                         if (pin.label && pin.channel) {
@@ -173,7 +175,7 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, initialPin, usedPins: initU
                         }
                     }}
                 >
-                    {initialPin ? "Save" : "Submit"}
+                    {t("submit")}
                 </LoadingButton>
             </Group>
         </Modal>

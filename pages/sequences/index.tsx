@@ -1,5 +1,5 @@
 import { Tabs, Container, Title, Group, ActionIcon } from '@mantine/core'
-import type { NextPage } from 'next'
+import type { GetStaticProps, NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { Calendar, CalendarOff, List, Plus, Refresh, } from 'tabler-icons-react';
@@ -8,6 +8,8 @@ import { Sequence } from '../../components/common'
 import { usePrompt } from '../../components/context';
 import { useRouter } from 'next/router';
 import { useCRUD } from '../../components/context';
+import { useTranslation } from 'react-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 
 const lists: ('all' | 'active' | 'running')[] = ['all', 'active', 'running']
@@ -19,6 +21,8 @@ const Sequences: NextPage = () => {
     const prompt = usePrompt()
     const crud = useCRUD()
 
+    const { t } = useTranslation()
+
     useEffect(() => {
         crud?.sequenceCRUD?.list()
             .then(d => setSequences(d.data))
@@ -28,13 +32,12 @@ const Sequences: NextPage = () => {
     return (
         <>
             <Head>
-                <title>Sequences - Scheduler</title>
-                <meta name="description" content="" />
+                <title>{t('sequences_title')}</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Container size={'lg'} p="0" style={{ height: '100%', display: 'flex', flexDirection: 'column', }} >
                 <Group position='apart'>
-                    <Title p={'lg'}>Sequences</Title>
+                    <Title p={'lg'}>{t('sequences')}</Title>
                     <Group>
                         <ActionIcon
                             color={'gray'}
@@ -61,9 +64,9 @@ const Sequences: NextPage = () => {
                     </Group>
                 </Group>
                 <Tabs variant='outline' active={active} onTabChange={setActive} tabPadding={0} >
-                    <Tabs.Tab label="All" icon={<List size={16} />} />
-                    <Tabs.Tab label="Activated" icon={<Calendar size={16} />} />
-                    <Tabs.Tab label="Running" icon={<CalendarOff size={16} />} />
+                    <Tabs.Tab label={t("all")} icon={<List size={16} />} />
+                    <Tabs.Tab label={t("activated")} icon={<Calendar size={16} />} />
+                    <Tabs.Tab label={t("running")} icon={<CalendarOff size={16} />} />
                 </Tabs>
                 <Container
                     size={'lg'}
@@ -83,6 +86,12 @@ const Sequences: NextPage = () => {
         </>
     )
 }
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+    props: {
+        ...await serverSideTranslations(locale ?? 'en', ['common']),
+    },
+})
 
 
 export default Sequences

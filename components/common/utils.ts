@@ -7,10 +7,10 @@ const formatHour = (n: number) => {
 }
 
 const getMonthName = (n: number) => {
-    return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][n]
+    return ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'][n]
 }
 const getDayName = (n: number) => {
-    return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][n]
+    return ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][n]
 }
 
 

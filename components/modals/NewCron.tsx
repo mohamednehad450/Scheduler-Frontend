@@ -4,6 +4,7 @@ import { Cron } from "../common";
 import cronstrue from 'cronstrue'
 import CronInput from "./CronInput";
 import { useCRUD } from "../context";
+import { useTranslation } from "react-i18next";
 
 interface NewCronProps {
     opened: boolean
@@ -16,6 +17,8 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
 
     const theme = useMantineTheme()
     const crud = useCRUD()
+
+    const { t } = useTranslation()
 
     const [label, setLabel] = useState(initCron?.label || '')
     const [cron, setCron] = useState(initCron?.cron || '* * * * *')
@@ -36,7 +39,7 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
 
     return (
         <Modal
-            title={initCron ? 'Edit ' + initCron.label : "Add new cron"}
+            title={initCron ? `${t("edit")} ${initCron.label}` : t("add_new_schedule")}
             opened={opened}
             onClose={() => onClose()}
             size="lg"
@@ -44,8 +47,8 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
         >
             <TextInput
                 p="md"
-                label="Label"
-                description={'Cron trigger label'}
+                label={t("label")}
+                description={t("schedule_label")}
                 value={label}
                 onChange={(e) => setLabel(e.target.value)}
                 error={err.label}
@@ -55,19 +58,19 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
             <CronInput initCron={cron} onChange={setCron} />
             <Divider />
             <Group p="md" direction="column" style={{ zIndex: 1, boxShadow: theme.shadows.xs, position: 'sticky', top: 0, backgroundColor: theme.colorScheme === 'light' ? 'white' : 'black' }}>
-                <Text size="sm" color={'gray'}>{'Preview'}</Text>
+                <Text size="sm" color={'gray'}>{t("preview")}</Text>
                 <Group px="sm">
                     <Text size="lg">{cronstrue.toString(cron, { monthStartIndexZero: true, })}</Text>
                 </Group>
             </Group>
             <Group p={'md'} position="right">
                 <Button variant="subtle" onClick={() => onClose()}>
-                    Cancel
+                    {t("cancel")}
                 </Button>
                 <Button
                     onClick={() => {
                         if (!label) {
-                            setErr({ label: 'You must provide a label' })
+                            setErr({ label: t("required_name") })
                             return
                         }
 
@@ -82,7 +85,7 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
                             })
                     }}
                 >
-                    {initCron ? "Save" : "Submit"}
+                    {t("submit")}
                 </Button>
             </Group>
         </Modal>

@@ -6,6 +6,7 @@ import SequenceRow from './SequenceRow'
 import { v4 } from 'uuid'
 import { useRouter } from 'next/router'
 import { useCRUD } from '../context'
+import { useTranslation } from 'react-i18next'
 
 interface SequenceListProps {
     sequences: Sequence[]
@@ -23,6 +24,7 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
 
     const router = useRouter()
     const prompt = usePrompt()
+    const { t } = useTranslation()
 
     useEffect(() => {
         const handleState: DeviceStateHandler = ({ runningSequences }) => {
@@ -46,75 +48,82 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
 
     return (
         <>
-            {list.length ? (<Table striped highlightOnHover verticalSpacing={'xs'} horizontalSpacing="sm" sx={theme => ({ ":hover": { cursor: "pointer" } })}>
-                <thead style={{ position: 'sticky' }}>
-                    <tr>
-                        <th>
-                            Name
-                        </th>
-                        <th>
-                            Last Run
-                        </th>
-                        <th>
-                            No. of Triggers
-                        </th>
-                        <th>
-                            Actions
-                        </th>
-                    </tr>
-                </thead>
-                <tbody >
-                    {list.map(s => (
-                        <SequenceRow
-                            key={String(s.id)}
-                            isRunning={runningSequences.some(id => id === s.id)}
-                            sequence={s}
-                            remove={(id) =>
-                                prompt?.confirm((confirmed) =>
-                                    confirmed && crud?.sequenceCRUD?.remove(id)
-                                        .then(() => {
-                                            onChange(sequences.filter((seq) => id !== seq.id))
-                                        })
-                                        .catch((err) => {
-                                            // TODO
-                                        })
-                                )}
-                            onChange={(newSeq) => {
-                                const newSequences = [...sequences]
-                                newSequences[s.i] = newSeq
-                                onChange(newSequences)
-                            }}
-                            run={(id, onDone) => {
-                                const actionId = v4()
-                                socket?.emit('run', actionId, id)
-                                socket?.once(actionId, (ok: boolean, err: Error | null) => {
-                                    onDone && onDone()
-                                    // TODO: Error handling    
-                                })
-                            }}
-                            stop={(id, onDone) => {
-                                const actionId = v4()
-                                socket?.emit('stop', actionId, id)
-                                socket?.once(actionId, (ok: boolean, err: Error | null) => {
-                                    onDone && onDone()
-                                    // TODO: Error handling    
-                                })
-                            }}
-                        />
-                    ))}
-                </tbody>
-            </Table>
+            {list.length ? (
+                <Table
+                    striped
+                    highlightOnHover
+                    verticalSpacing={'xs'}
+                    horizontalSpacing="sm"
+                    sx={theme => ({ ":hover": { cursor: "pointer" } })}
+                >
+                    <thead style={{ position: 'sticky' }}>
+                        <tr>
+                            <th style={{ textAlign: 'start' }}>
+                                {t('name')}
+                            </th>
+                            <th style={{ textAlign: 'start' }}>
+                                {t('last_run')}
+                            </th>
+                            <th style={{ textAlign: 'start' }}>
+                                {t('no_triggers')}
+                            </th>
+                            <th style={{ textAlign: 'start' }}>
+                                {t('actions')}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody >
+                        {list.map(s => (
+                            <SequenceRow
+                                key={String(s.id)}
+                                isRunning={runningSequences.some(id => id === s.id)}
+                                sequence={s}
+                                remove={(id) =>
+                                    prompt?.confirm((confirmed) =>
+                                        confirmed && crud?.sequenceCRUD?.remove(id)
+                                            .then(() => {
+                                                onChange(sequences.filter((seq) => id !== seq.id))
+                                            })
+                                            .catch((err) => {
+                                                // TODO
+                                            })
+                                    )}
+                                onChange={(newSeq) => {
+                                    const newSequences = [...sequences]
+                                    newSequences[s.i] = newSeq
+                                    onChange(newSequences)
+                                }}
+                                run={(id, onDone) => {
+                                    const actionId = v4()
+                                    socket?.emit('run', actionId, id)
+                                    socket?.once(actionId, (ok: boolean, err: Error | null) => {
+                                        onDone && onDone()
+                                        // TODO: Error handling    
+                                    })
+                                }}
+                                stop={(id, onDone) => {
+                                    const actionId = v4()
+                                    socket?.emit('stop', actionId, id)
+                                    socket?.once(actionId, (ok: boolean, err: Error | null) => {
+                                        onDone && onDone()
+                                        // TODO: Error handling    
+                                    })
+                                }}
+                            />
+                        ))}
+                    </tbody>
+                </Table>
             ) :
                 <Group style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: "100%", placeItems: 'center' }}>
                     {(show === "all" || !sequences.length ? (
                         <Group direction='column' position='center' >
-                            <Text>{"No Sequences defined"}</Text>
+                            <Text>{t("no_sequences_defined")}</Text>
                             <Button variant='subtle' onClick={() => prompt?.newSequence((newSeq) => newSeq && router.push('/sequences/' + newSeq.id))}>
-                                Add new Sequence
+                                {t('add_new_sequences')}
                             </Button>
                         </Group>
                     ) :
-                        (<Text>{show === "active" ? "No Active Sequences" : "No Running Sequences"}</Text>))}
+                        (<Text>{show === "active" ? t("no_active_sequences") : t('no_running_sequences')}</Text>))}
                 </Group>
             }
         </>

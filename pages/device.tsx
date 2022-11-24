@@ -1,6 +1,8 @@
 import { Grid, Container, Card } from '@mantine/core'
-import type { NextPage } from 'next'
+import type { GetStaticProps, NextPage } from 'next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
+import { useTranslation } from 'react-i18next'
 import { Channels, CronTriggers, Events } from '../components/device'
 
 const g = {
@@ -13,11 +15,14 @@ const g = {
 
 
 const Device: NextPage = () => {
+
+    const { t } = useTranslation()
+
     return (
         <>
             <Head>
                 <title>
-                    Scheduler: Device
+                    {t("device_title")}
                 </title>
             </Head>
             <Container size={'lg'} m="sm" p="sm">
@@ -42,5 +47,11 @@ const Device: NextPage = () => {
         </>
     )
 }
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+    props: {
+        ...await serverSideTranslations(locale ?? 'en', ['common']),
+    },
+})
 
 export default Device

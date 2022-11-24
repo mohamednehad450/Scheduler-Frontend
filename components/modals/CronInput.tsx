@@ -1,6 +1,7 @@
 
 import { Tab, Tabs } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { formatHour, getDayName, getMonthName } from "../common";
 import CronField from "./CronField";
 
@@ -43,6 +44,8 @@ const CronInput: FC<{ initCron: string, onChange: (cron: string) => void }> = ({
 
     const { sec, min, hour, dom, month, dow } = parseCron(initCron || '')
 
+    const { t } = useTranslation()
+
     const [secCron, setSecCron] = useState(sec)
     const [minCron, setMinCron] = useState(min)
     const [hourCron, setHourCron] = useState(hour)
@@ -56,7 +59,7 @@ const CronInput: FC<{ initCron: string, onChange: (cron: string) => void }> = ({
 
     return (
         <Tabs py="sm">
-            <Tab label="Seconds">
+            <Tab label={t("second")}>
                 <CronField
                     min={0}
                     max={59}
@@ -64,7 +67,7 @@ const CronInput: FC<{ initCron: string, onChange: (cron: string) => void }> = ({
                     onChange={(s) => setSecCron(s)}
                 />
             </Tab>
-            <Tab label="Minutes">
+            <Tab label={t("minute")}>
                 <CronField
                     min={0}
                     max={59}
@@ -72,7 +75,7 @@ const CronInput: FC<{ initCron: string, onChange: (cron: string) => void }> = ({
                     onChange={(s) => setMinCron(s)}
                 />
             </Tab>
-            <Tab label="Hours">
+            <Tab label={t("hour")}>
                 <CronField
                     min={0}
                     max={23}
@@ -81,7 +84,7 @@ const CronInput: FC<{ initCron: string, onChange: (cron: string) => void }> = ({
                     onChange={(s) => setHourCron(s)}
                 />
             </Tab>
-            <Tab label="Day of month">
+            <Tab label={t("day_of_month")}>
                 <CronField
                     min={1}
                     max={31}
@@ -89,20 +92,20 @@ const CronInput: FC<{ initCron: string, onChange: (cron: string) => void }> = ({
                     onChange={(s) => setDomCron(s)}
                 />
             </Tab>
-            <Tab label="Month">
+            <Tab label={t("month")}>
                 <CronField
                     min={0}
                     max={11}
-                    formatLabel={getMonthName}
+                    formatLabel={n => t(getMonthName(n))}
                     initialValue={monthCron}
                     onChange={(s) => setMonthCron(s)}
                 />
             </Tab>
-            <Tab label="Day of week">
+            <Tab label={t("day_of_week")}>
                 <CronField
                     min={0}
                     max={6}
-                    formatLabel={getDayName}
+                    formatLabel={n => t(getDayName(n))}
                     initialValue={dowCron}
                     onChange={(s) => setDowCron(s)}
                 />

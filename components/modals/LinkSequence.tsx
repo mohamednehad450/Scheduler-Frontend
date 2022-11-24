@@ -1,5 +1,6 @@
 import { Button, Group, Modal, MultiSelect } from "@mantine/core"
 import { FC, useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { Cron, Sequence } from "../common"
 import { useCRUD, usePrompt } from "../context"
 
@@ -20,6 +21,8 @@ const LinkSequence: FC<LinkSequenceProps> = ({ opened, onClose, initialCrons, se
     const prompt = usePrompt()
     const crud = useCRUD()
 
+    const { t } = useTranslation()
+
     useEffect(() => {
         if (opened) {
             crud?.cronCRUD?.list()
@@ -31,7 +34,7 @@ const LinkSequence: FC<LinkSequenceProps> = ({ opened, onClose, initialCrons, se
 
     return (
         <Modal
-            title={"Link Cron Triggers"}
+            title={t('link_schedules')}
             opened={opened}
             onClose={() => onClose()}
             size="lg"
@@ -41,8 +44,8 @@ const LinkSequence: FC<LinkSequenceProps> = ({ opened, onClose, initialCrons, se
                 size="md"
                 data={crons.map(c => ({ value: String(c.id), label: c.label })) || []}
                 value={cronsIds.map(String)}
-                label="Cron Triggers"
-                placeholder="- Select Triggers"
+                label={t("schedules")}
+                placeholder={`${t("select_schedules")}`}
                 onChange={(cronsIds) => setCronsIds(cronsIds.map(Number))}
             />
             <Button
@@ -58,16 +61,16 @@ const LinkSequence: FC<LinkSequenceProps> = ({ opened, onClose, initialCrons, se
                 }}
 
             >
-                Link a new cron trigger
+                {t("link_new_schedule")}
             </Button>
             <Group p={'md'} position="right">
                 <Button variant="subtle" onClick={() => onClose()}>
-                    Cancel
+                    {t("cancel")}
                 </Button>
                 <Button
                     onClick={() => crud?.cronSequence?.linkSequence(sequenceId, cronsIds).then(r => onClose(r.data))}
                 >
-                    {"Submit"}
+                    {t("submit")}
                 </Button>
             </Group>
         </Modal>

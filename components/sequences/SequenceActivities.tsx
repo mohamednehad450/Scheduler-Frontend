@@ -4,6 +4,7 @@ import { Refresh, Trash } from "tabler-icons-react"
 import { usePrompt } from "../context"
 import type { Sequence, SequenceEvent } from "../common"
 import { useCRUD } from "../context"
+import { useTranslation } from "react-i18next"
 
 
 interface SequenceActivitiesProps {
@@ -25,6 +26,8 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
 
     const crud = useCRUD()
 
+    const { t } = useTranslation()
+
 
     useEffect(() => {
         crud?.sequenceEvents?.listById(sequence.id)
@@ -40,7 +43,7 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
         <Container style={{ display: 'flex', flexDirection: 'column', height: "100%" }}>
             <LoadingOverlay visible={loading} />
             <Group pt="xs" position="apart">
-                <Text size="xl">Activities</Text>
+                <Text size="xl">{t("activities")}</Text>
                 <Group>
                     <ActionIcon size={24} onClick={() => {
                         setLoading(true)
@@ -69,7 +72,7 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
                                     // TODO
                                 })
                                 ,
-                                "Clear this sequence events?")
+                                `${t('clear_sequence_events')}`)
                         }
                     >
                         <Trash size={24} />
@@ -84,7 +87,7 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
                             {events.map(e => (
                                 <tr key={e.id}>
                                     <td>{new Date(e.date).toLocaleString()}</td>
-                                    <td>{capitalizeFirst(e.eventType)}</td>
+                                    <td>{t(e.eventType)}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -96,15 +99,15 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
                             }}
                         >
                             <tr>
-                                <th>Date</th>
-                                <th>Event</th>
+                                <th style={{ textAlign: 'start' }}>{t('date')}</th>
+                                <th style={{ textAlign: 'start' }}>{t('event')}</th>
                             </tr>
                         </tfoot>
                     </Table>
                 </ScrollArea>
             ) : (
                 <Group position="center" style={{ flex: 1, }}>
-                    <Text>No activities yet</Text>
+                    <Text>{t('zero_activities')}</Text>
                 </Group>
             )}
         </Container>

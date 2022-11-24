@@ -1,5 +1,6 @@
 import { ActionIcon, Group, Select, } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus } from "tabler-icons-react";
 import { Pin } from "../common";
 import DurationInput from "./DurationInput";
@@ -11,6 +12,12 @@ export type OrderInput = {
     offset: number
 }
 
+type timeLabel = {
+    ms: string,
+    sec: string,
+    min: string,
+    h: string,
+}
 
 interface OrdersInputProps {
     orders: OrderInput[],
@@ -22,22 +29,22 @@ interface OrdersInputProps {
 
 const { round } = Math
 
-const formatDuration = (ms: number) => {
-    if (ms < 1) return '00:00'
-    if (ms <= 1000) return Math.round(ms) + " ms"
-    const t = ms / 1000
-    const cm = Math.floor((ms % 1000) / 10)
+const formatDuration = (time: number, { ms, }: timeLabel) => {
+    if (time < 1) return '00:00'
+    if (time <= 1000) return Math.round(time) + ` ${ms}`
+    const t = time / 1000
+    const cm = Math.floor((time % 1000) / 10)
     const s = Math.floor(t % 60)
     const m = Math.floor(t / 60)
     return `${m > 9 ? m : '0' + m}:${s > 9 ? s : '0' + s}.${cm > 9 ? cm : '0' + cm}`
 }
 
-const formatTimeLabel = (ms: number): string => {
-    if (!ms) return '0'
-    if (ms < 1000) return `${ms} ms`
-    if (ms < 1000 * 60) return `${round(ms / 1000)} Seconds`
-    if (ms < 1000 * 60 * 60) return `${round(ms / (1000 * 60))} Minutes`
-    return `${round(ms / (1000 * 60 * 60))} Hours`
+const formatTimeLabel = (time: number, { sec, min, h, ms }: timeLabel): string => {
+    if (!time) return '0'
+    if (time < 1000) return `${time} ${ms}`
+    if (time < 1000 * 60) return `${round(time / 1000)} ${sec}`
+    if (time < 1000 * 60 * 60) return `${round(time / (1000 * 60))} ${min}`
+    return `${round(time / (1000 * 60 * 60))} ${h}`
 
 }
 
@@ -47,28 +54,42 @@ const update = (map: { [key: Pin['channel']]: [number, number][] }, maxX: number
             map[Number(channel)].map(([x1, x2]) => ({ channel: Number(channel), duration: Math.round((x2 - x1) * maxX), offset: Math.round(x1 * maxX) })));
 
 
-const defaultSequenceLength = [
-    { value: String(1000), label: '1 Second' },
-    { value: String(1000 * 60), label: '1 Minute' },
-    { value: String(1000 * 60 * 30), label: '30 Minute' },
-    { value: String(1000 * 60 * 60), label: '1 Hour' },
+
+const genDefaultSequenceLength = ({ sec, min, h }: timeLabel) => [
+    { value: String(1000), label: `1 ${sec}` },
+    { value: String(1000 * 60), label: `1 ${min}` },
+    { value: String(1000 * 60 * 30), label: `30 ${min}` },
+    { value: String(1000 * 60 * 60), label: `1 ${h}` },
 ]
 
-const steps = [
-    { value: String(10), label: '10 ms' },
-    { value: String(100), label: '100 ms' },
-    { value: String(500), label: '500 ms' },
-    { value: String(1000), label: '1 Second' },
-    { value: String(10000), label: '10 Seconds' },
-    { value: String(15000), label: '15 Seconds' },
-    { value: String(30000), label: '30 Seconds' },
-    { value: String(1000 * 60), label: '1 Minute' },
+const genSteps = ({ sec, min, ms }: timeLabel) => [
+    { value: String(10), label: `10 ${ms}` },
+    { value: String(100), label: `100 ${ms}` },
+    { value: String(500), label: `500 ${ms}` },
+    { value: String(1000), label: `1 ${sec}` },
+    { value: String(10000), label: `10 ${sec}` },
+    { value: String(15000), label: `15 ${sec}` },
+    { value: String(30000), label: `30 ${sec}` },
+    { value: String(1000 * 60), label: `1 ${min}` },
 ]
 
 const sortOrder = (a: [number, number], b: [number, number]) => a[0] > b[0] ? 1 : -1
 
 const OrdersInput: FC<OrdersInputProps> = ({ orders, onChange, error, pins }) => {
 
+
+
+    const { t } = useTranslation()
+
+    const timeLabel = {
+        min: t("minute"),
+        sec: t('second'),
+        h: t('hour'),
+        ms: t("ms")
+    }
+
+    const defaultSequenceLength = genDefaultSequenceLength(timeLabel)
+    const steps = genSteps(timeLabel)
 
     const [channelMap, setChannelMap] = useState<{ [key: Pin['channel']]: [number, number][] }>({})
     const [maxX, setMaxX] = useState(Math.max(...(orders.length ? orders.map(o => o.duration + o.offset) : [30 * 60 * 1000])))
@@ -96,7 +117,16 @@ const OrdersInput: FC<OrdersInputProps> = ({ orders, onChange, error, pins }) =>
     // Update SequenceLength with Custom lengths
     useEffect(() => {
         if (!sequenceLength.some(({ value }) => value === String(maxX))) {
-            setSequenceLength([...defaultSequenceLength, { value: String(maxX), label: `Custom - ${formatTimeLabel(maxX)}` }])
+            setSequenceLength([
+                ...defaultSequenceLength,
+                {
+                    value: String(maxX), label: `${t('custom')} - ${formatTimeLabel(maxX, {
+                        min: t("minute"),
+                        sec: t('second'),
+                        h: t('hour'),
+                        ms: t("ms")
+                    })}`
+                }])
         } else setSequenceLength([...defaultSequenceLength])
     }, [maxX])
 
@@ -109,7 +139,7 @@ const OrdersInput: FC<OrdersInputProps> = ({ orders, onChange, error, pins }) =>
                 <Group>
                     <Select
                         styles={{ root: { width: '50%' } }}
-                        label={`Sequence Length`}
+                        label={t("sequence_length")}
                         value={String(maxX)}
                         data={sequenceLength}
                         onChange={v => {
@@ -131,7 +161,7 @@ const OrdersInput: FC<OrdersInputProps> = ({ orders, onChange, error, pins }) =>
 
                     <Select
                         styles={{ root: { width: '40%' } }}
-                        label={'Step'}
+                        label={t('step')}
                         value={String(step)}
                         data={steps}
                         onChange={(v) => {
@@ -145,10 +175,10 @@ const OrdersInput: FC<OrdersInputProps> = ({ orders, onChange, error, pins }) =>
                 </Group>
                 <Select
                     styles={{ root: { minWidth: '25%' } }}
-                    label={'Channels'}
+                    label={t('channels')}
                     value=""
                     data={pins.filter((p) => !channelMap[p.channel]).map(p => ({ value: String(p.channel), label: p.label })) || []}
-                    placeholder=" - Add Channel"
+                    placeholder={`${t("add_channel")}`}
                     onChange={(v) => {
                         const c = Number(v)
                         if (isNaN(c)) return
@@ -171,8 +201,8 @@ const OrdersInput: FC<OrdersInputProps> = ({ orders, onChange, error, pins }) =>
                         onChange(update({ ...channelMap, [Number(channel)]: vs }, maxX))
                     }}
                     label={pins.find(({ channel: c }) => c === Number(channel))?.label || ''}
-                    description={'Channel: ' + channel}
-                    formatTooltip={v => formatDuration(round(v * maxX))}
+                    description={`${t('channel')}: ${channel}`}
+                    formatTooltip={v => formatDuration(round(v * maxX), timeLabel)}
                     step={step / maxX}
                 />
             ))}

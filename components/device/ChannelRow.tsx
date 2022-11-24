@@ -1,5 +1,6 @@
 import { Menu, MenuItem, useMantineTheme } from "@mantine/core";
 import { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { Circle, Edit, Trash } from "tabler-icons-react";
 import { Pin } from "../common";
 import { usePrompt } from "../context";
@@ -16,13 +17,14 @@ const ChannelRow: FC<ChannelRowProps> = ({ pin, isRunning, remove, onChange }) =
 
     const theme = useMantineTheme()
     const prompt = usePrompt()
+    const { t } = useTranslation()
 
     return (
         <>
             <tr>
                 <td style={{ textAlign: 'start' }} >{pin.label}</td>
                 <td>{pin.channel}</td>
-                <td>{pin.onState}</td>
+                <td>{t(pin.onState)}</td>
                 <td><Circle size={16} fill={isRunning ? theme.colors.green[7] : theme.colors.red[7]} stroke='0' /></td>
                 <td>
                     <Menu>
@@ -30,14 +32,14 @@ const ChannelRow: FC<ChannelRowProps> = ({ pin, isRunning, remove, onChange }) =
                             onClick={() => prompt?.newPin((newPin) => newPin && onChange(newPin), {}, pin)}
                             icon={<Edit size={16} />}
                         >
-                            Edit
+                            {t("edit")}
                         </MenuItem>
                         <MenuItem
                             onClick={() => remove(pin.channel)}
                             color={'red'}
                             icon={<Trash size={16} />}
                         >
-                            Remove
+                            {t("delete")}
                         </MenuItem>
                     </Menu>
                 </td>

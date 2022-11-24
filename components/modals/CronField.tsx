@@ -1,5 +1,6 @@
 import { Group, MultiSelect, RangeSlider, Select, Chip, Chips } from "@mantine/core"
 import { FC, useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 interface CronInputProps {
     min: number,
@@ -12,10 +13,10 @@ interface CronInputProps {
 type CronType = '*' | 'range' | "step" | 'collection'
 
 const types: { value: CronType, label: string }[] = [
-    { value: "*", label: 'All' },
-    { value: "range", label: 'Range', },
-    { value: "step", label: 'Step', },
-    { value: "collection", label: 'Choices' },
+    { value: "*", label: 'all' },
+    { value: "range", label: 'range', },
+    { value: "step", label: 'step', },
+    { value: "collection", label: 'choices' },
 ]
 
 const getRange = (start: number, finish: number, formatLabel: (n: number) => string = String): { value: string, label: string }[] =>
@@ -56,6 +57,8 @@ const CronField: FC<CronInputProps> = ({
     const [step, setStep] = useState<{ start: number, step: number }>(getStepFromCron(initialValue) || { start: min, step: 1 })
     const [collection, setCollection] = useState<number[]>(getCollectionFromCron(initialValue) || [min])
 
+    const { t } = useTranslation()
+
     useEffect(() => {
         let str = ''
         switch (type) {
@@ -81,7 +84,7 @@ const CronField: FC<CronInputProps> = ({
         <Group py="sm" direction="column" align={'stretch'} >
             <Chips multiple={false} value={type} onChange={setType}>
                 {types.map(({ value, label }) => (
-                    <Chip key={value} value={value}>{label}</Chip>
+                    <Chip key={value} value={value}>{t(label)}</Chip>
                 ))}
             </Chips>
             {type === 'range' ?
@@ -103,13 +106,13 @@ const CronField: FC<CronInputProps> = ({
                         <Group py="sm" pt="0">
                             <Select
                                 style={{ width: "10rem" }}
-                                label="Start"
+                                label={t("start")}
                                 data={getRange(min, max, formatLabel)}
                                 value={String(step.start)}
                                 onChange={(v) => setStep(s => ({ ...s, start: Number(v) }))}
                             />
                             <Select
-                                label="Step"
+                                label={t("step")}
                                 style={{ width: "10rem" }}
                                 data={getRange(min, max, String)}
                                 value={String(step.step)}
