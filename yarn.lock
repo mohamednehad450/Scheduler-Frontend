@@ -725,10 +725,10 @@ cron@^2.1.0:
   dependencies:
     luxon "^1.23.x"
 
-cronstrue@^2.11.0:
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/cronstrue/-/cronstrue-2.11.0.tgz#18ff1b95a836b9b4e06854f796db2dc8fa98ce41"
-  integrity sha512-iIBCSis5yqtFYWtJAmNOiwDveFWWIn+8uV5UYuPHYu/Aeu5CSSJepSbaHMyfc+pPFgnsCcGzfPQEo7LSGmWbTg==
+cronstrue@^2.20.0:
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/cronstrue/-/cronstrue-2.20.0.tgz#709ef674ccf385f3c0e77c40a5141911e38b5d05"
+  integrity sha512-cGGxqXGt+yf46nQw2nipLpQLaqlXbeAdcR2HoHYar91bpWRFViw16XCwbSLs0uwhzzYjHwN9BVw5SYIXNqIFwg==
 
 cross-spawn@^7.0.2:
   version "7.0.3"

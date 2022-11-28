@@ -14,7 +14,7 @@
     "@mantine/next": "^4.2.7",
     "axios": "^0.27.2",
     "cron": "^2.1.0",
-    "cronstrue": "^2.11.0",
+    "cronstrue": "^2.20.0",
     "d3-scale": "^4.0.2",
     "i18next": "^22.0.6",
     "next": "12.1.6",
