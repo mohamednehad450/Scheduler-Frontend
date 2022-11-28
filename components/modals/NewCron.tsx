@@ -2,9 +2,11 @@ import { Button, Divider, Group, Modal, Text, TextInput, useMantineTheme } from 
 import { FC, useEffect, useState } from "react";
 import { Cron } from "../common";
 import cronstrue from 'cronstrue'
+import 'cronstrue/locales/ar'
 import CronInput from "./CronInput";
 import { useCRUD } from "../context";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/router";
 
 interface NewCronProps {
     opened: boolean
@@ -36,6 +38,8 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
         }
     }, [opened])
 
+    const router = useRouter()
+
 
     return (
         <Modal
@@ -60,7 +64,7 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
             <Group p="md" direction="column" style={{ zIndex: 1, boxShadow: theme.shadows.xs, position: 'sticky', top: 0, backgroundColor: theme.colorScheme === 'light' ? 'white' : 'black' }}>
                 <Text size="sm" color={'gray'}>{t("preview")}</Text>
                 <Group px="sm">
-                    <Text size="lg">{cronstrue.toString(cron, { monthStartIndexZero: true, })}</Text>
+                    <Text size="lg">{cronstrue.toString(cron, { monthStartIndexZero: true, locale: router.locale || 'en' })}</Text>
                 </Group>
             </Group>
             <Group p={'md'} position="right">
