@@ -23,7 +23,7 @@ const OrdersPreview: FC<OrdersPreviewProps> = ({ orders }) => {
     const maxX = Math.max(...orders.map(o => o.offset + o.duration))
     const xScale = scaleLinear()
         .domain([0, maxX])
-        .range([0, 100])
+        .range(theme.dir === "rtl" ? [100, 0] : [0, 100])
 
 
     const channels = new Map<number, string>()
@@ -37,8 +37,8 @@ const OrdersPreview: FC<OrdersPreviewProps> = ({ orders }) => {
         .paddingOuter(0.25)
 
 
-    const offset = <T extends { offset: number }>(o: T) => o.offset
-    const duration = <T extends { duration: number }>(o: T) => o.duration
+    const x1 = <T extends { offset: number }>(o: T) => o.offset
+    const x2 = <T extends { duration: number, offset: number }>(o: T) => o.duration + o.offset
     const channel = <T extends { channel: number }>(o: T) => o.channel
 
     return (
@@ -56,7 +56,7 @@ const OrdersPreview: FC<OrdersPreviewProps> = ({ orders }) => {
                                     key={c}
                                     width={100 - marksWidthPercentage + "%"}
                                     height={rowHeight}
-                                    x={0}
+                                    x={theme.dir === 'rtl' ? marksWidthPercentage + "%" : 0}
                                     y={(yScale(c) || 0) - (yScale.bandwidth())}
                                     style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}
                                 >
@@ -74,7 +74,7 @@ const OrdersPreview: FC<OrdersPreviewProps> = ({ orders }) => {
                         </g>
                     </MediaQuery>
                     <svg
-                        x={(100 - marksWidthPercentage) + '%'}
+                        x={(theme.dir === 'ltr' ? (100 - marksWidthPercentage) : 0) + "%"}
                         width={marksWidthPercentage + "%"}
                         style={{ overflow: 'visible' }} >
                         {[...channels.keys()].map(c => (
@@ -84,8 +84,8 @@ const OrdersPreview: FC<OrdersPreviewProps> = ({ orders }) => {
                         {orders.map(order => (
                             <PeriodMark
                                 item={order}
-                                x1Value={offset}
-                                x2Value={duration}
+                                x1Value={x1}
+                                x2Value={x2}
                                 yValue={channel}
                                 xScale={xScale}
                                 yScale={yScale}

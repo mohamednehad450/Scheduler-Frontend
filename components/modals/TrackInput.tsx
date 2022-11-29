@@ -38,9 +38,10 @@ const TrackInput: FC<TrackInputProps> = ({
     const { ref, active } = useMove(({ x }) => {
 
 
+        const adjustX = theme.dir === "ltr" ? x : 1 - x
         // Setting active Thump
         if (!activeIndex.current) {
-            const flat = value.flatMap(([x1, x2]) => [abs(x1 - x), abs(x2 - x)])
+            const flat = value.flatMap(([x1, x2]) => [abs(x1 - adjustX), abs(x2 - adjustX)])
             let minIndex = 0
             flat.forEach((n, i) => {
                 if (n <= flat[minIndex]) {
@@ -55,9 +56,9 @@ const TrackInput: FC<TrackInputProps> = ({
 
         // First thump
         if (sub === 0) {
-            const length = value[index][1] - x
+            const length = value[index][1] - adjustX
             // Prevent collision with the thump before it
-            if ((index > 0) && (value[index - 1][1] + step > x)) {
+            if ((index > 0) && (value[index - 1][1] + step > adjustX)) {
                 value[index][0] = value[index - 1][1] + step
 
             }
@@ -67,14 +68,14 @@ const TrackInput: FC<TrackInputProps> = ({
             }
             // Moving on step at a time
             else {
-                value[index][0] = round(x / step) * step
+                value[index][0] = round(adjustX / step) * step
             }
         }
         // Second thump
         if (sub === 1) {
-            const length = x - value[index][0]
+            const length = adjustX - value[index][0]
             // Prevent collision with the thump after it
-            if ((index < value.length - 1) && (value[index + 1][0] - step < x)) {
+            if ((index < value.length - 1) && (value[index + 1][0] - step < adjustX)) {
                 value[index][1] = value[index + 1][0] - step
             }
             // min length = step
@@ -83,7 +84,7 @@ const TrackInput: FC<TrackInputProps> = ({
             }
             // Moving on step at a time
             else {
-                value[index][1] = round(x / step) * step
+                value[index][1] = round(adjustX / step) * step
             }
         }
 
@@ -100,13 +101,13 @@ const TrackInput: FC<TrackInputProps> = ({
 
 
     const x1Value = (v: Value) => v[0]
-    const x2Value = (v: Value) => v[1] - v[0]
+    const x2Value = (v: Value) => v[1]
 
 
     const maxX = 1
     const xScale = scaleLinear()
         .domain([0, maxX])
-        .range([0, 100])
+        .range(theme.dir === 'ltr' ? [0, 100] : [100, 0])
 
 
     const maxY = TRACK_HEIGHT

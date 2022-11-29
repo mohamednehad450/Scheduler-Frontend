@@ -15,9 +15,9 @@ interface PeriodMarkProps<T> {
 function PeriodMark<T extends Object>({ item, x1Value, x2Value, xScale, yValue, yScale, showThump }: PeriodMarkProps<T>) {
     const theme = useMantineTheme()
 
-    const x = xScale(x1Value(item))
-    const width = xScale(x2Value(item))
-
+    const x1 = xScale(x1Value(item))
+    const x2 = xScale(x2Value(item))
+    const width = Math.abs(x2 - x1)
     const height = yScale.bandwidth()
     const y = yScale(yValue(item))
     return (
@@ -25,7 +25,7 @@ function PeriodMark<T extends Object>({ item, x1Value, x2Value, xScale, yValue, 
             <rect
                 width={`${width}%`}
                 height={height}
-                x={`${x}%`}
+                x={`${Math.min(x1, x2)}%`}
                 y={y}
                 fill={theme.colors.blue[7]}
                 rx={yScale.bandwidth() / 2}
@@ -35,7 +35,7 @@ function PeriodMark<T extends Object>({ item, x1Value, x2Value, xScale, yValue, 
                     <circle
                         r={yScale.bandwidth()}
                         stroke={theme.colors.blue[7]}
-                        cx={`${x}%`}
+                        cx={`${x1}%`}
                         cy={(y || 0) + yScale.bandwidth() / 2}
                         fill={'white'}
                         strokeWidth={3}
@@ -43,7 +43,7 @@ function PeriodMark<T extends Object>({ item, x1Value, x2Value, xScale, yValue, 
                     <circle
                         r={yScale.bandwidth()}
                         stroke={theme.colors.blue[7]}
-                        cx={`${x + width}%`}
+                        cx={`${x2}%`}
                         cy={(y || 0) + yScale.bandwidth() / 2}
                         fill={'white'}
                         strokeWidth={3}

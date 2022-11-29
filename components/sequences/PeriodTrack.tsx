@@ -12,12 +12,15 @@ function PeriodTrack({ xScale, yScale, yValue }: PeriodTrackProps) {
 
     const theme = useMantineTheme()
 
+    const x = Math.min(xScale.range()[0], xScale.range()[1])
+    const width = Math.max(xScale.range()[0], xScale.range()[1])
+
     return (
         <g>
             <rect
-                width={xScale.range()[1] + "%"}
+                width={width + "%"}
                 height={yScale.bandwidth()}
-                x={xScale(0) + "%"}
+                x={x + "%"}
                 y={yScale(yValue)}
                 fill={theme.colors.gray[3]}
                 rx={yScale.bandwidth() / 2}
