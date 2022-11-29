@@ -23,7 +23,16 @@ const SequenceTriggers: FC<SequenceTriggersProps> = ({ cronTriggers }) => {
                     <Tab label={t('schedules')} >
                         <Accordion>
                             {cronTriggers.map(({ cron }) => (
-                                <AccordionItem label={cron.label} iconPosition="right" key={cron.id} >
+                                <AccordionItem
+                                    label={cron.label}
+                                    iconPosition="right"
+                                    key={cron.id}
+                                    styles={{
+                                        label: {
+                                            display: 'flex'
+                                        }
+                                    }}
+                                >
                                     <Table striped highlightOnHover>
                                         <thead>
                                             <tr>

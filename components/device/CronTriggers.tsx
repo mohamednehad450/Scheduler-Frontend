@@ -48,12 +48,16 @@ const CronTriggers: FC = () => {
             <Divider />
             {crons.length ? (
                 <ScrollArea pt="xs" m="0" p="0" styles={{ scrollbar: { zIndex: 2 } }}>
-                    <Accordion offsetIcon={true}>
+                    <Accordion >
                         {crons.map((cron, i) => (
                             <AccordionItem
                                 key={cron.id}
                                 label={cron.label}
+                                iconPosition={"right"}
                                 styles={{
+                                    label: {
+                                        display: 'flex',
+                                    },
                                     itemTitle: {
                                         zIndex: 1,
                                         position: 'sticky',
