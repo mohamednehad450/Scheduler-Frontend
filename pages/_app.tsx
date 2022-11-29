@@ -3,6 +3,8 @@ import Head from 'next/head';
 import { AppLayout } from '../components/layout';
 import { AppContext } from '../components/context';
 import { appWithTranslation } from 'next-i18next';
+import 'cronstrue/locales/ar'
+
 
 function App(props: AppProps) {
   const { Component, pageProps } = props;

@@ -26,7 +26,7 @@ const CronRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
             <Group direction="column" py="sm">
                 <Text size="sm" color={'gray'}>{t("schedule_description")}</Text>
                 <Text>
-                    {cronstrue.toString(cron.cron, { monthStartIndexZero: true })}
+                    {cronstrue.toString(cron.cron, { monthStartIndexZero: true, locale: router.locale || "en" })}
                 </Text>
             </Group>
             <Divider />

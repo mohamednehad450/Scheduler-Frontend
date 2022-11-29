@@ -2,7 +2,6 @@ import { Button, Divider, Group, Modal, Text, TextInput, useMantineTheme } from 
 import { FC, useEffect, useState } from "react";
 import { Cron } from "../common";
 import cronstrue from 'cronstrue'
-import 'cronstrue/locales/ar'
 import CronInput from "./CronInput";
 import { useCRUD } from "../context";
 import { useTranslation } from "react-i18next";
