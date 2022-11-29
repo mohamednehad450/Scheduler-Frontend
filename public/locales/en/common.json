@@ -1,5 +1,6 @@
 {
     "dir": "ltr",
+    "lang": "Language",
     "scheduler": "Pi Scheduler",
     "dashboard": "Dashboard",
     "sequences": "Sequences",

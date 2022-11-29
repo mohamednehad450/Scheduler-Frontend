@@ -1,5 +1,6 @@
 {
     "dir": "rtl",
+    "lang": "اللغة",
     "scheduler": "مؤقت باي",
     "dashboard": "لوحة البيانات",
     "sequences": "التسلسلات",

@@ -2,6 +2,7 @@ import { Dispatch, FC, SetStateAction } from "react";
 import { Burger, Button, Group, Header as _Header, MediaQuery, Text, useMantineTheme } from "@mantine/core";
 import { useAuth } from "../context";
 import { useTranslation } from "react-i18next";
+import LanguageMenu from "./LanguageMenu";
 
 interface HeaderProps {
     opened: boolean
@@ -28,14 +29,17 @@ const Header: FC<HeaderProps> = ({ opened, setOpened }) => {
                     </MediaQuery>
                     <Text size="lg">{t('scheduler')}</Text>
                 </Group>
-                {auth?.state === "signedIn" && (
-                    <Group>
-                        <Text>{auth?.username}</Text>
-                        <Button variant="subtle" onClick={() => auth?.logout()}>
-                            {t('logout')}
-                        </Button>
-                    </Group>
-                )}
+                <Group>
+                    <LanguageMenu />
+                    {auth?.state === "signedIn" && (
+                        <Group>
+                            <Text>{auth?.username}</Text>
+                            <Button variant="subtle" onClick={() => auth?.logout()}>
+                                {t('logout')}
+                            </Button>
+                        </Group>
+                    )}
+                </Group>
             </Group>
         </_Header>
     )
