@@ -4,7 +4,6 @@ import Nav from "./Nav";
 import Header from "./Header";
 import { useAuth } from "../context";
 import SignInCard from "./SignInCard";
-import { useTranslation, } from "react-i18next";
 
 
 const AppLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
