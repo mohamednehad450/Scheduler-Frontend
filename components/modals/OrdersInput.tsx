@@ -67,9 +67,9 @@ const genSteps = ({ sec, min, ms }: timeLabel) => [
     { value: String(100), label: `100 ${ms}` },
     { value: String(500), label: `500 ${ms}` },
     { value: String(1000), label: `1 ${sec}` },
-    { value: String(10000), label: `10 ${sec}` },
-    { value: String(15000), label: `15 ${sec}` },
-    { value: String(30000), label: `30 ${sec}` },
+    { value: String(1000 * 10), label: `10 ${sec}` },
+    { value: String(1000 * 15), label: `15 ${sec}` },
+    { value: String(1000 * 30), label: `30 ${sec}` },
     { value: String(1000 * 60), label: `1 ${min}` },
 ]
 
@@ -93,7 +93,7 @@ const OrdersInput: FC<OrdersInputProps> = ({ orders, onChange, error, pins }) =>
 
     const [channelMap, setChannelMap] = useState<{ [key: Pin['channel']]: [number, number][] }>({})
     const [maxX, setMaxX] = useState(Math.max(...(orders.length ? orders.map(o => o.duration + o.offset) : [30 * 60 * 1000])))
-    const [step, setStep] = useState(1000)
+    const [step, setStep] = useState(Math.min(1000, Number([...steps].reverse().find(({ value }) => Number(value) <= (maxX / 4))?.value) || 10))
     const [sequenceLength, setSequenceLength] = useState<{ value: string, label: string }[]>([...defaultSequenceLength])
     const [customLength, setCustomLength] = useState(false)
 
@@ -145,9 +145,9 @@ const OrdersInput: FC<OrdersInputProps> = ({ orders, onChange, error, pins }) =>
                         onChange={v => {
                             const length = Number(v)
                             setMaxX(length)
-                            // Make sure step is at most half of the length
+                            // Make sure step is at most quarter of the length
                             const newStep = (length / 2) < step ?
-                                Number([...steps].reverse().find(({ value }) => Number(value) <= (length / 2))?.value || 10) :
+                                Number([...steps].reverse().find(({ value }) => Number(value) <= (length / 4))?.value || 10) :
                                 undefined
                             newStep && setStep(newStep)
                             onChange(update(channelMap, length))
@@ -166,7 +166,7 @@ const OrdersInput: FC<OrdersInputProps> = ({ orders, onChange, error, pins }) =>
                         data={steps}
                         onChange={(v) => {
                             const c = Number(v)
-                            if (isNaN(c) || maxX * 0.5 < c) return
+                            if (isNaN(c) || maxX * 0.25 < c) return
                             setStep(c)
                         }}
                         rightSectionWidth={0}
