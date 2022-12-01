@@ -128,6 +128,7 @@ const TrackInput: FC<TrackInputProps> = ({
                 <Group style={{ zIndex: active ? -1 : 0 }}>
 
                     <ActionIcon size={20} variant="light" onClick={() => {
+                        activeIndex.current = undefined
                         value.pop()
                         onChange(value)
                         onChangeEnd && onChangeEnd(value)
@@ -136,6 +137,7 @@ const TrackInput: FC<TrackInputProps> = ({
                     </ActionIcon>
                     <Space />
                     <ActionIcon size={20} variant="light" onClick={() => {
+                        activeIndex.current = undefined
                         if (!value.length) {
                             value.push([0, 0.1])
                             onChange(value)
