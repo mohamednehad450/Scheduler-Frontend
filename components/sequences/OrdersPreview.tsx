@@ -89,7 +89,7 @@ const OrdersPreview: FC<OrdersPreviewProps> = ({ orders }) => {
                                 yValue={channel}
                                 xScale={xScale}
                                 yScale={yScale}
-                                key={order.id}
+                                key={`${order.channel}:${order.offset}-${order.duration}`}
                             />
                         ))}
                         <PeriodTicks {...{ xScale, yScale }} />

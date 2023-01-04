@@ -33,7 +33,6 @@ export type Cron = {
             name: string,
             active: boolean
         }
-
     }[]
 }
 
@@ -42,18 +41,17 @@ export type Cron = {
  * 
  */
 type Order = {
-    id: number
     channel: number
     duration: number
     offset: number
-    sequenceId: number
+    Pin: { label: string }
 }
 export type Sequence = {
     id: number
     name: string
     lastRun: Date | null
     active: boolean
-    orders: (Order & { Pin: { label: string } })[]
+    orders: Order[]
     CronSequence: { cron: Cron }[]
 }
 
