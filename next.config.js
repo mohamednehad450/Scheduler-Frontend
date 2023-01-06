@@ -16,12 +16,12 @@ const nextConfig = {
         destination: `http://${process.env.BACKEND_URL || 'localhost'}:${process.env.BACKEND_PORT || "8000"}/pin/:id`,
       },
       {
-        source: `/api/events/sequences`,
-        destination: `http://${process.env.BACKEND_URL || 'localhost'}:${process.env.BACKEND_PORT || "8000"}/events/sequences`,
+        source: `/api/event/sequence`,
+        destination: `http://${process.env.BACKEND_URL || 'localhost'}:${process.env.BACKEND_PORT || "8000"}/event/sequence`,
       },
       {
-        source: `/api/events/sequences/:id`,
-        destination: `http://${process.env.BACKEND_URL || 'localhost'}:${process.env.BACKEND_PORT || "8000"}/events/sequences/:id`,
+        source: `/api/event/sequence/:id`,
+        destination: `http://${process.env.BACKEND_URL || 'localhost'}:${process.env.BACKEND_PORT || "8000"}/event/sequence/:id`,
       },
       {
         source: `/api/sequence`,
