@@ -98,7 +98,6 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, initialPin, usedPins: initU
                 onChange={v => v && setPin(p => ({ ...p, channel: Number(v) }))}
                 value={String(pin.channel)}
                 error={err.channel}
-                disabled={!!initialPin}
             />
             <RadioGroup
                 py="xs"
@@ -161,7 +160,7 @@ const NewPin: FC<NewPinsProps> = ({ opened, onClose, initialPin, usedPins: initU
                         }
 
                         if (pin.label && pin.channel) {
-                            const res = initialPin ? crud?.pinsCRUD?.update(pin.channel, { label: pin.label, onState: pin.onState }) : crud?.pinsCRUD?.add(pin)
+                            const res = initialPin ? crud?.pinsCRUD?.update(initialPin.channel, { ...pin }) : crud?.pinsCRUD?.add(pin)
                             res && res.then((r) => {
                                 onDone()
                                 initialPin ? onClose(r.data) : onClose()
