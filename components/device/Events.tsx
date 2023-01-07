@@ -1,7 +1,8 @@
-import { ActionIcon, Container, Divider, Group, LoadingOverlay, ScrollArea, Table, Text } from "@mantine/core";
+import { ActionIcon, Container, Divider, Group, LoadingOverlay, Pagination, ScrollArea, Table, Text } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Refresh, Trash } from "tabler-icons-react";
+import { Pagination as Page } from "../../api";
 import { SequenceEvent } from "../common";
 import { useCRUD, usePrompt } from "../context";
 
@@ -9,7 +10,7 @@ import { useCRUD, usePrompt } from "../context";
 
 const Events: FC = () => {
 
-    const [events, setEvents] = useState<SequenceEvent[]>([])
+    const [events, setEvents] = useState<{ events: SequenceEvent[], page?: Page }>({ events: [] })
     const [loading, setLoading] = useState(true)
     const prompt = usePrompt()
 
@@ -19,8 +20,8 @@ const Events: FC = () => {
 
     useEffect(() => {
         crud?.sequenceEvents?.listAll()
-            .then(d => {
-                setEvents(d.data)
+            .then(({ data }) => {
+                setEvents(data)
             })
             .catch(err => {
                 // TODO
@@ -58,7 +59,7 @@ const Events: FC = () => {
                             prompt?.confirm((confirmed) =>
                                 confirmed && crud?.sequenceEvents?.deleteAll()
                                     .then(d => {
-                                        setEvents([])
+                                        setEvents({ events: [] })
                                     })
                                     .catch(err => {
                                         // TODO
@@ -70,11 +71,11 @@ const Events: FC = () => {
                 </Group>
             </Group>
             <Divider />
-            {events.length ? (
+            {events.events.length ? (
                 <ScrollArea pt="xs" m="0" p="0">
                     <Table striped highlightOnHover >
                         <tbody>
-                            {events.map((e) => (
+                            {events.events.map((e) => (
                                 <tr key={e.id}>
                                     <td>{new Date(e.date).toLocaleString()}</td>
                                     <td>{e.sequence.name}</td>
@@ -104,6 +105,25 @@ const Events: FC = () => {
                     <Text>{t('no_events')}</Text>
                 </div>
             )}
+            <Group position="right" px={"xs"} pt={"xs"}>
+                <Pagination
+                    total={Math.round((events.page?.total || 0) / (events.page?.perPage || 1))}
+                    siblings={0}
+                    onChange={(page) => {
+                        setLoading(true)
+                        crud?.sequenceEvents?.listAll({ page })
+                            .then(d => {
+                                setEvents(d.data)
+                            })
+                            .catch(err => {
+                                // TODO
+                            })
+                            .finally(() => {
+                                setLoading(false)
+                            })
+                    }}
+                />
+            </Group>
         </Container>
     )
 }

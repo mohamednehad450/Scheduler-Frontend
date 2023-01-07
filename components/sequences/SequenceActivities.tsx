@@ -1,26 +1,22 @@
-import { Divider, Container, Group, ScrollArea, Table, Text, ActionIcon, LoadingOverlay, useMantineTheme } from "@mantine/core"
+import { Divider, Container, Group, ScrollArea, Table, Text, ActionIcon, LoadingOverlay, useMantineTheme, Pagination } from "@mantine/core"
 import { FC, useEffect, useState } from "react"
 import { Refresh, Trash } from "tabler-icons-react"
 import { usePrompt } from "../context"
 import type { Sequence, SequenceEvent } from "../common"
 import { useCRUD } from "../context"
 import { useTranslation } from "react-i18next"
+import { Pagination as Page } from "../../api"
 
 
 interface SequenceActivitiesProps {
     sequence: Sequence
 }
 
-const capitalizeFirst = (s: string) => {
-    const arr = [...s]
-    arr[0] = arr[0].toLocaleUpperCase()
-    return arr.join('')
-}
 const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
 
     const theme = useMantineTheme()
     const [loading, setLoading] = useState(true)
-    const [events, setEvents] = useState<SequenceEvent[]>([])
+    const [events, setEvents] = useState<{ events: SequenceEvent[], page?: Page }>({ events: [] })
 
     const prompt = usePrompt()
 
@@ -66,12 +62,11 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
                         onClick={() =>
                             prompt?.confirm((confirmed) => confirmed && crud?.sequenceEvents?.deleteById(sequence.id)
                                 .then(d => {
-                                    setEvents([])
+                                    setEvents({ events: [] })
                                 })
                                 .catch(err => {
                                     // TODO
-                                })
-                                ,
+                                }),
                                 `${t('clear_sequence_events')}`)
                         }
                     >
@@ -80,11 +75,11 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
                 </Group>
             </Group>
             <Divider />
-            {events.length ? (
+            {events.events.length ? (
                 <ScrollArea pt="xs" styles={{ root: { flex: 1 } }} >
                     <Table highlightOnHover striped>
                         <tbody>
-                            {events.map(e => (
+                            {events.events.map(e => (
                                 <tr key={e.id}>
                                     <td>{new Date(e.date).toLocaleString()}</td>
                                     <td>{t(e.eventType)}</td>
@@ -110,6 +105,25 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
                     <Text>{t('zero_activities')}</Text>
                 </Group>
             )}
+            <Group position="right" px={"xs"} pt={"xs"}>
+                <Pagination
+                    total={Math.round((events.page?.total || 0) / (events.page?.perPage || 1))}
+                    siblings={0}
+                    onChange={page => {
+                        setLoading(true)
+                        crud?.sequenceEvents?.listById(sequence.id, { page })
+                            .then(d => {
+                                setEvents(d.data)
+                            })
+                            .catch(err => {
+                                // TODO
+                            })
+                            .finally(() => {
+                                setLoading(false)
+                            })
+                    }}
+                />
+            </Group>
         </Container>
     )
 }

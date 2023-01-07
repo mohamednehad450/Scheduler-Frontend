@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react"
-import { auth, cronSequence, CRUD, Events } from "../../../api"
+import { auth, cronSequence, CRUD, Events, Page } from "../../../api"
 import { Cron, Sequence } from '../../common'
 
 interface AuthContext {
@@ -114,8 +114,8 @@ const useEventsWithAuth = <K, T>(events: Events<K, T>) => {
     return {
         deleteAll: () => events.deleteAll(token),
         deleteById: (id: K) => events.deleteById(id, token),
-        listAll: () => events.listAll(token),
-        listById: (id: K) => events.listById(id, token),
+        listAll: (page?: Page) => events.listAll(token, page),
+        listById: (id: K, page?: Page) => events.listById(id, token, page),
     }
 }
 

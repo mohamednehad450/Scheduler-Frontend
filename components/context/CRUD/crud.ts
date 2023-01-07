@@ -6,6 +6,8 @@ import {
     pinsCRUD as pinsCRUDNoAuth,
     sequenceCRUD as sequenceCRUDNoAuth,
     sequenceEvents as sequenceEventsNoAuth,
+    Page,
+    Pagination,
 } from "../../../api";
 import { Cron, Sequence, SequenceEvent, Pin } from "../../common";
 
@@ -22,8 +24,8 @@ interface CRUD<K, T> {
 interface Events<K, T> {
     deleteAll: () => Promise<void>;
     deleteById: (id: K) => Promise<void>;
-    listById: (id: K) => Promise<{ data: T[] }>
-    listAll: () => Promise<{ data: T[] }>
+    listById: (id: K, page?: Page) => Promise<{ data: { events: T[], page: Pagination } }>
+    listAll: (page?: Page) => Promise<{ data: { events: T[], page: Pagination } }>
 }
 
 interface CronSequenceCRUD {

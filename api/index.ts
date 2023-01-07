@@ -4,7 +4,7 @@ import cronSequence from "./cronSequence";
 import pinsCRUD from "./pinsCRUD";
 import sequenceCRUD from "./sequenceCRUD";
 import sequenceEvents from "./sequenceEvents";
-import { CRUD, Events } from "./utils";
+import { CRUD, Events, Page, Pagination } from "./utils";
 
 export {
     pinsCRUD,
@@ -16,3 +16,4 @@ export {
     CRUD,
     Events,
 }
+export type { Page, Pagination }

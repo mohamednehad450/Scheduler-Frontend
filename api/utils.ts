@@ -29,11 +29,19 @@ class CRUD<K, T> implements CRUDClass<K, T>{
 interface EventsClass<K, T> {
     deleteAll: (token: string) => Promise<void>;
     deleteById: (id: K, token: string) => Promise<void>;
-    listById: (id: K, token: string) => Promise<{ data: T[] }>
-    listAll: (token: string) => Promise<{ data: T[] }>
+    listById: (id: K, token: string) => Promise<{ data: { events: T[], page: Pagination } }>
+    listAll: (token: string) => Promise<{ data: { events: T[], page: Pagination } }>
 }
 
-
+type Page = {
+    page: number,
+    perPage?: number
+}
+type Pagination = {
+    current: number,
+    perPage: number,
+    total: number
+}
 class Events<K, T> implements EventsClass<K, T>  {
     url: string
 
@@ -43,8 +51,9 @@ class Events<K, T> implements EventsClass<K, T>  {
 
     deleteAll = async (token: string) => axios.delete<void, void>(this.url, { params: { token } });
     deleteById = (id: K, token: string) => axios.delete<void, void>(this.url + "/" + id, { params: { token } });
-    listById = (id: K, token: string) => axios.get<T[]>(this.url + '/' + id, { params: { token } });
-    listAll = (token: string) => axios.get<T[]>(this.url, { params: { token } });
+    listById = (id: K, token: string, page?: Page) => axios.get<{ events: T[], page: Pagination }>(this.url + '/' + id, { params: { token, ...page }, });
+    listAll = (token: string, page?: Page) => axios.get<{ events: T[], page: Pagination }>(this.url, { params: { token, ...page } });
 }
 
 export { CRUD, Events }
+export type { Page, Pagination }
