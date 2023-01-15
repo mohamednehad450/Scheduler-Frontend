@@ -55,5 +55,19 @@ class Events<K, T> implements EventsClass<K, T>  {
     listAll = (token: string, page?: Page) => axios.get<{ events: T[], page: Pagination }>(this.url, { params: { token, ...page } });
 }
 
-export { CRUD, Events }
+
+class Auth {
+
+    url: string
+
+    constructor(url: string) {
+        this.url = url
+    }
+
+    register = async (user: any) => axios.post<{ username: string, token: string }>(this.url + '/register', user)
+    login = async (user: any) => axios.post<{ username: string, token: string }>(this.url + '/login', user)
+    validate = async (token: string) => axios.post<void>(this.url + '/validate', { token })
+}
+
+export { CRUD, Events, Auth }
 export type { Page, Pagination }

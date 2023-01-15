@@ -3,6 +3,7 @@ import { io, Socket } from "socket.io-client"
 import type { Pin, Sequence } from "../../../components/common"
 import os from 'os'
 import { useAuth } from "../auth"
+import { BACKEND_BASE_URL } from "../../../api"
 
 enum ACTIONS {
     RUN = "run",
@@ -44,7 +45,7 @@ const useSocketContext = (): Socket | undefined => {
     const auth = useAuth()
     useEffect(() => {
         if (auth?.state !== "signedIn") return
-        const s = io(`http://${os.hostname()}:8000`, { auth: { token: auth?.token }, })
+        const s = io(BACKEND_BASE_URL, { auth: { token: auth?.token }, })
         s.on('connect', () => {
             setSocket(s)
         })
