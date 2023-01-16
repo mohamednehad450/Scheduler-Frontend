@@ -9,9 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@mantine/core": "^4.2.7",
-    "@mantine/hooks": "^4.2.7",
-    "@mantine/next": "^4.2.7",
+    "@mantine/core": "^4.2.12",
+    "@mantine/hooks": "^4.2.12",
+    "@mantine/next": "^4.2.12",
     "axios": "^0.27.2",
     "cron": "^2.1.0",
     "cronstrue": "^2.20.0",
