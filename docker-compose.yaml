@@ -3,10 +3,13 @@ services:
     image: mohamednehad450/scheduler-frontend:1.0
     ports:
       - "3000:3000"
+    environment:
+      - BACKEND_URL=backend
+      - BACKEND_PORT=8000
     networks:
       - backend
   backend:
-    image: mohamednehad450/scheduler-backend:1.0
+    image: mohamednehad450/scheduler:1.0
     ports:
       - "8000:8000"
     volumes:
@@ -15,7 +18,7 @@ services:
     networks:
       - backend
     environment:
-      - TOKEN_KEY=<YOUR TOKEN KEY HERE>
+      - TOKEN_KEY=${TOKEN_KEY}
 volumes:
   db:
     driver: local
