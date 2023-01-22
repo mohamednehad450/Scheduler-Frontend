@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
 import { io, Socket } from "socket.io-client"
 import type { Pin, Sequence } from "../../../components/common"
 import os from 'os'
@@ -33,19 +33,26 @@ type SuccessObject = {
     args: any[]
 }
 
+type SocketContext = {
+    url: [string, Dispatch<SetStateAction<string>>]
+    socket: Socket | undefined
+}
 
-const socketContext = createContext<Socket | undefined>(undefined)
+
+const socketContext = createContext<SocketContext | undefined>(undefined)
 
 const useSocket = () => useContext(socketContext)
 
 
-const useSocketContext = (): Socket | undefined => {
+const useSocketContext = (): SocketContext => {
 
     const [socket, setSocket] = useState<Socket>()
+    const [socketUrl, setSocketUrl] = useState(`http://${os.hostname()}:8000`)
     const auth = useAuth()
     useEffect(() => {
+
         if (auth?.state !== "signedIn") return
-        const s = io(BACKEND_BASE_URL, { auth: { token: auth?.token }, })
+        const s = io(socketUrl, { auth: { token: auth?.token }, })
         s.on('connect', () => {
             setSocket(s)
         })
@@ -56,10 +63,13 @@ const useSocketContext = (): Socket | undefined => {
             s.removeAllListeners()
             setSocket(undefined)
         }
-    }, [auth?.token, auth?.state])
+    }, [auth?.token, auth?.state, socketUrl])
 
 
-    return socket
+    return {
+        url: [socketUrl, setSocketUrl],
+        socket
+    }
 }
 
 export { useSocket, useSocketContext, socketContext }

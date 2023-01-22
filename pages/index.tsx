@@ -20,17 +20,17 @@ const g = {
 const Home: NextPage = () => {
 
   const [sequences, setSequences] = useState<Sequence[]>([])
-  const socket = useSocket()
+  const sContext = useSocket()
 
   const crud = useCRUD()
 
   const { t } = useTranslation()
 
   useEffect(() => {
-    if (!socket) return
+    if (!sContext?.socket) return
     crud?.sequenceCRUD?.list()
       .then(d => setSequences(d.data))
-  }, [socket, crud])
+  }, [sContext?.socket, crud])
 
   return (
     <>

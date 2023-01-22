@@ -17,7 +17,7 @@ interface SequenceListProps {
 
 const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
 
-    const socket = useSocket()
+    const sContext = useSocket()
     const [runningSequences, setRunningSequences] = useState<DeviceState['runningSequences']>([])
 
     const crud = useCRUD()
@@ -30,10 +30,10 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
         const handleState: DeviceStateHandler = ({ runningSequences }) => {
             runningSequences && setRunningSequences(runningSequences)
         }
-        socket?.on('state', handleState)
-        socket?.emit('state')
-        return () => { socket?.removeListener('state', handleState) }
-    }, [socket])
+        sContext?.socket?.on('state', handleState)
+        sContext?.socket?.emit('state')
+        return () => { sContext?.socket?.removeListener('state', handleState) }
+    }, [sContext])
 
     const list = sequences.map((s, i) => ({ ...s, i }))?.filter(s => {
         switch (show) {
@@ -95,16 +95,16 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
                                 }}
                                 run={(id, onDone) => {
                                     const actionId = v4()
-                                    socket?.emit('run', actionId, id)
-                                    socket?.once(actionId, (ok: boolean, err: Error | null) => {
+                                    sContext?.socket?.emit('run', actionId, id)
+                                    sContext?.socket?.once(actionId, (ok: boolean, err: Error | null) => {
                                         onDone && onDone()
                                         // TODO: Error handling    
                                     })
                                 }}
                                 stop={(id, onDone) => {
                                     const actionId = v4()
-                                    socket?.emit('stop', actionId, id)
-                                    socket?.once(actionId, (ok: boolean, err: Error | null) => {
+                                    sContext?.socket?.emit('stop', actionId, id)
+                                    sContext?.socket?.once(actionId, (ok: boolean, err: Error | null) => {
                                         onDone && onDone()
                                         // TODO: Error handling    
                                     })

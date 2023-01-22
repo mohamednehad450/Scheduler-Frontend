@@ -8,7 +8,7 @@ import { TickHandler, useSocket } from "../context";
 
 const DeviceTime: FC = () => {
 
-    const socket = useSocket()
+    const sContext = useSocket()
     const [time, setTime] = useState<Date>()
 
     const { t } = useTranslation()
@@ -17,15 +17,15 @@ const DeviceTime: FC = () => {
         const tick: TickHandler = (time: string) => {
             setTime(new Date(time))
         }
-        socket?.on('tick', tick)
-        socket?.emit('tick', null, true)
+        sContext?.socket?.on('tick', tick)
+        sContext?.socket?.emit('tick', null, true)
 
         return () => {
-            socket?.removeListener('tick', tick);
-            socket?.emit('tick', null, false)
+            sContext?.socket?.removeListener('tick', tick);
+            sContext?.socket?.emit('tick', null, false)
         }
 
-    }, [socket])
+    }, [sContext])
 
     return (
         <Card shadow="sm" p="sm" radius={'md'} style={{ height: '18rem', }}  >
@@ -39,7 +39,7 @@ const DeviceTime: FC = () => {
                     <Title>{time?.toLocaleTimeString()}</Title>
                 </Group>
             </Container>
-            <LoadingOverlay visible={!socket || !time} />
+            <LoadingOverlay visible={!sContext?.socket || !time} />
         </Card>
     )
 }

@@ -9,7 +9,7 @@ import ScrollList from "./ScrollList";
 
 const Sequences: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
 
-    const socket = useSocket()
+    const sContext = useSocket()
     const router = useRouter()
 
     const { t } = useTranslation()
@@ -23,10 +23,10 @@ const Sequences: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
         const handleState: DeviceStateHandler = ({ runningSequences }) => {
             runningSequences && setRunningSequences(runningSequences)
         }
-        socket?.on('state', handleState)
-        socket?.emit('state')
-        return () => { socket?.removeListener('state', handleState) }
-    }, [socket])
+        sContext?.socket?.on('state', handleState)
+        sContext?.socket?.emit('state')
+        return () => { sContext?.socket?.removeListener('state', handleState) }
+    }, [sContext])
 
 
 

@@ -10,7 +10,7 @@ import ScrollList from "./ScrollList";
 
 const PinsStatus: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
 
-    const socket = useSocket()
+    const sContext = useSocket()
     const prompt = usePrompt()
     const crud = useCRUD()
 
@@ -21,7 +21,7 @@ const PinsStatus: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
     const [reservedPins, setReservedPins] = useState<DeviceState['reservedPins']>()
 
     useEffect(() => {
-        if (!socket) return
+        if (!sContext?.socket) return
         crud?.pinsCRUD?.list()
             .then(d => setPins(d.data))
 
@@ -31,15 +31,15 @@ const PinsStatus: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
         }
         const handleChannelChange: ChannelChangeHandler = (change) => setChannelsStatus(old => ({ ...old, ...change }))
 
-        socket?.on('state', handleState)
-        socket?.on('channelChange', handleChannelChange)
+        sContext?.socket?.on('state', handleState)
+        sContext?.socket?.on('channelChange', handleChannelChange)
 
-        socket?.emit('state')
+        sContext?.socket?.emit('state')
         return () => {
-            socket?.removeListener('state', handleState)
-            socket?.removeListener('channelChange', handleChannelChange)
+            sContext?.socket?.removeListener('state', handleState)
+            sContext?.socket?.removeListener('channelChange', handleChannelChange)
         }
-    }, [socket, crud])
+    }, [sContext, crud])
 
 
     return (
@@ -90,7 +90,7 @@ const PinsStatus: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
                     />
                 </Tabs.Tab>
             </Tabs>
-            <LoadingOverlay visible={!socket || !channelsStatus || !reservedPins} />
+            <LoadingOverlay visible={!sContext?.socket || !channelsStatus || !reservedPins} />
         </Card>
     )
 }

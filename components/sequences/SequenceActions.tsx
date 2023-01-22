@@ -46,7 +46,7 @@ interface SequenceActionsProps {
 const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
 
     const prompt = usePrompt()
-    const socket = useSocket()
+    const sContext = useSocket()
 
     const crud = useCRUD()
 
@@ -56,10 +56,10 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
         const handleState: DeviceStateHandler = ({ runningSequences }) => {
             runningSequences && setRunningSequences(runningSequences)
         }
-        socket?.on('state', handleState)
-        socket?.emit('state')
-        return () => { socket?.removeListener('state', handleState) }
-    }, [socket])
+        sContext?.socket?.on('state', handleState)
+        sContext?.socket?.emit('state')
+        return () => { sContext?.socket?.removeListener('state', handleState) }
+    }, [sContext])
 
 
 
@@ -79,8 +79,8 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                             <Group direction="column" style={{ alignItems: 'stretch' }}>
                                 <LoadingButton p={0} onClick={(onDone) => {
                                     const actionId = v4()
-                                    socket?.emit(isRunning ? 'stop' : 'run', actionId, sequence.id)
-                                    socket?.once(actionId, (ok: boolean, err: Error | null) => {
+                                    sContext?.socket?.emit(isRunning ? 'stop' : 'run', actionId, sequence.id)
+                                    sContext?.socket?.once(actionId, (ok: boolean, err: Error | null) => {
                                         onDone()
                                         // TODO: Error handling    
                                     })

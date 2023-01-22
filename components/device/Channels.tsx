@@ -12,7 +12,7 @@ const Channels: FC = () => {
     const [pins, setPins] = useState<Pin[]>([])
     const [channelsStatus, setChannelsStatus] = useState<DeviceState['channelsStatus']>([])
 
-    const socket = useSocket()
+    const sContext = useSocket()
     const prompt = usePrompt()
     const crud = useCRUD()
     const { t } = useTranslation()
@@ -23,15 +23,15 @@ const Channels: FC = () => {
             channelsStatus && setChannelsStatus(channelsStatus)
         }
         const handleChannelChange: ChannelChangeHandler = (change) => setChannelsStatus(old => ({ ...old, ...change }))
-        socket?.on('state', handleState)
-        socket?.on('channelChange', handleChannelChange)
+        sContext?.socket?.on('state', handleState)
+        sContext?.socket?.on('channelChange', handleChannelChange)
 
-        socket?.emit('state')
+        sContext?.socket?.emit('state')
         return () => {
-            socket?.removeListener('state', handleState)
-            socket?.removeListener('channelChange', handleChannelChange)
+            sContext?.socket?.removeListener('state', handleState)
+            sContext?.socket?.removeListener('channelChange', handleChannelChange)
         }
-    }, [socket])
+    }, [sContext])
 
     useEffect(() => {
         crud?.pinsCRUD?.list()
@@ -44,7 +44,7 @@ const Channels: FC = () => {
             <Group py="xs" position="apart">
                 <Text size='xl'>{t('pins')}</Text>
                 <Group>
-                    <Button onClick={() => prompt?.confirm((confirmed) => confirmed && socket?.emit('reset'))} variant="subtle">
+                    <Button onClick={() => prompt?.confirm((confirmed) => confirmed && sContext?.socket?.emit('reset'))} variant="subtle">
                         {t("rest_pins")}
                     </Button>
                     <ActionIcon size={24} onClick={() => crud?.pinsCRUD?.list().then(d => setPins(d.data))} >
