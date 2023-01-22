@@ -141,5 +141,8 @@
     "required_channel": "You must select a channel",
     "submit_add_another": "Submit & add another",
     "activated": "Activated",
-    "deactivated": "Deactivated"
+    "deactivated": "Deactivated",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "change-socket-url": "Change Device Link"
 }

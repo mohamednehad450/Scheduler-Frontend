@@ -3,6 +3,7 @@ import { Burger, Button, Group, Header as _Header, MediaQuery, Text, useMantineT
 import { useAuth } from "../context";
 import { useTranslation } from "react-i18next";
 import LanguageMenu from "./LanguageMenu";
+import SocketUrlMenu from "./SocketUrlMenu";
 
 interface HeaderProps {
     opened: boolean
@@ -30,7 +31,7 @@ const Header: FC<HeaderProps> = ({ opened, setOpened }) => {
                     <Text size="lg">{t('scheduler')}</Text>
                 </Group>
                 <Group>
-                    <LanguageMenu />
+                    <SocketUrlMenu />
                     {auth?.state === "signedIn" && (
                         <Group>
                             <Text>{auth?.username}</Text>
@@ -39,6 +40,7 @@ const Header: FC<HeaderProps> = ({ opened, setOpened }) => {
                             </Button>
                         </Group>
                     )}
+                    <LanguageMenu />
                 </Group>
             </Group>
         </_Header>

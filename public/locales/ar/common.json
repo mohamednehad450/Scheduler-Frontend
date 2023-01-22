@@ -141,5 +141,8 @@
     "required_channel": "يجب اخيار رقم القناة",
     "submit_add_another": "حفظ واضافة اخرى",
     "activated": "مفعل",
-    "deactivated": "معطل"
+    "deactivated": "معطل",
+    "connected": "متصل",
+    "disconnected": "غير متصل",
+    "change-socket-url": "تغيير رابط الجهاز"
 }
