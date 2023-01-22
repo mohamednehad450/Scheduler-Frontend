@@ -1,34 +1,108 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# Scheduler
 
-First, run the development server:
+## Table of content
++ [Overview](#overview)
++ [Prerequisites](#prerequisites)
++ [Installation](#installation)
+    - [Using docker compose with the backend (Recommended)](#using-docker-compose-with-the-backend)
+    - [Stand-alone from DockerHub](#stand-alone-from-dockerhub)
+    - [Stand-alone build your own image](#stand-alone-build-your-own-image)
+    - [Stand-alone from source](#stand-alone-from-source)
 
-```bash
-npm run dev
-# or
-yarn dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Overview
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+A frontend to [Scheduler](https://github.com/mohamednehad450/Scheduler) built with [NextJS](https://nextjs.org/)
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Prerequisites
+- Install git
+    ```
+    sudo apt install git
+    ```
+- Install Docker (if not building from source)
+    1. Install docker
+        ```
+        curl -sSL https://get.docker.com | sh
+        ```
+    2. Allow Docker to be used without being a root
+        ```
+        sudo usermod -aG docker $USER
+        ```
+    3. Restart
+        ``` 
+        reboot
+        ```
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+## Installation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Using docker compose with [the backend](https://github.com/mohamednehad450/Scheduler)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+1. Clone this project
+    ```
+    git clone https://github.com/mohamednehad450/Scheduler-Frontend.git
+    cd Scheduler-Frontend
+    ```
+2. Create `.env` file and add TOKEN_KEY to it 
+    ```
+    echo TOKEN_KEY=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 50) > .env
+    ```
+3. Start docker compose
+    ```
+    docker compose up
+    ```
 
-## Deploy on Vercel
+### Stand-alone from DockerHub
+1. Create the container
+    ```
+    docker container create --name scheduler_frontend_container -p 3000:3000 mohamednehad450/scheduler-frontend:1.0
+    ```
+2. Start the container
+    ```
+    docker start scheduler_frontend_container
+    ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Stand-alone build your own image
+1. Clone this project
+    ```
+    git clone https://github.com/mohamednehad450/Scheduler-Frontend.git
+    cd Scheduler-Frontend
+    ```
+2. Build the image 
+    ``` 
+    docker build -t scheduler-frontend .
+    ```
+3. Create the container
+    ```
+    docker container create --name scheduler_frontend_container -p 3000:3000 scheduler-frontend
+    ```
+4. Start the container
+    ```
+    docker start scheduler_frontend_container
+    ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Stand-alone from source
+1. Install node 18 using [nvm](https://github.com/nvm-sh/nvm) or from [here](https://nodejs.org/en/download/)
+
+2. Clone this project
+    ```
+    git clone https://github.com/mohamednehad450/Scheduler-Frontend.git
+    cd Scheduler-Frontend
+    ```
+
+3. Install dependencies
+    ```
+    npm install
+    ```
+
+4. Build the project
+    ``` 
+    npm run build
+    ```
+
+5. Start the server
+    ```
+    npm run start
+    ```
