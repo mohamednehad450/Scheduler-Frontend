@@ -15,7 +15,7 @@ type SequenceInput = {
 interface NewSequenceProps {
     opened: boolean,
     onClose: (newSeq?: Sequence) => void,
-    initialSequence?: Sequence
+    initialSequence?: Partial<Sequence>
 }
 
 
@@ -24,7 +24,7 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
     const [sequence, setSequence] = useState<SequenceInput>({
         name: initialSequence?.name || '',
         active: initialSequence?.active || false,
-        orders: initialSequence?.orders.map(({ offset, duration, channel }) => ({ offset, duration, channel })) || []
+        orders: initialSequence?.orders?.map(({ offset, duration, channel }) => ({ offset, duration, channel })) || []
     })
     const [error, setError] = useState({
         name: '',
@@ -46,7 +46,7 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
             setSequence({
                 name: initialSequence?.name || '',
                 active: initialSequence?.active || false,
-                orders: initialSequence?.orders.map(({ offset, duration, channel }) => ({ offset, duration, channel })) || []
+                orders: initialSequence?.orders?.map(({ offset, duration, channel }) => ({ offset, duration, channel })) || []
             })
             setError({
                 name: '',
@@ -69,7 +69,7 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
             size={'xl'}
             opened={opened}
             onClose={() => onClose()}
-            title={initialSequence ? `${t('edit')} ${initialSequence.name}` : t('add_new_sequence')}
+            title={initialSequence?.id ? `${t('edit')} ${initialSequence.name || ''}` : t('add_new_sequence')}
             overflow="inside"
         >
             <Divider pt="md" />
@@ -128,7 +128,7 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
                             onDone()
                             return
                         }
-                        const func = initialSequence ?
+                        const func = initialSequence?.id ?
                             crud?.sequenceCRUD?.update(initialSequence.id, sequence) :
                             crud?.sequenceCRUD?.add(sequence)
                         func && func

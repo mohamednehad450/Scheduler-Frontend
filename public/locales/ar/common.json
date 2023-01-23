@@ -144,5 +144,6 @@
     "deactivated": "معطل",
     "connected": "متصل",
     "disconnected": "غير متصل",
-    "change-socket-url": "تغيير رابط الجهاز"
+    "change-socket-url": "تغيير رابط الجهاز",
+    "copy": "نسخ"
 }

@@ -144,5 +144,6 @@
     "deactivated": "Deactivated",
     "connected": "Connected",
     "disconnected": "Disconnected",
-    "change-socket-url": "Change Device Link"
+    "change-socket-url": "Change Device Link",
+    "copy": "Copy"
 }

@@ -4,7 +4,7 @@ import { ConfirmModal, NewSequence, NewCron, LinkSequence, LinkCron, NewPin } fr
 
 interface PromptArgs {
     confirm: [onDone: (confirmed: boolean) => void, message?: string]
-    newSequence: [onDone: (newSeq?: Sequence) => void, initialSequence?: Sequence]
+    newSequence: [onDone: (newSeq?: Sequence) => void, initialSequence?: Partial<Sequence>]
     newCron: [onDone: (newCron?: Cron) => void, initialCron?: Cron]
     newPin: [onDone: (newPin?: Pin) => void, usedPins: { [key: Pin['channel']]: true }, initialPin?: Pin]
     linkSequence: [onDone: (seq?: Sequence) => void, sequenceId: Sequence['id'], initialIds?: Cron['id'][]]

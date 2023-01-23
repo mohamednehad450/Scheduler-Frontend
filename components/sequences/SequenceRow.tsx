@@ -1,6 +1,6 @@
 import { Group, Text, ActionIcon, Tooltip, MediaQuery, Menu } from '@mantine/core'
 import { FC, MouseEventHandler } from 'react'
-import { Calendar, CalendarOff, Edit, PlayerPause, PlayerPlay, Trash, } from 'tabler-icons-react';
+import { Calendar, CalendarOff, Copy, Edit, PlayerPause, PlayerPlay, Trash, } from 'tabler-icons-react';
 import type { Sequence } from '../common'
 import { useRouter } from 'next/router';
 import { useCRUD, usePrompt } from '../context';
@@ -41,6 +41,11 @@ const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, rem
                 // TODO
             })
     const edit = () => prompt?.newSequence((seq) => seq && onChange(seq), sequence)
+
+    const copy = () => prompt?.newSequence(
+        (seq) => seq && router.push(router.route + '/' + seq.id),
+        { orders: sequence.orders }
+    )
 
     return (
         <tr onClick={() => router.push(router.route + '/' + sequence.id)} >
@@ -86,6 +91,14 @@ const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, rem
                                 <Edit size={16} />
                             </ActionIcon>
                         </Tooltip>
+                        <Tooltip label={t('copy')} withArrow>
+                            <ActionIcon
+                                variant='default'
+                                onClick={copy}
+                            >
+                                <Copy size={16} />
+                            </ActionIcon>
+                        </Tooltip>
                         <Tooltip label={t('delete')} withArrow>
                             <ActionIcon
                                 variant='default'
@@ -126,6 +139,12 @@ const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, rem
                             icon={<Edit size={16} />}
                         >
                             {t("edit")}
+                        </Menu.Item>
+                        <Menu.Item
+                            onClick={copy}
+                            icon={<Copy size={16} />}
+                        >
+                            {t("copy")}
                         </Menu.Item>
                         <Menu.Item
                             onClick={() => remove(sequence.id)}
