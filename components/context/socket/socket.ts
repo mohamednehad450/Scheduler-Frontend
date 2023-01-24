@@ -3,7 +3,8 @@ import { io, Socket } from "socket.io-client"
 import type { Pin, Sequence } from "../../../components/common"
 import os from 'os'
 import { useAuth } from "../auth"
-import { BACKEND_BASE_URL } from "../../../api"
+import { deviceAction } from '../../../api'
+
 
 enum ACTIONS {
     RUN = "run",
@@ -33,9 +34,18 @@ type SuccessObject = {
     args: any[]
 }
 
+type DeviceAction = {
+    getState: () => Promise<{ data: DeviceState }>
+    getTime: () => Promise<{ data: { time: string } }>
+    resetDevice: () => Promise<{ data: DeviceState }>
+    run: (id: number) => Promise<{ data: { state: DeviceState, sequence: Sequence } }>
+    stop: (id: number) => Promise<{ data: DeviceState }>
+}
+
 type SocketContext = {
     url: [string, Dispatch<SetStateAction<string>>]
     socket: Socket | undefined
+    fallback: DeviceAction
 }
 
 
@@ -68,7 +78,14 @@ const useSocketContext = (): SocketContext => {
 
     return {
         url: [socketUrl, setSocketUrl],
-        socket
+        socket,
+        fallback: {
+            resetDevice: () => deviceAction.resetDevice(auth?.token || ''),
+            getState: () => deviceAction.getState(auth?.token || ''),
+            getTime: () => deviceAction.getTime(auth?.token || ''),
+            run: (id) => deviceAction.run(id, auth?.token || ''),
+            stop: (id) => deviceAction.stop(id, auth?.token || ''),
+        }
     }
 }
 

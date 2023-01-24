@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { Cron, Pin, Sequence, SequenceEvent } from "../components/common";
 import CronSequence from "./cronSequence";
-import { Auth, CRUD, Events, Page, Pagination } from "./utils";
+import { Auth, CRUD, DeviceAction, Events, Page, Pagination } from "./utils";
 
 const BACKEND_BASE_URL = `http://${process.env.BACKEND_URL || 'localhost'}:${process.env.BACKEND_PORT || "8000"}`
 
@@ -26,6 +26,7 @@ const cronCRUD = new CRUD<Cron['id'], Cron>(NEXT_API_PREFIX + routes.CRON)
 const sequenceEvents = new Events<SequenceEvent['id'], SequenceEvent>(NEXT_API_PREFIX + routes.EVENTS.SEQUENCE)
 const cronSequence = new CronSequence(NEXT_API_PREFIX + routes.LINK)
 const auth = new Auth(NEXT_API_PREFIX + routes.AUTH)
+const deviceAction = new DeviceAction(NEXT_API_PREFIX + routes.ACTION)
 
 const redirect = (slugName: string) => async (req: NextRequest) => {
 
@@ -53,6 +54,7 @@ export {
     cronCRUD,
     cronSequence,
     auth,
+    deviceAction,
     CRUD,
     Events,
     BACKEND_BASE_URL,
