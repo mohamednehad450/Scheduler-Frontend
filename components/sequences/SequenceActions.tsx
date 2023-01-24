@@ -53,13 +53,19 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
     const [runningSequences, setRunningSequences] = useState<DeviceState['runningSequences']>([])
 
     useEffect(() => {
+        if (!sContext?.socket) {
+            const interval = setInterval(() => {
+                sContext?.fallback.getState().then(r => setRunningSequences(r.data.runningSequences))
+            }, 1000)
+            return () => { clearInterval(interval) }
+        }
         const handleState: DeviceStateHandler = ({ runningSequences }) => {
             runningSequences && setRunningSequences(runningSequences)
         }
         sContext?.socket?.on('state', handleState)
         sContext?.socket?.emit('state')
         return () => { sContext?.socket?.removeListener('state', handleState) }
-    }, [sContext])
+    }, [sContext?.socket])
 
 
 
@@ -78,12 +84,22 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                         <Grid.Col {...g}>
                             <Group direction="column" style={{ alignItems: 'stretch' }}>
                                 <LoadingButton p={0} onClick={(onDone) => {
-                                    const actionId = v4()
-                                    sContext?.socket?.emit(isRunning ? 'stop' : 'run', actionId, sequence.id)
-                                    sContext?.socket?.once(actionId, (ok: boolean, err: Error | null) => {
-                                        onDone()
-                                        // TODO: Error handling    
-                                    })
+                                    if (isRunning) {
+                                        sContext?.fallback.stop(sequence.id)
+                                            .then(r => {
+                                                setRunningSequences(r.data.runningSequences)
+                                            })
+                                            .catch(console.error)
+                                            .finally(() => onDone())
+                                        return
+                                    }
+                                    sContext?.fallback.run(sequence.id)
+                                        .then(r => {
+                                            setRunningSequences(r.data.state.runningSequences)
+                                            onChange(r.data.sequence)
+                                        })
+                                        .catch(console.error)
+                                        .finally(() => onDone())
                                 }}>
                                     <Group>
                                         {isRunning ?

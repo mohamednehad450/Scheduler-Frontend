@@ -23,6 +23,15 @@ const Sequences: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
         const handleState: DeviceStateHandler = ({ runningSequences }) => {
             runningSequences && setRunningSequences(runningSequences)
         }
+
+        if (!sContext?.socket) {
+            const interval = setInterval(() => {
+                sContext?.fallback.getState()
+                    .then(r => setRunningSequences(r.data.runningSequences))
+            }, 1000)
+            return () => { clearInterval(interval) }
+        }
+
         sContext?.socket?.on('state', handleState)
         sContext?.socket?.emit('state')
         return () => { sContext?.socket?.removeListener('state', handleState) }

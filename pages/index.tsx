@@ -27,7 +27,6 @@ const Home: NextPage = () => {
   const { t } = useTranslation()
 
   useEffect(() => {
-    if (!sContext?.socket) return
     crud?.sequenceCRUD?.list()
       .then(d => setSequences(d.data))
   }, [sContext?.socket, crud])

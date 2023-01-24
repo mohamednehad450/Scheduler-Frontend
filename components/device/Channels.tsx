@@ -19,6 +19,13 @@ const Channels: FC = () => {
 
 
     useEffect(() => {
+        if (!sContext?.socket) {
+            const interval = setInterval(() => {
+                sContext?.fallback.getState().then(r => setChannelsStatus(r.data.channelsStatus))
+            }, 1000)
+            return () => { clearInterval(interval) }
+        }
+
         const handleState: DeviceStateHandler = ({ channelsStatus }) => {
             channelsStatus && setChannelsStatus(channelsStatus)
         }
@@ -31,7 +38,7 @@ const Channels: FC = () => {
             sContext?.socket?.removeListener('state', handleState)
             sContext?.socket?.removeListener('channelChange', handleChannelChange)
         }
-    }, [sContext])
+    }, [sContext?.socket])
 
     useEffect(() => {
         crud?.pinsCRUD?.list()
@@ -44,7 +51,14 @@ const Channels: FC = () => {
             <Group py="xs" position="apart">
                 <Text size='xl'>{t('pins')}</Text>
                 <Group>
-                    <Button onClick={() => prompt?.confirm((confirmed) => confirmed && sContext?.socket?.emit('reset'))} variant="subtle">
+                    <Button
+                        onClick={() => prompt?.confirm((confirmed) =>
+                            confirmed &&
+                            sContext?.fallback.resetDevice()
+                                .then(r => setChannelsStatus(r.data.channelsStatus))
+                        )}
+                        variant="subtle"
+                    >
                         {t("rest_pins")}
                     </Button>
                     <ActionIcon size={24} onClick={() => crud?.pinsCRUD?.list().then(d => setPins(d.data))} >

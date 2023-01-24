@@ -14,9 +14,17 @@ const DeviceTime: FC = () => {
     const { t } = useTranslation()
 
     useEffect(() => {
+        if (!sContext?.socket) {
+            const interval = setInterval(() => {
+                sContext?.fallback.getTime().then(r => setTime(new Date(r.data.time)))
+            }, 1000)
+            return () => { clearInterval(interval) }
+        }
+
         const tick: TickHandler = (time: string) => {
             setTime(new Date(time))
         }
+
         sContext?.socket?.on('tick', tick)
         sContext?.socket?.emit('tick', null, true)
 
@@ -25,7 +33,7 @@ const DeviceTime: FC = () => {
             sContext?.socket?.emit('tick', null, false)
         }
 
-    }, [sContext])
+    }, [sContext?.socket])
 
     return (
         <Card shadow="sm" p="sm" radius={'md'} style={{ height: '18rem', }}  >
@@ -39,7 +47,7 @@ const DeviceTime: FC = () => {
                     <Title>{time?.toLocaleTimeString()}</Title>
                 </Group>
             </Container>
-            <LoadingOverlay visible={!sContext?.socket || !time} />
+            <LoadingOverlay visible={!time} />
         </Card>
     )
 }

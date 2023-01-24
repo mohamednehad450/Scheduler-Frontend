@@ -1,8 +1,8 @@
-import { Button, Card, Group, LoadingOverlay, Tabs, Text } from "@mantine/core";
+import { Button, Card, Group, Tabs, Text } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pin, Sequence } from "../common";
-import { DeviceState, DeviceStateHandler, ChannelChangeHandler, useSocket, usePrompt, useAuth, useCRUD } from "../context";
+import { DeviceState, DeviceStateHandler, ChannelChangeHandler, useSocket, usePrompt, useCRUD } from "../context";
 import PinStatusRow from "./PinStatusRow";
 import ScrollList from "./ScrollList";
 
@@ -17,19 +17,38 @@ const PinsStatus: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
     const { t } = useTranslation()
 
     const [pins, setPins] = useState<Pin[]>([])
-    const [channelsStatus, setChannelsStatus] = useState<DeviceState['channelsStatus']>()
-    const [reservedPins, setReservedPins] = useState<DeviceState['reservedPins']>()
+    const [deviceState, setDeviceState] = useState<DeviceState>({
+        channelsStatus: {},
+        reservedPins: [],
+        runningSequences: [],
+    })
+
 
     useEffect(() => {
-        if (!sContext?.socket) return
         crud?.pinsCRUD?.list()
             .then(d => setPins(d.data))
 
-        const handleState: DeviceStateHandler = ({ reservedPins, channelsStatus }) => {
-            channelsStatus && setChannelsStatus(channelsStatus)
-            reservedPins && setReservedPins(reservedPins)
+        // Socket is not connected, Manually getting device state
+        if (!sContext?.socket) {
+            const interval = setInterval(() => {
+                sContext?.fallback.getState()
+                    .then(r => setDeviceState(r.data))
+                    .catch(err => {
+                        console.log(err)
+                    })
+            }, 1000)
+
+            return () => { clearInterval(interval) }
         }
-        const handleChannelChange: ChannelChangeHandler = (change) => setChannelsStatus(old => ({ ...old, ...change }))
+
+        const handleState: DeviceStateHandler = (newState) => {
+            setDeviceState((oldState) => ({ ...oldState, ...newState }))
+        }
+
+        const handleChannelChange: ChannelChangeHandler = (change) => setDeviceState(old => ({
+            ...old,
+            channelsStatus: { ...old.channelsStatus, ...change }
+        }))
 
         sContext?.socket?.on('state', handleState)
         sContext?.socket?.on('channelChange', handleChannelChange)
@@ -39,7 +58,7 @@ const PinsStatus: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
             sContext?.socket?.removeListener('state', handleState)
             sContext?.socket?.removeListener('channelChange', handleChannelChange)
         }
-    }, [sContext, crud])
+    }, [sContext?.socket, crud])
 
 
     return (
@@ -48,7 +67,7 @@ const PinsStatus: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
                 <Tabs.Tab label={t("all_pins")}>
                     <ScrollList
                         body={pins.length && pins.map(s => (
-                            <PinStatusRow key={s.channel} label={s.label} running={!!channelsStatus && channelsStatus[s.channel]} />
+                            <PinStatusRow key={s.channel} label={s.label} running={deviceState.channelsStatus[s.channel]} />
                         ))}
                         empty={
                             <>
@@ -74,7 +93,7 @@ const PinsStatus: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
                 </Tabs.Tab>
                 <Tabs.Tab label={t('reserved_pins')}>
                     <ScrollList
-                        body={reservedPins?.length && reservedPins.map((s) => (
+                        body={deviceState.reservedPins?.length && deviceState.reservedPins.map((s) => (
                             <Group key={s.pin.channel} p={'xs'} position="apart" style={{ borderBottom: "2px solid #e9ecef" }}>
                                 <Text size="sm">{s.pin.label}</Text>
                                 <Text size="sm">{sequences.find(seq => s.sequenceId === seq.id)?.name || "NULL"}</Text>
@@ -90,7 +109,6 @@ const PinsStatus: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
                     />
                 </Tabs.Tab>
             </Tabs>
-            <LoadingOverlay visible={!sContext?.socket || !channelsStatus || !reservedPins} />
         </Card>
     )
 }

@@ -27,13 +27,21 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
     const { t } = useTranslation()
 
     useEffect(() => {
+        if (!sContext?.socket) {
+            const interval = setInterval(() => {
+                sContext?.fallback.getState().then(r => setRunningSequences(r.data.runningSequences))
+            }, 1000)
+            return () => { clearInterval(interval) }
+        }
+
+
         const handleState: DeviceStateHandler = ({ runningSequences }) => {
             runningSequences && setRunningSequences(runningSequences)
         }
         sContext?.socket?.on('state', handleState)
         sContext?.socket?.emit('state')
         return () => { sContext?.socket?.removeListener('state', handleState) }
-    }, [sContext])
+    }, [sContext?.socket])
 
     const list = sequences.map((s, i) => ({ ...s, i }))?.filter(s => {
         switch (show) {
@@ -94,20 +102,21 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
                                     onChange(newSequences)
                                 }}
                                 run={(id, onDone) => {
-                                    const actionId = v4()
-                                    sContext?.socket?.emit('run', actionId, id)
-                                    sContext?.socket?.once(actionId, (ok: boolean, err: Error | null) => {
-                                        onDone && onDone()
-                                        // TODO: Error handling    
-                                    })
+                                    sContext?.fallback.run(id)
+                                        .then(r => {
+                                            const newSequences = [...sequences]
+                                            newSequences[s.i] = r.data.sequence
+                                            onChange(newSequences)
+                                            setRunningSequences(r.data.state.runningSequences)
+                                        })
+                                        .catch(console.error)
+                                        .finally(() => onDone && onDone())
                                 }}
                                 stop={(id, onDone) => {
-                                    const actionId = v4()
-                                    sContext?.socket?.emit('stop', actionId, id)
-                                    sContext?.socket?.once(actionId, (ok: boolean, err: Error | null) => {
-                                        onDone && onDone()
-                                        // TODO: Error handling    
-                                    })
+                                    sContext?.fallback.stop(id)
+                                        .then(r => setRunningSequences(r.data.runningSequences))
+                                        .catch(console.error)
+                                        .finally(() => onDone && onDone())
                                 }}
                             />
                         ))}
