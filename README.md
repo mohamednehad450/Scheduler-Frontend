@@ -40,10 +40,9 @@ A frontend to [Scheduler](https://github.com/mohamednehad450/Scheduler) built wi
 
 ### Using docker compose with [the backend](https://github.com/mohamednehad450/Scheduler)
 
-1. Clone this project
+1. Get the `docker-compose.yaml` file
     ```
-    git clone https://github.com/mohamednehad450/Scheduler-Frontend.git
-    cd Scheduler-Frontend
+    wget https://raw.githubusercontent.com/mohamednehad450/Scheduler-Frontend/master/docker-compose.yaml 
     ```
 2. Create `.env` file and add TOKEN_KEY to it 
     ```
