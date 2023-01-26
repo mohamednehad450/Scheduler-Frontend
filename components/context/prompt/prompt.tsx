@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from "react"
 import { Cron, Pin, Sequence } from "../../common"
-import { ConfirmModal, NewSequence, NewCron, LinkSequence, LinkCron, NewPin } from "../../modals"
+import { ConfirmModal, NewSequence, NewCron, LinkSequence, LinkCron, NewPin, ChangeSocketModal } from "../../modals"
 
 interface PromptArgs {
     confirm: [onDone: (confirmed: boolean) => void, message?: string]
@@ -19,6 +19,7 @@ type PromptContext = {
     newPin: (...args: PromptArgs['newPin']) => void
     linkSequence: (...args: PromptArgs['linkSequence']) => void
     linkCron: (...args: PromptArgs['linkCron']) => void
+    changeSocket: () => void
 }
 
 const promptContext = createContext<PromptContext | undefined>(undefined)
@@ -48,6 +49,9 @@ const usePromptContext = (): { context: PromptContext, modal: ReactNode } => {
     const [openedNewPin, setOpenedNewPin] = useState(false)
     const [newPin, setNewPin] = useState<PromptArgs['newPin']>()
 
+    const [openedChangeSocket, setOpenedChangeSocket] = useState(false)
+
+
     return {
         context: {
             confirm: (...args) => {
@@ -73,7 +77,10 @@ const usePromptContext = (): { context: PromptContext, modal: ReactNode } => {
             newPin: (...args) => {
                 setOpenedNewPin(true)
                 setNewPin(args)
-            }
+            },
+            changeSocket: () => {
+                setOpenedChangeSocket(true)
+            },
         },
         modal: (
             <>
@@ -133,6 +140,10 @@ const usePromptContext = (): { context: PromptContext, modal: ReactNode } => {
                     }}
                     cronId={linkCron?.[1] || -1}
                     initialSequences={linkCron?.[2]}
+                />
+                <ChangeSocketModal
+                    opened={openedChangeSocket}
+                    onDone={() => setOpenedChangeSocket(false)}
                 />
             </>
         )

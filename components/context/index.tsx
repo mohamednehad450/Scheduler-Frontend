@@ -35,11 +35,11 @@ const AppContext: FC<PropsWithChildren<{}>> = ({ children }) => {
             >
                 <ProvideAuth>
                     <ProvideCRUD>
-                        <ProvidePrompt>
-                            <ProvideSocket>
+                        <ProvideSocket>
+                            <ProvidePrompt>
                                 {children}
-                            </ProvideSocket>
-                        </ProvidePrompt>
+                            </ProvidePrompt>
+                        </ProvideSocket>
                     </ProvideCRUD>
                 </ProvideAuth>
             </MantineProvider>

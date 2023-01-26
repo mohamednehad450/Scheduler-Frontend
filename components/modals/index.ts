@@ -4,7 +4,7 @@ import NewSequence from "./NewSequence"
 import NewCron from "./NewCron"
 import LinkSequence from "./LinkSequence"
 import NewPin from "./NewPin"
-
+import ChangeSocketModal from "./ChangeSocketModal"
 
 export {
     ConfirmModal,
@@ -13,4 +13,5 @@ export {
     LinkSequence,
     LinkCron,
     NewPin,
+    ChangeSocketModal,
 }
