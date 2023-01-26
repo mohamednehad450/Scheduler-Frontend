@@ -145,5 +145,7 @@
     "connected": "متصل",
     "disconnected": "غير متصل",
     "change-socket-url": "تغيير رابط الجهاز",
-    "copy": "نسخ"
+    "copy": "نسخ",
+    "light-mode": "مظهر فاتح",
+    "dark-mode": "مظهر داكن"
 }

@@ -145,5 +145,7 @@
     "connected": "Connected",
     "disconnected": "Disconnected",
     "change-socket-url": "Change Device Link",
-    "copy": "Copy"
+    "copy": "Copy",
+    "light-mode": "Light Mode",
+    "dark-mode": "Dark Mode"
 }
