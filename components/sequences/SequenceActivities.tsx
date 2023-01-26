@@ -88,7 +88,7 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
                         </tbody>
                         <tfoot
                             style={{
-                                backgroundColor: theme.colorScheme === "light" ? 'white' : 'black',
+                                backgroundColor: theme.colorScheme === "light" ? 'white' : theme.colors.dark[4],
                                 position: 'sticky',
                                 bottom: 0,
                             }}

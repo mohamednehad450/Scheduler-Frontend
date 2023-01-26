@@ -94,7 +94,13 @@ const PinsStatus: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
                 <Tabs.Tab label={t('reserved_pins')}>
                     <ScrollList
                         body={deviceState.reservedPins?.length && deviceState.reservedPins.map((s) => (
-                            <Group key={s.pin.channel} p={'xs'} position="apart" style={{ borderBottom: "2px solid #e9ecef" }}>
+                            <Group
+                                key={s.pin.channel}
+                                p={'xs'} position="apart"
+                                sx={theme => ({
+                                    borderBottom: `2px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.dark[0]}`,
+                                })}
+                            >
                                 <Text size="sm">{s.pin.label}</Text>
                                 <Text size="sm">{sequences.find(seq => s.sequenceId === seq.id)?.name || "NULL"}</Text>
                             </Group>

@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Container, Divider, Group, ScrollArea, Table, Text } from "@mantine/core";
+import { ActionIcon, Button, Container, Divider, Group, ScrollArea, Table, Text, useMantineTheme } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Refresh } from "tabler-icons-react";
@@ -16,7 +16,7 @@ const Channels: FC = () => {
     const prompt = usePrompt()
     const crud = useCRUD()
     const { t } = useTranslation()
-
+    const theme = useMantineTheme()
 
     useEffect(() => {
         if (!sContext?.socket) {
@@ -105,7 +105,12 @@ const Channels: FC = () => {
                                 />
                             ))}
                         </tbody>
-                        <tfoot style={{ position: 'sticky', bottom: 0, background: 'white' }}>
+                        <tfoot
+                            style={{
+                                position: 'sticky',
+                                bottom: 0,
+                                background: theme.colorScheme === 'dark' ? theme.colors.dark[4] : 'white'
+                            }}>
                             <tr>
                                 <th style={{ textAlign: 'start' }}>{t("label")}</th>
                                 <th style={{ textAlign: 'start' }}>{t("channel")}</th>

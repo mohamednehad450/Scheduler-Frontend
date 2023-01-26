@@ -73,7 +73,7 @@ const Sequences: NextPage = () => {
                     m="0"
                     p="0"
                     sx={s => ({
-                        background: s.colorScheme === 'light' ? s.white : s.black,
+                        background: s.colorScheme === 'light' ? s.white : s.colors.dark[7],
                         height: '100%'
                     })}>
                     <SequenceList

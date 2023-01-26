@@ -60,7 +60,16 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
             <Divider />
             <CronInput initCron={cron} onChange={setCron} />
             <Divider />
-            <Group p="md" direction="column" style={{ zIndex: 1, boxShadow: theme.shadows.xs, position: 'sticky', top: 0, backgroundColor: theme.colorScheme === 'light' ? 'white' : 'black' }}>
+            <Group
+                p="md"
+                direction="column"
+                style={{
+                    zIndex: 1,
+                    position: 'sticky',
+                    top: 0,
+                    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : 'white'
+                }}
+            >
                 <Text size="sm" color={'gray'}>{t("preview")}</Text>
                 <Group px="sm">
                     <Text size="lg">{cronstrue.toString(cron, { monthStartIndexZero: true, locale: router.locale || 'en' })}</Text>

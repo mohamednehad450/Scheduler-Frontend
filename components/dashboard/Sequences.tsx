@@ -50,9 +50,9 @@ const Sequences: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
                                 p={'xs'}
                                 position="apart"
                                 sx={theme => ({
-                                    borderBottom: "2px solid #e9ecef",
+                                    borderBottom: `2px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.dark[0]}`,
                                     ':hover': {
-                                        backgroundColor: '#f1f3f5',
+                                        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
                                         cursor: 'pointer'
                                     }
                                 })}
@@ -79,9 +79,9 @@ const Sequences: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
                                 p={'xs'}
                                 position="apart"
                                 sx={theme => ({
-                                    borderBottom: "2px solid #e9ecef",
+                                    borderBottom: `2px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.dark[0]}`,
                                     ':hover': {
-                                        backgroundColor: '#f1f3f5',
+                                        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
                                         cursor: 'pointer'
                                     }
                                 })}

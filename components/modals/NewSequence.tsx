@@ -102,7 +102,14 @@ const NewSequence: FC<NewSequenceProps> = ({ onClose, initialSequence, opened })
                     />
                 </Group>
             </ScrollArea>
-            <Group position="right" sx={(theme) => ({ position: 'sticky', bottom: 0, backgroundColor: theme.colorScheme === "dark" ? 'black' : "white" })}>
+            <Group
+                position="right"
+                sx={(theme) => ({
+                    position: 'sticky',
+                    bottom: 0,
+                    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : "white"
+                })}
+            >
                 <Button
                     styles={{ root: { minWidth: '6rem' } }}
                     m="sm"

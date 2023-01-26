@@ -62,7 +62,7 @@ const CronTriggers: FC = () => {
                                         zIndex: 1,
                                         position: 'sticky',
                                         top: 0,
-                                        backgroundColor: theme.colorScheme === 'light' ? 'white' : 'black'
+                                        background: theme.colorScheme === 'dark' ? theme.colors.dark[4] : 'white'
                                     },
                                 }}
                             >

@@ -1,4 +1,4 @@
-import { ActionIcon, Container, Divider, Group, LoadingOverlay, Pagination, ScrollArea, Table, Text } from "@mantine/core";
+import { ActionIcon, Container, Divider, Group, LoadingOverlay, Pagination, ScrollArea, Table, Text, useMantineTheme } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Refresh, Trash } from "tabler-icons-react";
@@ -15,6 +15,7 @@ const Events: FC = () => {
     const prompt = usePrompt()
 
     const { t } = useTranslation()
+    const theme = useMantineTheme()
 
     const crud = useCRUD()
 
@@ -83,7 +84,12 @@ const Events: FC = () => {
                                 </tr>
                             ))}
                         </tbody>
-                        <tfoot style={{ position: 'sticky', bottom: 0, background: 'white' }}>
+                        <tfoot
+                            style={{
+                                position: 'sticky',
+                                bottom: 0,
+                                background: theme.colorScheme === 'dark' ? theme.colors.dark[4] : 'white'
+                            }}>
                             <tr>
                                 <th style={{ textAlign: 'start' }}>{t("date")}</th>
                                 <th style={{ textAlign: 'start' }}>{t("sequence")}</th>
