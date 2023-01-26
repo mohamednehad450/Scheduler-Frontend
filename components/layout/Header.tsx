@@ -4,6 +4,7 @@ import { useAuth } from "../context";
 import { useTranslation } from "react-i18next";
 import LanguageMenu from "./LanguageMenu";
 import SocketUrlMenu from "./SocketUrlMenu";
+import ThemeToggle from "./ThemeToggle";
 
 interface HeaderProps {
     opened: boolean
@@ -41,6 +42,7 @@ const Header: FC<HeaderProps> = ({ opened, setOpened }) => {
                         </Group>
                     )}
                     <LanguageMenu />
+                    <ThemeToggle />
                 </Group>
             </Group>
         </_Header>

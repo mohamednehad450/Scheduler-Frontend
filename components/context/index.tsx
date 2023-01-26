@@ -1,4 +1,5 @@
-import { MantineProvider } from "@mantine/core";
+import { ColorScheme, ColorSchemeProvider, MantineProvider } from "@mantine/core";
+import { useLocalStorage } from "@mantine/hooks";
 import { FC, PropsWithChildren } from "react";
 import { useTranslation } from "react-i18next";
 import { ProvideAuth, useAuth } from "./auth";
@@ -11,27 +12,39 @@ const AppContext: FC<PropsWithChildren<{}>> = ({ children }) => {
 
     const { t } = useTranslation()
 
+    const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
+        key: 'mantine-color-scheme',
+        defaultValue: 'light',
+        getInitialValueInEffect: true,
+    });
+
+    const toggleColorScheme = (value?: ColorScheme) =>
+        setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
+
+
     return (
-        <MantineProvider
-            withGlobalStyles
-            withNormalizeCSS
-            theme={{
-                /** Put your mantine theme override here */
-                dir: t('dir') === "rtl" ? 'rtl' : 'ltr',
-                colorScheme: 'light',
-            }}
-        >
-            <ProvideAuth>
-                <ProvideCRUD>
-                    <ProvidePrompt>
-                        <ProvideSocket>
-                            {children}
-                        </ProvideSocket>
-                    </ProvidePrompt>
-                </ProvideCRUD>
-            </ProvideAuth>
-        </MantineProvider>
-    )
+        <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+            <MantineProvider
+                withGlobalStyles
+                withNormalizeCSS
+                theme={{
+                    /** Put your mantine theme override here */
+                    dir: t('dir') === "rtl" ? 'rtl' : 'ltr',
+                    colorScheme,
+                }}
+            >
+                <ProvideAuth>
+                    <ProvideCRUD>
+                        <ProvidePrompt>
+                            <ProvideSocket>
+                                {children}
+                            </ProvideSocket>
+                        </ProvidePrompt>
+                    </ProvideCRUD>
+                </ProvideAuth>
+            </MantineProvider>
+        </ColorSchemeProvider>
+    );
 }
 
 export {
