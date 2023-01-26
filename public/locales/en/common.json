@@ -147,5 +147,6 @@
     "change-socket-url": "Change Device Link",
     "copy": "Copy",
     "light-mode": "Light Mode",
-    "dark-mode": "Dark Mode"
+    "dark-mode": "Dark Mode",
+    "account": "Account"
 }
