@@ -7,12 +7,25 @@ import { Language } from "tabler-icons-react"
 
 
 
-const LanguageMenu: FC = () => {
+const LanguageMenu: FC<{ subMenu?: boolean }> = ({ subMenu }) => {
 
     const { t } = useTranslation()
     const router = useRouter()
 
-    return (
+    return subMenu ? (
+        <>
+            <MenuLabel>{t('lang')}</MenuLabel>
+            <Link href={"#"} locale="ar">
+                <MenuItem disabled={router.locale === "ar"}>
+                    {"العربية"}
+                </MenuItem>
+            </Link>
+            <Link href={"#"} locale="en">
+                <MenuItem disabled={router.locale === "en"}>
+                    {"English"}
+                </MenuItem>
+            </Link></>
+    ) : (
         <Menu title={`${t("lang")}`} control={<ActionIcon><Language /></ActionIcon>} >
             <MenuLabel>{t('lang')}</MenuLabel>
             <Link href={"#"} locale="ar">
