@@ -3,6 +3,7 @@
 
 ## Table of content
 + [Overview](#overview)
++ [Screenshots](#screenshots)
 + [Prerequisites](#prerequisites)
 + [Installation](#installation)
     - [Using docker compose with the backend (Recommended)](#using-docker-compose-with-the-backend)
@@ -14,6 +15,17 @@
 ## Overview
 
 A frontend to [Scheduler](https://github.com/mohamednehad450/Scheduler) built with [NextJS](https://nextjs.org/)
+
+## Screenshots
+![Dashboard](screenshots/Dashboard.gif "Dashboard")
+![New Sequence](screenshots/NewSequence.gif "New Sequence")
+![Edit and Copy Sequence](screenshots/EditCopySequence.gif "Edit and Copy Sequence")
+![Sequence Page](screenshots/SequencePage.gif "Sequence Page")
+![Edit and Add Channel](screenshots/ChannelAddEdit.gif "Edit and Add Channel")
+![Edit and Add Schedule](screenshots/EditAddSchedule.gif "Edit and Add Schedule")
+![DarkMode](screenshots/DarkMode.gif "DarkMode")
+![Localization](screenshots/Localization.gif "Localization")
+![Mobile Layout](screenshots/MobileLayout.gif "Mobile Layout")
 
 
 ## Prerequisites
