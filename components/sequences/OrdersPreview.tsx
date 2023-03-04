@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Sequence } from '../common'
+import { Pin, Sequence } from '../common'
 import { Container, Divider, Group, MediaQuery, ScrollArea, Text, useMantineTheme } from '@mantine/core'
 import { scaleBand, scaleLinear } from 'd3-scale'
 import PeriodMark from './PeriodMark'
@@ -9,10 +9,11 @@ import { useTranslation } from 'react-i18next'
 
 interface OrdersPreviewProps {
     orders: Sequence['orders']
+    pins?: Pin[]
 }
 
 
-const OrdersPreview: FC<OrdersPreviewProps> = ({ orders }) => {
+const OrdersPreview: FC<OrdersPreviewProps> = ({ orders, pins }) => {
 
     const theme = useMantineTheme()
     const { t } = useTranslation()
@@ -27,7 +28,8 @@ const OrdersPreview: FC<OrdersPreviewProps> = ({ orders }) => {
 
 
     const channels = new Map<number, string>()
-    orders.forEach(o => channels.set(o.channel, o.Pin.label))
+
+    orders.forEach(o => !channels.has(o.channel) && channels.set(o.channel, pins?.find(p => p.channel === o.channel)?.label || ''))
 
     const maxY = channels.size * rowHeight
     const yScale = scaleBand<number>()
