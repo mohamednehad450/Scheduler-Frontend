@@ -128,7 +128,7 @@ const usePromptContext = (): { context: PromptContext, modal: ReactNode } => {
                         linkSequence?.[0](seq)
                         setLinkSequence(undefined)
                     }}
-                    sequenceId={linkSequence?.[1] || -1}
+                    sequenceId={linkSequence?.[1] || ''}
                     initialCrons={linkSequence?.[2]}
                 />
                 <LinkCron
@@ -138,7 +138,7 @@ const usePromptContext = (): { context: PromptContext, modal: ReactNode } => {
                         linkCron?.[0](cron)
                         setLinkCron(undefined)
                     }}
-                    cronId={linkCron?.[1] || -1}
+                    cronId={linkCron?.[1] || ''}
                     initialSequences={linkCron?.[2]}
                 />
                 <ChangeSocketModal

@@ -68,7 +68,7 @@ A frontend to [Scheduler](https://github.com/mohamednehad450/Scheduler) built wi
 ### Stand-alone from DockerHub
 1. Create the container
     ```
-    docker container create --name scheduler_frontend_container -p 3000:3000 mohamednehad450/scheduler-frontend:1.0
+    docker container create --name scheduler_frontend_container -p 3000:3000 mohamednehad450/scheduler-frontend:1.1
     ```
 2. Start the container
     ```

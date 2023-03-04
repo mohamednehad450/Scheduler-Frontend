@@ -3,7 +3,7 @@ import { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { Sequence } from '../../components/common'
+import { Pin, Sequence } from '../../components/common'
 import { OrdersPreview, SequenceActions, SequenceActivities, SequenceTriggers } from '../../components/sequences'
 import { useCRUD } from '../../components/context'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -30,6 +30,7 @@ const Sequence: NextPage = () => {
 
   const router = useRouter()
   const [sequence, setSequence] = useState<Sequence>()
+  const [pins, setPins] = useState<Pin[]>()
 
   const crud = useCRUD()
   const { t } = useTranslation()
@@ -37,17 +38,20 @@ const Sequence: NextPage = () => {
 
   useEffect(() => {
     if (!router.query.id) return
-    if (Array.isArray(router.query.id) || isNaN(Number(router.query.id))) {
+    if (Array.isArray(router.query.id)) {
       router.push('/sequences')
       return
     }
-    const id = Number(router.query.id)
+    const id = router.query.id
     crud?.sequenceCRUD?.get(id)
       .then(d => { d.data ? setSequence(d.data) : router.push('/sequences/') })
       .catch(err => {
         router.push('/sequences')
         return
       })
+    crud?.pinsCRUD?.list()
+      .then(r => setPins(r.data))
+
   }, [router.query, crud])
 
   return (
@@ -61,7 +65,7 @@ const Sequence: NextPage = () => {
         <Grid gutter="md">
           <Grid.Col {...g2} >
             <Card shadow="lg" p="xs" radius={'md'} style={{ height: '18rem' }}>
-              <OrdersPreview orders={sequence?.orders || []} />
+              <OrdersPreview orders={sequence?.orders || []} pins={pins} />
             </Card>
           </Grid.Col>
           <Grid.Col {...g} >
@@ -71,8 +75,7 @@ const Sequence: NextPage = () => {
           </Grid.Col>
           <Grid.Col {...g} >
             <Card shadow="lg" p="xs" radius={'md'} style={{ height: '18rem' }}>
-
-              <SequenceTriggers cronTriggers={sequence.CronSequence} />
+              <SequenceTriggers cronTriggers={sequence.crons} />
             </Card>
           </Grid.Col>
           <Grid.Col {...g} >

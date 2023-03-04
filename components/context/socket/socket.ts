@@ -38,8 +38,8 @@ type DeviceAction = {
     getState: () => Promise<{ data: DeviceState }>
     getTime: () => Promise<{ data: { time: string } }>
     resetDevice: () => Promise<{ data: DeviceState }>
-    run: (id: number) => Promise<{ data: { state: DeviceState, sequence: Sequence } }>
-    stop: (id: number) => Promise<{ data: DeviceState }>
+    run: (id: Sequence['id']) => Promise<{ data: { state: DeviceState, sequence: Sequence } }>
+    stop: (id: Sequence['id']) => Promise<{ data: DeviceState }>
 }
 
 type SocketContext = {

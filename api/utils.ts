@@ -81,8 +81,8 @@ class DeviceAction {
     getState = async (token: string) => axios.get<DeviceState>(this.url + '/state', { params: { token } });
     getTime = async (token: string) => axios.get<{ time: string }>(this.url + '/time', { params: { token } });
     resetDevice = async (token: string) => axios.post<DeviceState>(this.url + '/reset', null, { params: { token } });
-    run = (id: number, token: string) => axios.post<{ state: DeviceState, sequence: Sequence }>(this.url + "/run/" + id, null, { params: { token } });
-    stop = (id: number, token: string) => axios.post<DeviceState>(this.url + "/stop/" + id, null, { params: { token } });
+    run = (id: Sequence['id'], token: string) => axios.post<{ state: DeviceState, sequence: Sequence }>(this.url + "/run/" + id, null, { params: { token } });
+    stop = (id: Sequence['id'], token: string) => axios.post<DeviceState>(this.url + "/stop/" + id, null, { params: { token } });
 }
 
 

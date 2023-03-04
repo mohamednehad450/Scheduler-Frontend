@@ -145,7 +145,7 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                                 <Button
                                     p={0}
                                     variant="outline"
-                                    onClick={() => prompt?.linkSequence(s => s && onChange(s), sequence.id, sequence.CronSequence.map(c => c.cron.id))}
+                                    onClick={() => prompt?.linkSequence(s => s && onChange(s), sequence.id, sequence.crons.map(c => c.id))}
                                 >
                                     <Group>
                                         <Link size={16} />

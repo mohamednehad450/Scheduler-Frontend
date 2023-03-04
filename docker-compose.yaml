@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: mohamednehad450/scheduler-frontend:1.0
+    image: mohamednehad450/scheduler-frontend:1.1
     ports:
       - "3000:3000"
     environment:
@@ -9,12 +9,12 @@ services:
     networks:
       - backend
   backend:
-    image: mohamednehad450/scheduler:1.0
+    image: mohamednehad450/scheduler:1.1
     ports:
       - "8000:8000"
     volumes:
       - /sys:/sys # Expose the GPIO interface
-      - db:/server/prisma
+      - db:/server/database
     networks:
       - backend
     environment:

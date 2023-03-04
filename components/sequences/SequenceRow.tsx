@@ -56,7 +56,7 @@ const SequenceRow: FC<SequenceRowProps> = ({ sequence, isRunning, run, stop, rem
                 <Text >{sequence.lastRun ? new Date(sequence.lastRun).toLocaleString() : t('never_run')}</Text>
             </td>
             <td>
-                <Text >{sequence.CronSequence.length ? sequence.CronSequence.length + " " + t('triggers') : t('zero_triggers')} </Text>
+                <Text >{sequence.crons.length ? sequence.crons.length + " " + t('triggers') : t('zero_triggers')} </Text>
             </td>
             <td onClick={stopPropagation()}>
                 <MediaQuery smallerThan={'md'} styles={{ display: 'none' }}>

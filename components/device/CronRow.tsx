@@ -39,7 +39,7 @@ const CronRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
                             {t('edit')}
                         </Group>
                     </Button>
-                    <Button variant="light" onClick={() => prompt?.linkCron(newCron => newCron && onChange(newCron), cron.id, cron.CronSequence.map(s => s.sequence.id))}>
+                    <Button variant="light" onClick={() => prompt?.linkCron(newCron => newCron && onChange(newCron), cron.id, cron.sequences.map(s => s.id))}>
                         <Group position="center">
                             <Link size="16" />
                             {t("link")}
@@ -60,7 +60,7 @@ const CronRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
             <Divider />
             <Group direction="column" py="sm">
                 <Text size="sm" color={'gray'}>{t("linked_sequences")}</Text>
-                {cron.CronSequence.length ? (<Table highlightOnHover striped>
+                {cron.sequences.length ? (<Table highlightOnHover striped>
                     <thead>
                         <tr>
                             <th style={{ textAlign: 'start' }}>{t("sequence")}</th>
@@ -68,17 +68,17 @@ const CronRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {cron.CronSequence.map(({ sequence }) => (
+                        {cron.sequences.map(({ id, name, active }) => (
                             <tr
-                                key={sequence.id}
-                                onClick={() => router.push('/sequences/' + sequence.id)}
+                                key={id}
+                                onClick={() => router.push('/sequences/' + id)}
                                 style={{ cursor: 'pointer' }}
                             >
                                 <td>
-                                    {sequence.name}
+                                    {name}
                                 </td>
                                 <td>
-                                    {sequence.active ? `${t("activated")}` : t('deactivated')}
+                                    {active ? `${t("activated")}` : t('deactivated')}
                                 </td>
                             </tr>
                         ))}
