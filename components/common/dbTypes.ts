@@ -10,29 +10,19 @@ export type Pin = {
 
 
 /**
- * Model CronSequence
- * 
- */
-export type CronSequence = {
-    id: number
-    cronId: number
-    sequenceId: number
-}
-
-/**
  * Model Cron
  * 
  */
-export type Cron = {
-    id: number
+export type BaseCron = {
+    id: string
     cron: string
     label: string
-    CronSequence: {
-        sequence: {
-            id: number,
-            name: string,
-            active: boolean
-        }
+}
+export type Cron = BaseCron & {
+    sequences: {
+        id: Sequence['id'],
+        name: Sequence['name'],
+        active: Sequence['active']
     }[]
 }
 
@@ -44,15 +34,17 @@ type Order = {
     channel: number
     duration: number
     offset: number
-    Pin: { label: string }
 }
-export type Sequence = {
-    id: number
+
+export type BaseSequence = {
+    id: string
     name: string
-    lastRun: Date | null
+    lastRun?: string
     active: boolean
     orders: Order[]
-    CronSequence: { cron: Cron }[]
+}
+export type Sequence = BaseSequence & {
+    crons: BaseCron[]
 }
 
 
@@ -60,11 +52,26 @@ export type Sequence = {
  * Model SequenceEvent
  * 
  */
-export type SequenceEvent = {
-    id: number
-    date: Date
-    sequenceId: number
-    eventType: string
+
+type SequenceEventType = "run" | 'stop' | 'finish' | 'activate' | 'deactivate'
+export const sequenceEventTypes: SequenceEventType[] = ["run", 'stop', 'finish', 'activate', 'deactivate']
+
+export type BaseSequenceEvent = {
+    id: string
+    date: string
+    sequenceId: BaseSequence['id']
+    eventType: SequenceEventType
+}
+export type SequenceEvent = BaseSequenceEvent & {
     sequence: { name: string }
 }
 
+
+/**
+ * Model CronSequence
+ * 
+ */
+export type CronSequence = {
+    cronId: BaseCron['id']
+    sequenceId: BaseSequence['id']
+}
