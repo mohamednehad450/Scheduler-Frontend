@@ -45,7 +45,7 @@ const LinkCron: FC<LinkCronProps> = ({ opened, onClose, initialSequences, cronId
                 value={sequencesIds.map(String)}
                 label={t("sequences")}
                 placeholder={`${t("select_sequences")}`}
-                onChange={(SequencesIds) => setSequencesIds(SequencesIds.map(Number))}
+                onChange={(SequencesIds) => setSequencesIds(SequencesIds)}
             />
             <Group p={'md'} position="right">
                 <Button variant="subtle" onClick={() => onClose()}>

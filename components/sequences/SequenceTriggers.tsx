@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { nextCronDates, Sequence } from "../common";
 
 interface SequenceTriggersProps {
-    cronTriggers: Sequence['CronSequence']
+    cronTriggers: Sequence['crons']
 }
 
 
@@ -22,11 +22,11 @@ const SequenceTriggers: FC<SequenceTriggersProps> = ({ cronTriggers }) => {
                 <Tabs>
                     <Tab label={t('schedules')} >
                         <Accordion>
-                            {cronTriggers.map(({ cron }) => (
+                            {cronTriggers.map(({ cron, label, id }) => (
                                 <AccordionItem
-                                    label={cron.label}
+                                    label={label}
                                     iconPosition="right"
-                                    key={cron.id}
+                                    key={id}
                                     styles={{
                                         label: {
                                             display: 'flex'
@@ -41,7 +41,7 @@ const SequenceTriggers: FC<SequenceTriggersProps> = ({ cronTriggers }) => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {nextCronDates(cron.cron, 5).map(d => (
+                                            {nextCronDates(cron, 5).map(d => (
                                                 <tr key={d.toString()}>
                                                     <td>
                                                         {d.toDateString()}

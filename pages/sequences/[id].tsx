@@ -37,11 +37,11 @@ const Sequence: NextPage = () => {
 
   useEffect(() => {
     if (!router.query.id) return
-    if (Array.isArray(router.query.id) || isNaN(Number(router.query.id))) {
+    if (Array.isArray(router.query.id)) {
       router.push('/sequences')
       return
     }
-    const id = Number(router.query.id)
+    const id = router.query.id
     crud?.sequenceCRUD?.get(id)
       .then(d => { d.data ? setSequence(d.data) : router.push('/sequences/') })
       .catch(err => {
@@ -71,8 +71,7 @@ const Sequence: NextPage = () => {
           </Grid.Col>
           <Grid.Col {...g} >
             <Card shadow="lg" p="xs" radius={'md'} style={{ height: '18rem' }}>
-
-              <SequenceTriggers cronTriggers={sequence.CronSequence} />
+              <SequenceTriggers cronTriggers={sequence.crons} />
             </Card>
           </Grid.Col>
           <Grid.Col {...g} >

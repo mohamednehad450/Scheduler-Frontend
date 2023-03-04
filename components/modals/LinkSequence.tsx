@@ -46,7 +46,7 @@ const LinkSequence: FC<LinkSequenceProps> = ({ opened, onClose, initialCrons, se
                 value={cronsIds.map(String)}
                 label={t("schedules")}
                 placeholder={`${t("select_schedules")}`}
-                onChange={(cronsIds) => setCronsIds(cronsIds.map(Number))}
+                onChange={(cronsIds) => setCronsIds(cronsIds)}
             />
             <Button
                 my="md"

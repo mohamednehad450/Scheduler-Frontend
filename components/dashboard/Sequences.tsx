@@ -59,7 +59,7 @@ const Sequences: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
                                 onClick={() => router.push('sequences/' + s.id)}
                             >
                                 <Text size="sm">{s.name}</Text>
-                                <Text size="sm">{s.CronSequence.length} {t("triggers")}</Text>
+                                <Text size="sm">{s.crons.length} {t("triggers")}</Text>
                             </Group>
                         ))}
                         empty={<Text>{t('no_active_sequences')}</Text>}
