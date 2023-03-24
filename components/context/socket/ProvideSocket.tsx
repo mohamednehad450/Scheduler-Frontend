@@ -1,15 +1,12 @@
-import { FC, PropsWithChildren } from "react"
-import { useSocketContext, socketContext } from "./socket"
-
+import { FC, PropsWithChildren } from "react";
+import { useSocketContext, socketContext } from "./socket";
 
 const ProvideSocket: FC<PropsWithChildren<{}>> = ({ children }) => {
-    const value = useSocketContext()
+  const value = useSocketContext();
 
-    return (
-        <socketContext.Provider value={value}>
-            {children}
-        </socketContext.Provider>
-    )
-}
+  return (
+    <socketContext.Provider value={value}>{children}</socketContext.Provider>
+  );
+};
 
-export default ProvideSocket
+export default ProvideSocket;

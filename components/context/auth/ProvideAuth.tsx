@@ -1,14 +1,10 @@
-import { FC, PropsWithChildren } from "react"
-import { useAuthContext, authContext } from "./auth"
+import { FC, PropsWithChildren } from "react";
+import { useAuthContext, authContext } from "./auth";
 
 const ProvideAuth: FC<PropsWithChildren<{}>> = ({ children }) => {
-    const value = useAuthContext()
+  const value = useAuthContext();
 
-    return (
-        <authContext.Provider value={value}>
-            {children}
-        </authContext.Provider>
-    )
-}
+  return <authContext.Provider value={value}>{children}</authContext.Provider>;
+};
 
-export default ProvideAuth
+export default ProvideAuth;

@@ -1,8 +1,4 @@
-import { usePrompt } from "./prompt"
-import ProvidePrompt from "./ProvidePrompt"
+import { usePrompt } from "./prompt";
+import ProvidePrompt from "./ProvidePrompt";
 
-
-export {
-    usePrompt,
-    ProvidePrompt,
-}
+export { usePrompt, ProvidePrompt };

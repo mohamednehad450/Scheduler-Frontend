@@ -1,5 +1,5 @@
-import { redirect } from '../../api'
+import { redirect } from "../../api";
 export const config = {
-    runtime: 'edge',
-}
-export default redirect('slug')
+  runtime: "edge",
+};
+export default redirect("slug");
