@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: mohamednehad450/scheduler-frontend:1.1
+    image: mohamednehad450/scheduler-frontend:1.2
     ports:
       - "3000:3000"
     environment:
@@ -9,7 +9,7 @@ services:
     networks:
       - backend
   backend:
-    image: mohamednehad450/scheduler:1.1
+    image: mohamednehad450/scheduler:1.2
     ports:
       - "8000:8000"
     volumes:
