@@ -85,6 +85,7 @@ const NewPin: FC<NewPinsProps> = ({
         label={t("channel")}
         description={t("pick_pin_channel")}
         required
+        disabled={!!initialPin}
         data={channels
           .filter((c) => !usedPins[c] || c === initialPin?.channel)
           .map(String)}
@@ -153,7 +154,10 @@ const NewPin: FC<NewPinsProps> = ({
 
             if (pin.label && pin.channel) {
               const res = initialPin
-                ? crud?.pinsCRUD?.update(initialPin.channel, { ...pin })
+                ? crud?.pinsCRUD?.update(initialPin.channel, {
+                    ...pin,
+                    channel: undefined,
+                  })
                 : crud?.pinsCRUD?.add(pin);
               res &&
                 res
