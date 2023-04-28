@@ -35,3 +35,11 @@ yarn-error.log*
 *.tsbuildinfo
 
 /screenshots
+
+.git 
+.gitignore
+
+.prettierrc
+Dockerfile
+docker-compose.yaml
+README.md
