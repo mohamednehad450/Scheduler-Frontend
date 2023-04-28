@@ -45,7 +45,7 @@ const Sequence: NextPage = () => {
     }
     const id = router.query.id;
     crud?.sequenceCRUD
-      ?.get(id)
+      ?.get(Number(id))
       .then((d) => {
         d.data ? setSequence(d.data) : router.push("/sequences/");
       })

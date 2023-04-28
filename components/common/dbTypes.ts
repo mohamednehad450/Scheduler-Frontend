@@ -13,7 +13,7 @@ export type Pin = {
  *
  */
 export type BaseCron = {
-  id: string;
+  id: number;
   cron: string;
   label: string;
 };
@@ -36,7 +36,7 @@ type Order = {
 };
 
 export type BaseSequence = {
-  id: string;
+  id: number;
   name: string;
   lastRun?: string;
   active: boolean;
@@ -61,7 +61,7 @@ export const sequenceEventTypes: SequenceEventType[] = [
 ];
 
 export type BaseSequenceEvent = {
-  id: string;
+  id: number;
   date: string;
   sequenceId: BaseSequence["id"];
   eventType: SequenceEventType;
