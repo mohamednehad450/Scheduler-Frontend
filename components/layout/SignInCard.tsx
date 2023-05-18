@@ -9,15 +9,14 @@ import {
   Text,
   LoadingOverlay,
 } from "@mantine/core";
-import { DefaultTFuncReturn } from "i18next";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context";
 
 type FormError = {
-  username: DefaultTFuncReturn;
-  password: DefaultTFuncReturn;
-  confirm: DefaultTFuncReturn;
+  username: string;
+  password: string;
+  confirm: string;
 };
 
 const SignInCard = () => {
@@ -28,7 +27,7 @@ const SignInCard = () => {
   const [confirm, setConfirm] = useState("");
 
   const [formError, setFormError] = useState<Partial<FormError>>({});
-  const [signError, setSignError] = useState<DefaultTFuncReturn>("");
+  const [signError, setSignError] = useState("");
 
   useEffect(() => {
     setFormError({});
