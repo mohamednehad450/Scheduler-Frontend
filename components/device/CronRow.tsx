@@ -18,7 +18,7 @@ const CronRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
   const router = useRouter();
   const prompt = usePrompt();
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   return (
     <>
@@ -29,7 +29,7 @@ const CronRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
         <Text>
           {cronstrue.toString(cron.cron, {
             monthStartIndexZero: true,
-            locale: router.locale || "en",
+            locale: i18n.language,
           })}
         </Text>
       </Group>

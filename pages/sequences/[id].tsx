@@ -1,5 +1,5 @@
 import { Card, Container, Grid, LoadingOverlay, Title } from "@mantine/core";
-import { GetServerSideProps, NextPage } from "next";
+import { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -11,7 +11,6 @@ import {
   SequenceTriggers,
 } from "../../components/sequences";
 import { useCRUD } from "../../components/context";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "react-i18next";
 
 const g = {
@@ -119,11 +118,5 @@ const Sequence: NextPage = () => {
     </>
   );
 };
-
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale ?? "en", ["common"])),
-  },
-});
 
 export default Sequence;

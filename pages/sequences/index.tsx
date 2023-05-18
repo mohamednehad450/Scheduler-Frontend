@@ -1,5 +1,5 @@
 import { Tabs, Container, Title, Group, ActionIcon } from "@mantine/core";
-import type { GetStaticProps, NextPage } from "next";
+import type { NextPage } from "next";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { Calendar, CalendarOff, List, Plus, Refresh } from "tabler-icons-react";
@@ -9,7 +9,6 @@ import { usePrompt } from "../../components/context";
 import { useRouter } from "next/router";
 import { useCRUD } from "../../components/context";
 import { useTranslation } from "react-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 const lists: ("all" | "active" | "running")[] = ["all", "active", "running"];
 const Sequences: NextPage = () => {
@@ -96,11 +95,5 @@ const Sequences: NextPage = () => {
     </>
   );
 };
-
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale ?? "en", ["common"])),
-  },
-});
 
 export default Sequences;

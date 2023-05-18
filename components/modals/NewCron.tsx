@@ -25,7 +25,7 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
   const theme = useMantineTheme();
   const crud = useCRUD();
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const [label, setLabel] = useState(initCron?.label || "");
   const [cron, setCron] = useState(initCron?.cron || "* * * * *");
@@ -87,7 +87,7 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
           <Text size="lg">
             {cronstrue.toString(cron, {
               monthStartIndexZero: true,
-              locale: router.locale || "en",
+              locale: i18n.language,
             })}
           </Text>
         </Group>

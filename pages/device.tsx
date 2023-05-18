@@ -1,6 +1,5 @@
 import { Grid, Container, Card } from "@mantine/core";
-import type { GetStaticProps, NextPage } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import type { NextPage } from "next";
 import Head from "next/head";
 import { useTranslation } from "react-i18next";
 import { Channels, CronTriggers, Events } from "../components/device";
@@ -43,11 +42,5 @@ const Device: NextPage = () => {
     </>
   );
 };
-
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale ?? "en", ["common"])),
-  },
-});
 
 export default Device;
