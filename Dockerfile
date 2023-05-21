@@ -1,6 +1,4 @@
-FROM node:18-alpine
-
-RUN npm install -g pnpm
+FROM mohamednehad450/scheduler
 
 WORKDIR /frontend
 
@@ -15,6 +13,12 @@ RUN pnpm build
 
 RUN pnpm next export 
 
-EXPOSE 3000
+ENV FRONTEND_DIR="/frontend/out"
+
+# Expose GPIO pins
+VOLUME [ "/sys:/sys" ]
+
+WORKDIR /server
+EXPOSE 8000
 
 CMD ["pnpm", "start"]
