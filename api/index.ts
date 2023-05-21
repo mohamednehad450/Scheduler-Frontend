@@ -3,10 +3,6 @@ import { Cron, Pin, Sequence, SequenceEvent } from "../components/common";
 import CronSequence from "./cronSequence";
 import { Auth, CRUD, DeviceAction, Events, Page, Pagination } from "./utils";
 
-const BACKEND_BASE_URL = `http://${process.env.BACKEND_URL || "localhost"}:${
-  process.env.BACKEND_PORT || "8000"
-}`;
-
 const routes = {
   SEQUENCE: "/sequence",
   PIN: "/pin",
@@ -19,28 +15,30 @@ const routes = {
   ACTION: "/action",
 };
 
-const NEXT_API_PREFIX = "/api";
+const API_PREFIX = "/api";
 
-const pinsCRUD = new CRUD<Pin["channel"], Pin>(NEXT_API_PREFIX + routes.PIN);
+const pinsCRUD = new CRUD<Pin["channel"], Pin>(API_PREFIX + routes.PIN);
 const sequenceCRUD = new CRUD<Sequence["id"], Sequence>(
-  NEXT_API_PREFIX + routes.SEQUENCE
+  API_PREFIX + routes.SEQUENCE
 );
-const cronCRUD = new CRUD<Cron["id"], Cron>(NEXT_API_PREFIX + routes.CRON);
+const cronCRUD = new CRUD<Cron["id"], Cron>(API_PREFIX + routes.CRON);
 const sequenceEvents = new Events<SequenceEvent["id"], SequenceEvent>(
-  NEXT_API_PREFIX + routes.EVENTS.SEQUENCE
+  API_PREFIX + routes.EVENTS.SEQUENCE
 );
-const cronSequence = new CronSequence(NEXT_API_PREFIX + routes.LINK);
-const auth = new Auth(NEXT_API_PREFIX + routes.AUTH);
-const deviceAction = new DeviceAction(NEXT_API_PREFIX + routes.ACTION);
+const cronSequence = new CronSequence(API_PREFIX + routes.LINK);
+const auth = new Auth(API_PREFIX + routes.AUTH);
+const deviceAction = new DeviceAction(API_PREFIX + routes.ACTION);
 
+// Used to redirect all api request to the backend when developing
 const redirect = (slugName: string) => async (req: NextRequest) => {
   const { searchParams, pathname } = new URL(req.url);
   searchParams.delete(slugName); // Remove slug
   const params = searchParams.toString(); // Get remaining params
 
-  const baseUrl = pathname.split(NEXT_API_PREFIX)[1]; // Get backend endpoint by removing the api prefix
+  const baseUrl = pathname.split(API_PREFIX)[1]; // Get backend endpoint by removing the api prefix
 
-  const url = `${BACKEND_BASE_URL}${baseUrl}${params ? "?" + params : ""}`; // complete url
+  const DEV_BACKEND_URL = process.env.BACKEND_URL || "";
+  const url = `${DEV_BACKEND_URL}${baseUrl}${params ? "?" + params : ""}`; // complete url
 
   return fetch(url, {
     method: req.method,
@@ -60,7 +58,6 @@ export {
   deviceAction,
   CRUD,
   Events,
-  BACKEND_BASE_URL,
   routes,
   redirect,
 };
