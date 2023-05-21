@@ -62,7 +62,7 @@ const useSocket = () => useContext(socketContext);
 
 const useSocketContext = (): SocketContext => {
   const [socket, setSocket] = useState<Socket>();
-  const [socketUrl, setSocketUrl] = useState(`http://${os.hostname()}:8000`);
+  const [socketUrl, setSocketUrl] = useState("");
   const auth = useAuth();
   useEffect(() => {
     if (auth?.state !== "signedIn") return;
