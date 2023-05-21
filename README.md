@@ -6,14 +6,13 @@
 - [Screenshots](#screenshots)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
-  - [Using docker compose with the backend (Recommended)](#using-docker-compose-with-the-backend)
-  - [Stand-alone from DockerHub](#stand-alone-from-dockerhub)
-  - [Stand-alone build your own image](#stand-alone-build-your-own-image)
+  - [Pre-built image from DockerHub](#pre-built-image-from-dockerhub)
+  - [Build your own image](#build-your-own-image)
   - [Stand-alone from source](#stand-alone-from-source)
 
 ## Overview
 
-A frontend to [Scheduler](https://github.com/mohamednehad450/Scheduler) built with [NextJS](https://nextjs.org/)
+A frontend to [Scheduler](https://github.com/mohamednehad450/Scheduler), built with [NextJS](https://nextjs.org/)
 
 ## Screenshots
 
@@ -30,7 +29,7 @@ A frontend to [Scheduler](https://github.com/mohamednehad450/Scheduler) built wi
 ## Prerequisites
 
 - Install git
-  ```
+  ```[Scheduler](https://github.com/mohamednehad450/Scheduler)
   sudo apt install git
   ```
 - Install Docker (if not building from source)
@@ -49,33 +48,24 @@ A frontend to [Scheduler](https://github.com/mohamednehad450/Scheduler) built wi
 
 ## Installation
 
-### Using docker compose with [the backend](https://github.com/mohamednehad450/Scheduler)
-
-1. Get the `docker-compose.yaml` file
-   ```
-   wget https://raw.githubusercontent.com/mohamednehad450/Scheduler-Frontend/master/docker-compose.yaml
-   ```
-2. Create `.env` file and add TOKEN_KEY to it
-   ```
-   echo TOKEN_KEY=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 50) > .env
-   ```
-3. Start docker compose
-   ```
-   docker compose up
-   ```
-
-### Stand-alone from DockerHub
+### Pre-built image from DockerHub
 
 1. Create the container
    ```
-   docker container create --name scheduler_frontend_container -p 3000:3000 mohamednehad450/scheduler-frontend:1.2
+   docker container create \
+   --name scheduler_container \
+   -p 8000:8000 \
+   -e TOKEN_KEY=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 50) \
+   mohamednehad450/scheduler-frontend
    ```
 2. Start the container
    ```
-   docker start scheduler_frontend_container
+   docker start scheduler_container
    ```
 
-### Stand-alone build your own image
+### Build your own image
+
+NOTE: building the image will use the pre-built image of [Scheduler](https://github.com/mohamednehad450/Scheduler)
 
 1. Clone this project
    ```
@@ -88,11 +78,15 @@ A frontend to [Scheduler](https://github.com/mohamednehad450/Scheduler) built wi
    ```
 3. Create the container
    ```
-   docker container create --name scheduler_frontend_container -p 3000:3000 scheduler-frontend
+    docker container create \
+   --name scheduler_container \
+   -p 8000:8000 \
+   -e TOKEN_KEY=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 50) \
+   scheduler-frontend
    ```
 4. Start the container
    ```
-   docker start scheduler_frontend_container
+   docker start scheduler_container
    ```
 
 ### Stand-alone from source
@@ -109,16 +103,21 @@ A frontend to [Scheduler](https://github.com/mohamednehad450/Scheduler) built wi
 3. Install dependencies
 
    ```
-   npm install
+   npm install -g pnpm
+   pnpm i
    ```
 
 4. Build the project
 
    ```
-   npm run build
+   pnpm run build
    ```
 
 5. Start the server
    ```
-   npm run start
+   pnpm run start
+   ```
+   OR to export as a static site
+   ```
+   pnpm next export
    ```
