@@ -1,16 +1,20 @@
 FROM node:18-alpine
 
+RUN npm install -g pnpm
+
 WORKDIR /frontend
 
 COPY package.json ./
-COPY package-lock.json ./
+COPY pnpm-lock.yaml ./
 
-RUN npm install
+RUN pnpm i
 
 COPY . .
 
-RUN npm run build
+RUN pnpm build
+
+RUN pnpm next export 
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+CMD ["pnpm", "start"]
