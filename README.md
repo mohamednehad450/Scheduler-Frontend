@@ -54,6 +54,7 @@ A frontend to [Scheduler](https://github.com/mohamednehad450/Scheduler), built w
    ```
    docker container create \
    --name scheduler_container \
+   -v /sys:/sys \
    -p 8000:8000 \
    -e TOKEN_KEY=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 50) \
    mohamednehad450/scheduler-frontend
@@ -80,6 +81,7 @@ NOTE: building the image will use the pre-built image of [Scheduler](https://git
    ```
     docker container create \
    --name scheduler_container \
+   -v /sys:/sys \
    -p 8000:8000 \
    -e TOKEN_KEY=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 50) \
    scheduler-frontend
