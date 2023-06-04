@@ -3,7 +3,7 @@ import { FC, PropsWithChildren, useState } from "react";
 
 const LoadingButton: FC<
   PropsWithChildren<
-    ButtonProps<any> & {
+    ButtonProps & {
       onClick?: (onDone: () => void) => void;
       confirm?: boolean;
     }
