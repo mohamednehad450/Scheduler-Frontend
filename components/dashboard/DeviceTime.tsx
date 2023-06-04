@@ -1,8 +1,8 @@
 import {
   Card,
-  Container,
+  Center,
   Divider,
-  Group,
+  Flex,
   LoadingOverlay,
   Text,
   Title,
@@ -43,32 +43,26 @@ const DeviceTime: FC = () => {
   }, [sContext?.socket]);
 
   return (
-    <Card shadow="sm" p="sm" radius={"md"} style={{ height: "18rem" }}>
-      <Container
-        style={{
-          height: "16rem",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "stretch",
-          justifyContent: "space-between",
-        }}
-      >
-        <Group pt="sm" style={{ display: "block" }}>
-          <Text weight={500} size="lg">
-            {t("device_time")}
+    <Card h="18rem" shadow="sm" p="0" radius={"md"}>
+      <Text p="md" pb="0" weight={500} size="lg">
+        {t("device_time")}
+      </Text>
+      <Divider />
+      <Center h={"14rem"}>
+        <Flex direction={"column"} align={"center"} justify={"center"}>
+          <Text
+            sx={(theme) => ({
+              color:
+                theme.colorScheme === "dark"
+                  ? theme.colors.gray[5]
+                  : theme.colors.gray[7],
+            })}
+          >
+            {time?.toDateString()}
           </Text>
-          <Divider />
-        </Group>
-        <Group
-          style={{ flex: 4, display: "flex", justifyContent: "center" }}
-          m="lg"
-          position="center"
-          direction="column"
-        >
-          <Text color={"gray"}>{time?.toDateString()}</Text>
           <Title>{time?.toLocaleTimeString()}</Title>
-        </Group>
-      </Container>
+        </Flex>
+      </Center>
       <LoadingOverlay visible={!time} />
     </Card>
   );
