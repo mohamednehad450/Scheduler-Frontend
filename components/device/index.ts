@@ -1,5 +1,5 @@
 import Channels from "./Channels";
-import CronTriggers from "./CronTriggers";
+import Triggers from "./Triggers";
 import Events from "./Events";
 
-export { Channels, Events, CronTriggers };
+export { Channels, Events, Triggers };

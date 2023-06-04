@@ -1,4 +1,4 @@
-import { Button, Divider, Group, Table, Text } from "@mantine/core";
+import { Button, Divider, Flex, Group, Table, Text } from "@mantine/core";
 import { FC } from "react";
 import { Edit, Link, Trash } from "tabler-icons-react";
 import { Cron } from "../common";
@@ -14,7 +14,7 @@ interface CronRowProps {
   remove: (id: Cron["id"]) => void;
 }
 
-const CronRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
+const TriggerRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
   const router = useRouter();
   const prompt = usePrompt();
 
@@ -22,23 +22,39 @@ const CronRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
 
   return (
     <>
-      <Group direction="column" py="sm">
-        <Text size="sm" color={"gray"}>
+      <Flex direction={"column"} py="md">
+        <Text
+          size="sm"
+          sx={(theme) => ({
+            color:
+              theme.colorScheme === "dark"
+                ? theme.colors.gray[6]
+                : theme.colors.gray[7],
+          })}
+        >
           {t("schedule_description")}
         </Text>
-        <Text>
+        <Text px="md" pt="sm">
           {cronstrue.toString(cron.cron, {
             monthStartIndexZero: true,
             locale: i18n.language,
           })}
         </Text>
-      </Group>
+      </Flex>
       <Divider />
-      <Group direction="column" py="sm">
-        <Text size="sm" color={"gray"}>
+      <Flex direction={"column"} py="md">
+        <Text
+          size="sm"
+          sx={(theme) => ({
+            color:
+              theme.colorScheme === "dark"
+                ? theme.colors.gray[6]
+                : theme.colors.gray[7],
+          })}
+        >
           {t("actions")}
         </Text>
-        <Group>
+        <Group px="md" pt="sm">
           <Button
             variant="light"
             onClick={() =>
@@ -72,14 +88,22 @@ const CronRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
             </Group>
           </Button>
         </Group>
-      </Group>
+      </Flex>
       <Divider />
-      <Group direction="column" py="sm">
-        <Text size="sm" color={"gray"}>
+      <Flex direction={"column"} py="md">
+        <Text
+          size="sm"
+          sx={(theme) => ({
+            color:
+              theme.colorScheme === "dark"
+                ? theme.colors.gray[6]
+                : theme.colors.gray[7],
+          })}
+        >
           {t("linked_sequences")}
         </Text>
         {cron.sequences.length ? (
-          <Table highlightOnHover striped>
+          <Table mx="md" mt="sm" highlightOnHover striped>
             <thead>
               <tr>
                 <th style={{ textAlign: "start" }}>{t("sequence")}</th>
@@ -100,15 +124,25 @@ const CronRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
             </tbody>
           </Table>
         ) : (
-          <Text>{t("no_linked_sequences")}</Text>
+          <Text px="md" pt="sm">
+            {t("no_linked_sequences")}
+          </Text>
         )}
-      </Group>
+      </Flex>
       <Divider />
-      <Group direction="column" py="sm">
-        <Text size="sm" color={"gray"}>
+      <Flex direction={"column"} py="md">
+        <Text
+          size="sm"
+          sx={(theme) => ({
+            color:
+              theme.colorScheme === "dark"
+                ? theme.colors.gray[6]
+                : theme.colors.gray[7],
+          })}
+        >
           {t("next_trigger_dates")}
         </Text>
-        <Table highlightOnHover striped>
+        <Table mx="md" mt="sm" highlightOnHover striped>
           <thead>
             <tr>
               <th style={{ textAlign: "start" }}>{t("date")}</th>
@@ -124,9 +158,9 @@ const CronRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
             ))}
           </tbody>
         </Table>
-      </Group>
+      </Flex>
     </>
   );
 };
 
-export default CronRow;
+export default TriggerRow;
