@@ -1,4 +1,4 @@
-import { Tabs, Container, Title, Group, ActionIcon } from "@mantine/core";
+import { Tabs, Container, Title, Group, ActionIcon, Flex } from "@mantine/core";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useEffect, useState } from "react";
@@ -10,9 +10,8 @@ import { useRouter } from "next/router";
 import { useCRUD } from "../../components/context";
 import { useTranslation } from "react-i18next";
 
-const lists: ("all" | "active" | "running")[] = ["all", "active", "running"];
 const Sequences: NextPage = () => {
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState<"all" | "active" | "running">("all");
   const [sequences, setSequences] = useState<Sequence[]>([]);
 
   const router = useRouter();
@@ -32,9 +31,12 @@ const Sequences: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Container
+        h="100%"
         size={"lg"}
         p="0"
-        style={{ height: "100%", display: "flex", flexDirection: "column" }}
+        sx={(s) => ({
+          background: s.colorScheme === "light" ? s.white : s.colors.dark[7],
+        })}
       >
         <Group position="apart">
           <Title p={"lg"}>{t("sequences")}</Title>
@@ -66,31 +68,39 @@ const Sequences: NextPage = () => {
             </ActionIcon>
           </Group>
         </Group>
-        <Tabs
-          variant="outline"
-          active={active}
-          onTabChange={setActive}
-          tabPadding={0}
-        >
-          <Tabs.Tab label={t("all")} icon={<List size={16} />} />
-          <Tabs.Tab label={t("the_activated")} icon={<Calendar size={16} />} />
-          <Tabs.Tab label={t("running")} icon={<CalendarOff size={16} />} />
-        </Tabs>
-        <Container
-          size={"lg"}
-          m="0"
-          p="0"
-          sx={(s) => ({
-            background: s.colorScheme === "light" ? s.white : s.colors.dark[7],
-            height: "100%",
-          })}
-        >
-          <SequenceList
-            sequences={sequences}
-            onChange={setSequences}
-            show={lists[active]}
-          />
-        </Container>
+        <Flex direction={"column"}>
+          <Tabs
+            value={active}
+            onTabChange={(v) => setActive(v as typeof active)}
+          >
+            <Tabs.List px="md">
+              <Tabs.Tab value="all" icon={<List size={16} />}>
+                {t("all")}
+              </Tabs.Tab>
+              <Tabs.Tab value="active" icon={<Calendar size={16} />}>
+                {t("the_activated")}
+              </Tabs.Tab>
+              <Tabs.Tab value="running" icon={<CalendarOff size={16} />}>
+                {t("running")}
+              </Tabs.Tab>
+            </Tabs.List>
+          </Tabs>
+          <Flex
+            w="100%"
+            m="0"
+            p="0"
+            sx={(s) => ({
+              background:
+                s.colorScheme === "light" ? s.white : s.colors.dark[7],
+            })}
+          >
+            <SequenceList
+              sequences={sequences}
+              onChange={setSequences}
+              show={active}
+            />
+          </Flex>
+        </Flex>
       </Container>
     </>
   );

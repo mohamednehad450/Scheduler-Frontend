@@ -1,4 +1,4 @@
-import { Button, Group, Table, Text } from "@mantine/core";
+import { Button, Flex, Table, Text } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import type { Sequence } from "../common";
 import {
@@ -8,7 +8,6 @@ import {
   useSocket,
 } from "../context";
 import SequenceRow from "./SequenceRow";
-import { v4 } from "uuid";
 import { useRouter } from "next/router";
 import { useCRUD } from "../context";
 import { useTranslation } from "react-i18next";
@@ -74,7 +73,7 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
           highlightOnHover
           verticalSpacing={"xs"}
           horizontalSpacing="sm"
-          sx={(theme) => ({ ":hover": { cursor: "pointer" } })}
+          sx={() => ({ ":hover": { cursor: "pointer" } })}
         >
           <thead style={{ position: "sticky" }}>
             <tr>
@@ -133,17 +132,9 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
           </tbody>
         </Table>
       ) : (
-        <Group
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100%",
-            placeItems: "center",
-          }}
-        >
+        <Flex w="100%" h="10rem" align={"center"} justify={"center"}>
           {show === "all" || !sequences.length ? (
-            <Group direction="column" position="center">
+            <Flex direction={"column"}>
               <Text>{t("no_sequences_defined")}</Text>
               <Button
                 variant="subtle"
@@ -155,7 +146,7 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
               >
                 {t("add_new_sequences")}
               </Button>
-            </Group>
+            </Flex>
           ) : (
             <Text>
               {show === "active"
@@ -163,7 +154,7 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
                 : t("no_running_sequences")}
             </Text>
           )}
-        </Group>
+        </Flex>
       )}
     </>
   );

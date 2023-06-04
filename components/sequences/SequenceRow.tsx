@@ -142,40 +142,46 @@ const SequenceRow: FC<SequenceRowProps> = ({
         </MediaQuery>
         <MediaQuery largerThan={"md"} styles={{ display: "none" }}>
           <Menu>
-            <Menu.Label>{t("actions")}</Menu.Label>
-            <Menu.Item
-              onClick={toggleRun}
-              icon={
-                isRunning ? <PlayerPause size={16} /> : <PlayerPlay size={16} />
-              }
-            >
-              {isRunning ? t("stop") : t("run")}
-            </Menu.Item>
-            <Menu.Item
-              onClick={toggleActive}
-              icon={
-                sequence.active ? (
-                  <CalendarOff size={16} />
-                ) : (
-                  <Calendar size={16} />
-                )
-              }
-            >
-              {sequence.active ? t("deactivate") : t("activate")}
-            </Menu.Item>
-            <Menu.Item onClick={edit} icon={<Edit size={16} />}>
-              {t("edit")}
-            </Menu.Item>
-            <Menu.Item onClick={copy} icon={<Copy size={16} />}>
-              {t("copy")}
-            </Menu.Item>
-            <Menu.Item
-              onClick={() => remove(sequence.id)}
-              color={"red"}
-              icon={<Trash size={16} />}
-            >
-              {t("delete")}
-            </Menu.Item>
+            <Menu.Dropdown>
+              <Menu.Label>{t("actions")}</Menu.Label>
+              <Menu.Item
+                onClick={toggleRun}
+                icon={
+                  isRunning ? (
+                    <PlayerPause size={16} />
+                  ) : (
+                    <PlayerPlay size={16} />
+                  )
+                }
+              >
+                {isRunning ? t("stop") : t("run")}
+              </Menu.Item>
+              <Menu.Item
+                onClick={toggleActive}
+                icon={
+                  sequence.active ? (
+                    <CalendarOff size={16} />
+                  ) : (
+                    <Calendar size={16} />
+                  )
+                }
+              >
+                {sequence.active ? t("deactivate") : t("activate")}
+              </Menu.Item>
+              <Menu.Item onClick={edit} icon={<Edit size={16} />}>
+                {t("edit")}
+              </Menu.Item>
+              <Menu.Item onClick={copy} icon={<Copy size={16} />}>
+                {t("copy")}
+              </Menu.Item>
+              <Menu.Item
+                onClick={() => remove(sequence.id)}
+                color={"red"}
+                icon={<Trash size={16} />}
+              >
+                {t("delete")}
+              </Menu.Item>
+            </Menu.Dropdown>
           </Menu>
         </MediaQuery>
       </td>
