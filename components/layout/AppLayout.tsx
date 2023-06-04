@@ -1,7 +1,7 @@
-import { AppShell, MantineProvider, useMantineTheme } from "@mantine/core";
+import { AppShell, useMantineTheme } from "@mantine/core";
 import { FC, PropsWithChildren, useState } from "react";
 import Nav from "./Nav";
-import Header from "./Header";
+import MyHeader from "./MyHeader";
 import { useAuth } from "../context";
 import SignInCard from "./SignInCard";
 
@@ -28,7 +28,7 @@ const AppLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
           <Nav opened={opened} setOpened={setOpened} />
         ) : undefined
       }
-      header={<Header opened={opened} setOpened={setOpened} />}
+      header={<MyHeader opened={opened} setOpened={setOpened} />}
       padding={0}
     >
       {auth?.state === "signedIn" ? children : <SignInCard />}

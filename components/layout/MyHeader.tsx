@@ -3,13 +3,10 @@ import {
   ActionIcon,
   Burger,
   Button,
-  Divider,
   Group,
-  Header as _Header,
+  Header,
   MediaQuery,
   Menu,
-  MenuItem,
-  MenuLabel,
   Text,
   useMantineTheme,
 } from "@mantine/core";
@@ -26,17 +23,17 @@ interface HeaderProps {
   setOpened: Dispatch<SetStateAction<boolean>>;
 }
 
-const Header: FC<HeaderProps> = ({ opened, setOpened }) => {
+const MyHeader: FC<HeaderProps> = ({ opened, setOpened }) => {
   const auth = useAuth();
   const theme = useMantineTheme();
   const { t } = useTranslation();
   const expandSettings = useMediaQuery(
-    `(min-width: ${theme.breakpoints.sm}px)`,
+    `(min-width: ${theme.breakpoints.sm})`,
     false
   );
 
   return (
-    <_Header height={64} px="md">
+    <Header height={64} px="md" style={{ zIndex: 1 }} dir={t("dir")}>
       <Group position="apart" align={"center"} style={{ height: "100%" }}>
         <Group>
           <MediaQuery largerThan="sm" styles={{ display: "none" }}>
@@ -64,32 +61,33 @@ const Header: FC<HeaderProps> = ({ opened, setOpened }) => {
               <LanguageMenu />
             </>
           ) : (
-            <Menu
-              control={
+            <Menu>
+              <Menu.Target>
                 <ActionIcon>
                   <Settings />
                 </ActionIcon>
-              }
-            >
-              <LanguageMenu subMenu />
-              <Divider />
-              <SocketUrlMenu subMenu />
-              <Divider />
-              {auth?.state === "signedIn" && (
-                <>
-                  <MenuLabel>{t("account")}</MenuLabel>
-                  <MenuItem icon={<Logout />} onClick={() => auth?.logout()}>
-                    {t("logout")}
-                  </MenuItem>
-                </>
-              )}
+              </Menu.Target>
+              <Menu.Dropdown>
+                <LanguageMenu subMenu />
+                <Menu.Divider />
+                <SocketUrlMenu subMenu />
+                <Menu.Divider />
+                {auth?.state === "signedIn" && (
+                  <>
+                    <Menu.Label>{t("account")}</Menu.Label>
+                    <Menu.Item icon={<Logout />} onClick={() => auth?.logout()}>
+                      {t("logout")}
+                    </Menu.Item>
+                  </>
+                )}
+              </Menu.Dropdown>
             </Menu>
           )}
           <ThemeToggle />
         </Group>
       </Group>
-    </_Header>
+    </Header>
   );
 };
 
-export default Header;
+export default MyHeader;

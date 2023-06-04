@@ -1,4 +1,4 @@
-import { ActionIcon, Menu, MenuItem, MenuLabel } from "@mantine/core";
+import { ActionIcon, Menu } from "@mantine/core";
 import { useRouter } from "next/router";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,42 +9,42 @@ const LanguageMenu: FC<{ subMenu?: boolean }> = ({ subMenu }) => {
   const router = useRouter();
   return subMenu ? (
     <>
-      <MenuLabel>{t("lang")}</MenuLabel>
-      <MenuItem
+      <Menu.Label>{t("lang")}</Menu.Label>
+      <Menu.Item
         onClick={() => i18n.changeLanguage("ar")}
         disabled={router.locale === "ar"}
       >
         {"العربية"}
-      </MenuItem>
-      <MenuItem
+      </Menu.Item>
+      <Menu.Item
         onClick={() => i18n.changeLanguage("en")}
         disabled={router.locale === "en"}
       >
         {"English"}
-      </MenuItem>
+      </Menu.Item>
     </>
   ) : (
-    <Menu
-      title={`${t("lang")}`}
-      control={
-        <ActionIcon>
+    <Menu>
+      <Menu.Target>
+        <ActionIcon title={t("lang")}>
           <Language />
         </ActionIcon>
-      }
-    >
-      <MenuLabel>{t("lang")}</MenuLabel>
-      <MenuItem
-        onClick={() => i18n.changeLanguage("ar")}
-        disabled={router.locale === "ar"}
-      >
-        {"العربية"}
-      </MenuItem>
-      <MenuItem
-        onClick={() => i18n.changeLanguage("en")}
-        disabled={router.locale === "en"}
-      >
-        {"English"}
-      </MenuItem>
+      </Menu.Target>
+      <Menu.Dropdown>
+        <Menu.Label>{t("lang")}</Menu.Label>
+        <Menu.Item
+          onClick={() => i18n.changeLanguage("ar")}
+          disabled={router.locale === "ar"}
+        >
+          {"العربية"}
+        </Menu.Item>
+        <Menu.Item
+          onClick={() => i18n.changeLanguage("en")}
+          disabled={router.locale === "en"}
+        >
+          {"English"}
+        </Menu.Item>
+      </Menu.Dropdown>
     </Menu>
   );
 };
