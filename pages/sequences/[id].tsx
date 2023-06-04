@@ -1,4 +1,4 @@
-import { Card, Container, Grid, LoadingOverlay, Title } from "@mantine/core";
+import { Container, Grid, LoadingOverlay, Title } from "@mantine/core";
 import { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -12,21 +12,6 @@ import {
 } from "../../components/sequences";
 import { useCRUD } from "../../components/context";
 import { useTranslation } from "react-i18next";
-
-const g = {
-  sm: 12,
-  md: 6,
-  lg: 6,
-  xl: 4,
-  span: 12,
-};
-const g2 = {
-  sm: 12,
-  md: 12,
-  lg: 12,
-  xl: 8,
-  span: 12,
-};
 
 const Sequence: NextPage = () => {
   const router = useRouter();
@@ -67,48 +52,20 @@ const Sequence: NextPage = () => {
         <Container size={"lg"} m="sm" p="sm">
           <Title p={"lg"}>{sequence?.name}</Title>
           <Grid gutter="md">
-            <Grid.Col {...g2}>
-              <Card
-                shadow="lg"
-                p="xs"
-                radius={"md"}
-                style={{ height: "18rem" }}
-              >
-                <OrdersPreview orders={sequence?.orders || []} pins={pins} />
-              </Card>
+            <Grid.Col span={12} xl={8}>
+              <OrdersPreview orders={sequence?.orders || []} pins={pins} />
             </Grid.Col>
-            <Grid.Col {...g}>
-              <Card
-                shadow="lg"
-                p="xs"
-                radius={"md"}
-                style={{ height: "18rem" }}
-              >
-                <SequenceActions
-                  sequence={sequence}
-                  onChange={(seq) => setSequence(seq)}
-                />
-              </Card>
+            <Grid.Col span={12} lg={6} xl={4}>
+              <SequenceActions
+                sequence={sequence}
+                onChange={(seq) => setSequence(seq)}
+              />
             </Grid.Col>
-            <Grid.Col {...g}>
-              <Card
-                shadow="lg"
-                p="xs"
-                radius={"md"}
-                style={{ height: "18rem" }}
-              >
-                <SequenceTriggers cronTriggers={sequence.crons} />
-              </Card>
+            <Grid.Col span={12} lg={6} xl={4}>
+              <SequenceTriggers cronTriggers={sequence.crons} />
             </Grid.Col>
-            <Grid.Col {...g}>
-              <Card
-                shadow="lg"
-                p="xs"
-                radius={"md"}
-                style={{ height: "18rem" }}
-              >
-                <SequenceActivities sequence={sequence} />
-              </Card>
+            <Grid.Col span={12} lg={6} xl={4}>
+              <SequenceActivities sequence={sequence} />
             </Grid.Col>
           </Grid>
         </Container>

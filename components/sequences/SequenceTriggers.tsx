@@ -1,13 +1,9 @@
 import {
   Accordion,
-  AccordionItem,
-  Container,
+  Card,
   Divider,
-  Group,
   ScrollArea,
-  Tab,
   Table,
-  Tabs,
   Text,
 } from "@mantine/core";
 import { FC } from "react";
@@ -22,52 +18,41 @@ const SequenceTriggers: FC<SequenceTriggersProps> = ({ cronTriggers }) => {
   const { t } = useTranslation();
 
   return (
-    <Container
-      style={{ display: "flex", flexDirection: "column", height: "100%" }}
-    >
-      <Group pt="xs">
-        <Text size="xl">{t("triggers")}</Text>
-      </Group>
+    <Card shadow="lg" p="0" radius={"md"} h="18rem">
+      <Text weight={500} size="lg" p="xs" pb="0">
+        {t("orders_previews")}
+      </Text>
       <Divider />
-      <ScrollArea pt="xs" styles={{ root: { flex: 1 } }}>
-        <Tabs>
-          <Tab label={t("schedules")}>
-            <Accordion>
-              {cronTriggers.map(({ cron, label, id }) => (
-                <AccordionItem
-                  label={label}
-                  iconPosition="right"
-                  key={id}
-                  styles={{
-                    label: {
-                      display: "flex",
-                    },
-                  }}
-                >
-                  <Table striped highlightOnHover>
-                    <thead>
-                      <tr>
-                        <th style={{ textAlign: "start" }}>{t("date")}</th>
-                        <th style={{ textAlign: "start" }}>{t("time")}</th>
+      <ScrollArea p="0" h="15.5rem">
+        <Accordion>
+          {cronTriggers.map(({ cron, label, id }) => (
+            <Accordion.Item value={String(id)} key={id}>
+              <Accordion.Control h="3rem">
+                <Text>{label}</Text>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <Table striped highlightOnHover>
+                  <thead>
+                    <tr>
+                      <th style={{ textAlign: "start" }}>{t("date")}</th>
+                      <th style={{ textAlign: "start" }}>{t("time")}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {nextCronDates(cron, 5).map((d) => (
+                      <tr key={d.toString()}>
+                        <td>{d.toDateString()}</td>
+                        <td>{d.toLocaleTimeString()}</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {nextCronDates(cron, 5).map((d) => (
-                        <tr key={d.toString()}>
-                          <td>{d.toDateString()}</td>
-                          <td>{d.toLocaleTimeString()}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </Tab>
-          <Tab label={t("sensors")} disabled></Tab>
-        </Tabs>
+                    ))}
+                  </tbody>
+                </Table>
+              </Accordion.Panel>
+            </Accordion.Item>
+          ))}
+        </Accordion>
       </ScrollArea>
-    </Container>
+    </Card>
   );
 };
 

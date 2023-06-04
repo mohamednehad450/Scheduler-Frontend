@@ -1,7 +1,5 @@
 import {
   Divider,
-  Container,
-  Group,
   ScrollArea,
   Table,
   Text,
@@ -9,8 +7,10 @@ import {
   LoadingOverlay,
   useMantineTheme,
   Pagination,
+  Card,
+  Flex,
 } from "@mantine/core";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { Refresh, Trash } from "tabler-icons-react";
 import { usePrompt } from "../context";
 import type { Sequence, SequenceEvent } from "../common";
@@ -31,6 +31,7 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
   }>({ events: [] });
 
   const prompt = usePrompt();
+  const viewport = useRef<HTMLDivElement>(null);
 
   const crud = useCRUD();
 
@@ -38,7 +39,7 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
 
   useEffect(() => {
     crud?.sequenceEvents
-      ?.listById(sequence.id)
+      ?.listById(sequence.id, { page: events.page?.current || 1 })
       .then((d) => d.data && setEvents(d.data))
       .catch((err) => {
         //TODO
@@ -48,19 +49,18 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
       });
   }, [sequence, crud]);
   return (
-    <Container
-      style={{ display: "flex", flexDirection: "column", height: "100%" }}
-    >
-      <LoadingOverlay visible={loading} />
-      <Group pt="xs" position="apart">
-        <Text size="xl">{t("activities")}</Text>
-        <Group>
+    <Card shadow="lg" p="0" radius={"md"} h="18rem">
+      <Flex justify={"space-between"} align={"center"} p="xs" pb="0">
+        <Text weight={500} size="lg">
+          {t("activities")}
+        </Text>
+        <Flex align={"center"} gap={"sm"}>
           <ActionIcon
             size={24}
             onClick={() => {
               setLoading(true);
               crud?.sequenceEvents
-                ?.listById(sequence.id)
+                ?.listById(sequence.id, { page: events.page?.current || 1 })
                 .then((d) => {
                   setEvents(d.data);
                 })
@@ -95,65 +95,68 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
           >
             <Trash size={24} />
           </ActionIcon>
-        </Group>
-      </Group>
+        </Flex>
+      </Flex>
       <Divider />
       {events.events.length ? (
-        <ScrollArea pt="xs" styles={{ root: { flex: 1 } }}>
-          <Table highlightOnHover striped>
-            <tbody>
-              {events.events.map((e) => (
-                <tr key={e.id}>
-                  <td>{new Date(e.date).toLocaleString()}</td>
-                  <td>{t(e.eventType)}</td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot
-              style={{
-                backgroundColor:
-                  theme.colorScheme === "light"
-                    ? "white"
-                    : theme.colors.dark[4],
-                position: "sticky",
-                bottom: 0,
+        <>
+          <Flex h="3rem" px="xs" justify={"end"}>
+            <Pagination
+              total={Math.round(
+                (events.page?.total || 0) / (events.page?.perPage || 1)
+              )}
+              onChange={(page) => {
+                setLoading(true);
+                crud?.sequenceEvents
+                  ?.listById(sequence.id, { page })
+                  .then((d) => {
+                    setEvents(d.data);
+                    viewport?.current?.scrollTo({ top: 0, behavior: "smooth" });
+                  })
+                  .catch((err) => {
+                    // TODO
+                  })
+                  .finally(() => {
+                    setLoading(false);
+                  });
               }}
-            >
-              <tr>
-                <th style={{ textAlign: "start" }}>{t("date")}</th>
-                <th style={{ textAlign: "start" }}>{t("event")}</th>
-              </tr>
-            </tfoot>
-          </Table>
-        </ScrollArea>
+            />
+          </Flex>
+          <ScrollArea viewportRef={viewport} p="0" h="12.5rem">
+            <Table highlightOnHover striped>
+              <tbody>
+                {events.events.map((e) => (
+                  <tr key={e.id}>
+                    <td>{new Date(e.date).toLocaleString()}</td>
+                    <td>{t(e.eventType)}</td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot
+                style={{
+                  backgroundColor:
+                    theme.colorScheme === "light"
+                      ? "white"
+                      : theme.colors.dark[4],
+                  position: "sticky",
+                  bottom: 0,
+                }}
+              >
+                <tr>
+                  <th style={{ textAlign: "start" }}>{t("date")}</th>
+                  <th style={{ textAlign: "start" }}>{t("event")}</th>
+                </tr>
+              </tfoot>
+            </Table>
+          </ScrollArea>
+        </>
       ) : (
-        <Group position="center" style={{ flex: 1 }}>
+        <Flex h="15.5rem" align={"center"} justify={"center"}>
           <Text>{t("zero_activities")}</Text>
-        </Group>
+        </Flex>
       )}
-      <Group position="right" px={"xs"} pt={"xs"}>
-        <Pagination
-          total={Math.round(
-            (events.page?.total || 0) / (events.page?.perPage || 1)
-          )}
-          siblings={0}
-          onChange={(page) => {
-            setLoading(true);
-            crud?.sequenceEvents
-              ?.listById(sequence.id, { page })
-              .then((d) => {
-                setEvents(d.data);
-              })
-              .catch((err) => {
-                // TODO
-              })
-              .finally(() => {
-                setLoading(false);
-              });
-          }}
-        />
-      </Group>
-    </Container>
+      <LoadingOverlay visible={loading} />
+    </Card>
   );
 };
 

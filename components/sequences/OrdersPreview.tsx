@@ -1,9 +1,8 @@
 import { FC } from "react";
 import { Pin, Sequence } from "../common";
 import {
-  Container,
+  Card,
   Divider,
-  Group,
   MediaQuery,
   ScrollArea,
   Text,
@@ -56,14 +55,12 @@ const OrdersPreview: FC<OrdersPreviewProps> = ({ orders, pins }) => {
   const channel = <T extends { channel: number }>(o: T) => o.channel;
 
   return (
-    <Container
-      style={{ display: "flex", flexDirection: "column", height: "100%" }}
-    >
-      <Group pt="xs">
-        <Text size="xl">{t("orders_previews")}</Text>
-      </Group>
+    <Card shadow="lg" p="0" radius={"md"} h="18rem">
+      <Text weight={500} size="lg" p="xs" pb="0">
+        {t("orders_previews")}
+      </Text>
       <Divider />
-      <ScrollArea pt="xs" styles={{ root: { flex: 1 } }}>
+      <ScrollArea p="sm" h="15.5rem">
         <svg
           width={`97%`}
           style={{ overflow: "visible" }}
@@ -121,7 +118,7 @@ const OrdersPreview: FC<OrdersPreviewProps> = ({ orders, pins }) => {
           </svg>
         </svg>
       </ScrollArea>
-    </Container>
+    </Card>
   );
 };
 
