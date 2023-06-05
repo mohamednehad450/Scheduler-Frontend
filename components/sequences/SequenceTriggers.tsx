@@ -20,7 +20,7 @@ const SequenceTriggers: FC<SequenceTriggersProps> = ({ cronTriggers }) => {
   return (
     <Card shadow="lg" p="0" radius={"md"} h="18rem">
       <Text weight={500} size="lg" p="xs" pb="0">
-        {t("orders_previews")}
+        {t("schedules")}
       </Text>
       <Divider />
       <ScrollArea p="0" h="15.5rem">
