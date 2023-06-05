@@ -1,4 +1,11 @@
-import { ActionIcon, Group, Space, Text, useMantineTheme } from "@mantine/core";
+import {
+  ActionIcon,
+  Flex,
+  Group,
+  Space,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
 import { useMove } from "@mantine/hooks";
 import { scaleBand, scaleLinear } from "d3-scale";
 import { FC, useEffect, useRef } from "react";
@@ -112,14 +119,14 @@ const TrackInput: FC<TrackInputProps> = ({
   return (
     <div>
       <Group px="md" position="apart">
-        <Group style={{ gap: 0 }} direction="column">
+        <Flex direction="column">
           <Text size="sm" weight={500}>
             {label}
           </Text>
           <Text size="xs" color={theme.colors.gray[6]} weight={500}>
             {description}
           </Text>
-        </Group>
+        </Flex>
         <Group style={{ zIndex: active ? -1 : 0 }}>
           <ActionIcon
             size={20}
@@ -168,7 +175,7 @@ const TrackInput: FC<TrackInputProps> = ({
       </Group>
       <div
         style={{
-          margin: `0 ${theme.spacing.xl}px`,
+          margin: `0 ${theme.spacing.xl}`,
         }}
       >
         <div

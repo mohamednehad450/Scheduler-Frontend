@@ -1,4 +1,4 @@
-import { Tab, Tabs } from "@mantine/core";
+import { Tabs } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { formatHour, getDayName, getMonthName } from "../common";
@@ -59,24 +59,32 @@ const CronInput: FC<{ initCron: string; onChange: (cron: string) => void }> = ({
   }, [secCron, minCron, hourCron, domCron, monthCron, dowCron]);
 
   return (
-    <Tabs py="sm">
-      <Tab label={t("second")}>
+    <Tabs py="sm" defaultValue={"second"}>
+      <Tabs.List>
+        <Tabs.Tab value="second">{t("second")}</Tabs.Tab>
+        <Tabs.Tab value="minute">{t("minute")}</Tabs.Tab>
+        <Tabs.Tab value="hour">{t("hour")}</Tabs.Tab>
+        <Tabs.Tab value="day_of_month">{t("day_of_month")}</Tabs.Tab>
+        <Tabs.Tab value="month">{t("month")}</Tabs.Tab>
+        <Tabs.Tab value="day_of_week">{t("day_of_week")}</Tabs.Tab>
+      </Tabs.List>
+      <Tabs.Panel value="second">
         <CronField
           min={0}
           max={59}
           initialValue={secCron}
           onChange={(s) => setSecCron(s)}
         />
-      </Tab>
-      <Tab label={t("minute")}>
+      </Tabs.Panel>
+      <Tabs.Panel value="minute">
         <CronField
           min={0}
           max={59}
           initialValue={minCron}
           onChange={(s) => setMinCron(s)}
         />
-      </Tab>
-      <Tab label={t("hour")}>
+      </Tabs.Panel>
+      <Tabs.Panel value="hour">
         <CronField
           min={0}
           max={23}
@@ -84,16 +92,16 @@ const CronInput: FC<{ initCron: string; onChange: (cron: string) => void }> = ({
           initialValue={hourCron}
           onChange={(s) => setHourCron(s)}
         />
-      </Tab>
-      <Tab label={t("day_of_month")}>
+      </Tabs.Panel>
+      <Tabs.Panel value="day_of_month">
         <CronField
           min={1}
           max={31}
           initialValue={domCron}
           onChange={(s) => setDomCron(s)}
         />
-      </Tab>
-      <Tab label={t("month")}>
+      </Tabs.Panel>
+      <Tabs.Panel value="month">
         <CronField
           min={0}
           max={11}
@@ -101,8 +109,8 @@ const CronInput: FC<{ initCron: string; onChange: (cron: string) => void }> = ({
           initialValue={monthCron}
           onChange={(s) => setMonthCron(s)}
         />
-      </Tab>
-      <Tab label={t("day_of_week")}>
+      </Tabs.Panel>
+      <Tabs.Panel value="day_of_week">
         <CronField
           min={0}
           max={6}
@@ -110,7 +118,7 @@ const CronInput: FC<{ initCron: string; onChange: (cron: string) => void }> = ({
           initialValue={dowCron}
           onChange={(s) => setDowCron(s)}
         />
-      </Tab>
+      </Tabs.Panel>
     </Tabs>
   );
 };

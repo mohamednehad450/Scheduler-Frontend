@@ -35,6 +35,7 @@ const DurationInput: FC<DurationInputProps> = ({
       centered
       opened={opened}
       onClose={onClose}
+      zIndex={99999}
     >
       <Divider />
       <Group pt="md">

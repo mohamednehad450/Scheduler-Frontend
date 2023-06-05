@@ -4,7 +4,7 @@ import {
   RangeSlider,
   Select,
   Chip,
-  Chips,
+  Flex,
 } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -97,51 +97,53 @@ const CronField: FC<CronInputProps> = ({
   }, [type, range, step, collection]);
 
   return (
-    <Group py="sm" direction="column" align={"stretch"}>
-      <Chips multiple={false} value={type} onChange={setType}>
+    <Group py="sm" align={"stretch"}>
+      <Chip.Group multiple={false} value={type} onChange={setType}>
         {types.map(({ value, label }) => (
           <Chip key={value} value={value}>
             {t(label)}
           </Chip>
         ))}
-      </Chips>
-      {type === "range" ? (
-        <RangeSlider
-          py="sm"
-          px="xl"
-          value={range}
-          onChange={setRange}
-          min={min}
-          max={max}
-          minRange={1}
-          step={1}
-          label={formatLabel}
-        />
-      ) : type === "step" ? (
-        <Group py="sm" pt="0">
-          <Select
-            style={{ width: "10rem" }}
-            label={t("start")}
+      </Chip.Group>
+      <Flex direction={"column"} w="100%">
+        {type === "range" ? (
+          <RangeSlider
+            py="sm"
+            px="xl"
+            value={range}
+            onChange={setRange}
+            min={min}
+            max={max}
+            minRange={1}
+            step={1}
+            label={formatLabel}
+          />
+        ) : type === "step" ? (
+          <Group py="sm" pt="0">
+            <Select
+              style={{ width: "10rem" }}
+              label={t("start")}
+              data={getRange(min, max, formatLabel)}
+              value={String(step.start)}
+              onChange={(v) => setStep((s) => ({ ...s, start: Number(v) }))}
+            />
+            <Select
+              label={t("step")}
+              style={{ width: "10rem" }}
+              data={getRange(min, max, String)}
+              value={String(step.step)}
+              onChange={(v) => setStep((s) => ({ ...s, step: Number(v) }))}
+            />
+          </Group>
+        ) : type === "collection" ? (
+          <MultiSelect
+            value={collection.map(String)}
+            onChange={(vs) => vs.length && setCollection(vs.map(Number))}
+            py="sm"
             data={getRange(min, max, formatLabel)}
-            value={String(step.start)}
-            onChange={(v) => setStep((s) => ({ ...s, start: Number(v) }))}
           />
-          <Select
-            label={t("step")}
-            style={{ width: "10rem" }}
-            data={getRange(min, max, String)}
-            value={String(step.step)}
-            onChange={(v) => setStep((s) => ({ ...s, step: Number(v) }))}
-          />
-        </Group>
-      ) : type === "collection" ? (
-        <MultiSelect
-          value={collection.map(String)}
-          onChange={(vs) => vs.length && setCollection(vs.map(Number))}
-          py="sm"
-          data={getRange(min, max, formatLabel)}
-        />
-      ) : null}
+        ) : null}
+      </Flex>
     </Group>
   );
 };
