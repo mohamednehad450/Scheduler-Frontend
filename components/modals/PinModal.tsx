@@ -1,10 +1,9 @@
 import {
   Button,
   Divider,
+  Flex,
   Group,
-  Modal,
   Radio,
-  RadioGroup,
   Select,
   TextInput,
 } from "@mantine/core";
@@ -12,12 +11,12 @@ import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LoadingButton, Pin } from "../common";
 import { useCRUD } from "../context";
+import { ContextModalProps, openContextModal } from "@mantine/modals";
 
-interface NewPinsProps {
-  opened: boolean;
+interface PinModalProps {
   initialPin?: Pin;
-  onClose: (pin?: Pin) => void;
   usedPins: { [key: Pin["channel"]]: true };
+  onChange: (pin: Pin) => void;
 }
 
 const channels = [
@@ -25,11 +24,10 @@ const channels = [
   33, 35, 36, 37, 38, 40,
 ];
 
-const NewPin: FC<NewPinsProps> = ({
-  opened,
-  onClose,
-  initialPin,
-  usedPins: initUsedPins,
+const PinModal: FC<ContextModalProps<PinModalProps>> = ({
+  context,
+  id,
+  innerProps: { usedPins: initUsedPins, initialPin, onChange },
 }) => {
   const [pin, setPin] = useState<Partial<Pin>>(
     initialPin || {
@@ -53,23 +51,8 @@ const NewPin: FC<NewPinsProps> = ({
     });
   }, [pin]);
 
-  useEffect(() => {
-    setUsedPins(initUsedPins);
-    setPin(
-      initialPin || {
-        label: "",
-        onState: "HIGH",
-      }
-    );
-  }, [opened]);
-
   return (
-    <Modal
-      centered
-      opened={opened}
-      onClose={() => onClose()}
-      title={initialPin ? "Edit " + initialPin.label : t("add_new_pin")}
-    >
+    <>
       <Divider mb="sm" />
       <TextInput
         py="xs"
@@ -93,20 +76,19 @@ const NewPin: FC<NewPinsProps> = ({
         value={String(pin.channel)}
         error={err.channel}
       />
-      <RadioGroup
-        py="xs"
+      <Radio.Group
         label={t("on_state")}
         description={t("select_pin_on_state")}
         required
         value={pin.onState}
         onChange={(onState) => setPin((p) => ({ ...p, onState }))}
       >
-        <Radio value="HIGH" label={t("HIGH")} />
-        <Radio value="LOW" label={t("LOW")} />
-      </RadioGroup>
+        <Radio p="xs" value="HIGH" label={t("HIGH")} />
+        <Radio p="xs" value="LOW" label={t("LOW")} />
+      </Radio.Group>
 
       <Group position="right" py="xs">
-        <Button onClick={() => onClose()} variant="subtle">
+        <Button onClick={() => context.closeModal(id)} variant="subtle">
           {t("cancel")}
         </Button>
         {!initialPin && (
@@ -163,7 +145,8 @@ const NewPin: FC<NewPinsProps> = ({
                 res
                   .then((r) => {
                     onDone();
-                    initialPin ? onClose(r.data) : onClose();
+                    initialPin ?? onChange(r.data);
+                    context.closeModal(id);
                   })
                   .catch((err) => {
                     onDone();
@@ -177,8 +160,8 @@ const NewPin: FC<NewPinsProps> = ({
           {t("submit")}
         </LoadingButton>
       </Group>
-    </Modal>
+    </>
   );
 };
 
-export default NewPin;
+export default PinModal;

@@ -1,21 +1,20 @@
-import { Button, Group, Modal, MultiSelect } from "@mantine/core";
+import { Button, Group, MultiSelect } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Cron, Sequence } from "../common";
 import { useCRUD } from "../context";
+import { ContextModalProps } from "@mantine/modals";
 
 interface LinkCronProps {
-  opened: boolean;
-  onClose: (cron?: Cron) => void;
+  onChange: (cron: Cron) => void;
   cronId: Cron["id"];
   initialSequences?: Sequence["id"][];
 }
 
-const LinkCron: FC<LinkCronProps> = ({
-  opened,
-  onClose,
-  initialSequences,
-  cronId,
+const LinkCronModal: FC<ContextModalProps<LinkCronProps>> = ({
+  context,
+  id,
+  innerProps: { onChange, initialSequences, cronId },
 }) => {
   const [sequences, setSequences] = useState<Sequence[]>([]);
   const [sequencesIds, setSequencesIds] = useState<Sequence["id"][]>(
@@ -27,20 +26,12 @@ const LinkCron: FC<LinkCronProps> = ({
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (opened) {
-      crud?.sequenceCRUD?.list().then(({ data }) => setSequences(data));
-      setSequencesIds(initialSequences || []);
-    }
-  }, [opened, crud]);
+    crud?.sequenceCRUD?.list().then(({ data }) => setSequences(data));
+    setSequencesIds(initialSequences || []);
+  }, [crud]);
 
   return (
-    <Modal
-      title={t("link_sequences")}
-      opened={opened}
-      onClose={() => onClose()}
-      size="lg"
-      overflow="inside"
-    >
+    <>
       <MultiSelect
         size="md"
         data={
@@ -52,21 +43,22 @@ const LinkCron: FC<LinkCronProps> = ({
         onChange={(SequencesIds) => setSequencesIds(SequencesIds.map(Number))}
       />
       <Group p={"md"} position="right">
-        <Button variant="subtle" onClick={() => onClose()}>
+        <Button variant="subtle" onClick={() => context.closeModal(id)}>
           {t("cancel")}
         </Button>
         <Button
           onClick={() =>
-            crud?.cronSequence
-              ?.linkCron(cronId, sequencesIds)
-              .then((r) => onClose(r.data))
+            crud?.cronSequence?.linkCron(cronId, sequencesIds).then((r) => {
+              r.data && onChange(r.data);
+              r.data && context.closeModal(id);
+            })
           }
         >
           {t("submit")}
         </Button>
       </Group>
-    </Modal>
+    </>
   );
 };
 
-export default LinkCron;
+export default LinkCronModal;

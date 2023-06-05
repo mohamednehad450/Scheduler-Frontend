@@ -2,7 +2,6 @@ import {
   Button,
   Divider,
   Group,
-  Modal,
   ScrollArea,
   Switch,
   TextInput,
@@ -10,8 +9,13 @@ import {
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pin, Sequence, LoadingButton } from "../common";
-import { useCRUD, usePrompt } from "../context";
+import { useCRUD } from "../context";
 import OrdersInput, { OrderInput } from "./OrdersInput";
+import {
+  ContextModalProps,
+  openConfirmModal,
+  openContextModal,
+} from "@mantine/modals";
 
 type SequenceInput = {
   name: string;
@@ -19,16 +23,15 @@ type SequenceInput = {
   orders: OrderInput[];
 };
 
-interface NewSequenceProps {
-  opened: boolean;
-  onClose: (newSeq?: Sequence) => void;
+interface SequenceModalProps {
+  onChange: (seq: Sequence) => void;
   initialSequence?: Partial<Sequence>;
 }
 
-const NewSequence: FC<NewSequenceProps> = ({
-  onClose,
-  initialSequence,
-  opened,
+const SequenceModal: FC<ContextModalProps<SequenceModalProps>> = ({
+  context,
+  id,
+  innerProps: { onChange, initialSequence },
 }) => {
   const [sequence, setSequence] = useState<SequenceInput>({
     name: initialSequence?.name || "",
@@ -48,29 +51,11 @@ const NewSequence: FC<NewSequenceProps> = ({
 
   const crud = useCRUD();
 
-  const prompt = usePrompt();
-
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (opened) {
-      crud?.pinsCRUD?.list().then((d) => setPins(d.data));
-      setSequence({
-        name: initialSequence?.name || "",
-        active: initialSequence?.active || false,
-        orders:
-          initialSequence?.orders?.map(({ offset, duration, channel }) => ({
-            offset,
-            duration,
-            channel,
-          })) || [],
-      });
-      setError({
-        name: "",
-        orders: "",
-      });
-    }
-  }, [opened, crud]);
+    crud?.pinsCRUD?.list().then((d) => setPins(d.data));
+  }, [crud]);
 
   useEffect(() => {
     setError({
@@ -80,19 +65,9 @@ const NewSequence: FC<NewSequenceProps> = ({
   }, [sequence]);
 
   return (
-    <Modal
-      size={"xl"}
-      opened={opened}
-      onClose={() => onClose()}
-      title={
-        initialSequence?.id
-          ? `${t("edit")} ${initialSequence.name || ""}`
-          : t("add_new_sequence")
-      }
-      overflow="inside"
-    >
+    <>
       <Divider pt="md" />
-      <ScrollArea styles={{ viewport: { minHeight: "24rem" } }}>
+      <ScrollArea>
         <Group p="xs">
           <TextInput
             required
@@ -114,7 +89,7 @@ const NewSequence: FC<NewSequenceProps> = ({
             label={t("active")}
           />
         </Group>
-        <Group p="xs">
+        <Group>
           <OrdersInput
             error={error.orders}
             orders={sequence.orders}
@@ -136,7 +111,7 @@ const NewSequence: FC<NewSequenceProps> = ({
           styles={{ root: { minWidth: "6rem" } }}
           m="sm"
           variant="subtle"
-          onClick={() => onClose()}
+          onClick={() => context.closeModal(id)}
         >
           {t("cancel")}
         </Button>
@@ -164,17 +139,35 @@ const NewSequence: FC<NewSequenceProps> = ({
               func
                 .then(({ data: newSeq }) => {
                   if (initialSequence) {
-                    onClose(newSeq);
+                    onChange(newSeq);
+                    context.closeModal(id);
                   } else {
-                    onClose();
-                    prompt?.confirm((confirmed) => {
-                      confirmed
-                        ? prompt.linkSequence(
-                            (seq) => onClose(seq || newSeq),
-                            newSeq.id
-                          )
-                        : onClose(newSeq);
-                    }, `${t("link_sequence_schedule")}`);
+                    openConfirmModal({
+                      title: t("link_sequence_schedule"),
+                      centered: true,
+                      labels: {
+                        cancel: t("cancel"),
+                        confirm: t("confirm"),
+                      },
+                      onConfirm: () => {
+                        openContextModal({
+                          modal: "LinkSequenceModal",
+                          title: t("link_schedules"),
+                          centered: true,
+                          innerProps: {
+                            onChange: (seq) => {
+                              onChange(seq);
+                              context.closeModal(id);
+                            },
+                            sequenceId: newSeq.id,
+                          },
+                        });
+                      },
+                      onCancel: () => {
+                        onChange(newSeq);
+                        context.closeModal(id);
+                      },
+                    });
                   }
                 })
                 .catch((err) => {
@@ -186,8 +179,8 @@ const NewSequence: FC<NewSequenceProps> = ({
           {t("submit")}
         </LoadingButton>
       </Group>
-    </Modal>
+    </>
   );
 };
 
-export default NewSequence;
+export default SequenceModal;
