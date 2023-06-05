@@ -12,11 +12,11 @@ import {
 } from "@mantine/core";
 import { FC, useEffect, useRef, useState } from "react";
 import { Refresh, Trash } from "tabler-icons-react";
-import { usePrompt } from "../context";
 import type { Sequence, SequenceEvent } from "../common";
 import { useCRUD } from "../context";
 import { useTranslation } from "react-i18next";
 import { Pagination as Page } from "../../api";
+import { openConfirmModal } from "@mantine/modals";
 
 interface SequenceActivitiesProps {
   sequence: Sequence;
@@ -30,7 +30,6 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
     page?: Page;
   }>({ events: [] });
 
-  const prompt = usePrompt();
   const viewport = useRef<HTMLDivElement>(null);
 
   const crud = useCRUD();
@@ -78,9 +77,11 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
             color="red"
             size={24}
             onClick={() =>
-              prompt?.confirm(
-                (confirmed) =>
-                  confirmed &&
+              openConfirmModal({
+                title: t("clear_sequence_events"),
+                centered: true,
+                labels: { cancel: t("cancel"), confirm: t("confirm") },
+                onConfirm: () =>
                   crud?.sequenceEvents
                     ?.deleteById(sequence.id)
                     .then((d) => {
@@ -89,8 +90,7 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
                     .catch((err) => {
                       // TODO
                     }),
-                `${t("clear_sequence_events")}`
-              )
+              })
             }
           >
             <Trash size={24} />

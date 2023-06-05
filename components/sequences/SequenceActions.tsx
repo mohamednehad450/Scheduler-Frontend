@@ -1,4 +1,12 @@
-import { Button, Card, Divider, Grid, Group, Text } from "@mantine/core";
+import {
+  Button,
+  Card,
+  Divider,
+  Grid,
+  Group,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -12,13 +20,10 @@ import {
   Trash,
 } from "tabler-icons-react";
 import { LoadingButton, Sequence } from "../common";
-import {
-  DeviceState,
-  DeviceStateHandler,
-  usePrompt,
-  useSocket,
-} from "../context";
+import { DeviceState, DeviceStateHandler, useSocket } from "../context";
 import { useCRUD } from "../context";
+import { openConfirmModal, openContextModal } from "@mantine/modals";
+import { useMediaQuery } from "@mantine/hooks";
 
 interface SequenceActionsProps {
   sequence: Sequence;
@@ -26,7 +31,6 @@ interface SequenceActionsProps {
 }
 
 const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
-  const prompt = usePrompt();
   const sContext = useSocket();
 
   const crud = useCRUD();
@@ -59,6 +63,10 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
   const isRunning = runningSequences.some((id) => id === sequence.id);
   const router = useRouter();
   const { t } = useTranslation();
+
+  const theme = useMantineTheme();
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+
   return (
     <Card shadow="lg" p="0" radius={"md"} h="18rem">
       <Text weight={500} size="lg" p="xs" pb="0">
@@ -129,11 +137,16 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
             w="100%"
             variant="outline"
             onClick={() =>
-              prompt?.linkSequence(
-                (s) => s && onChange(s),
-                sequence.id,
-                sequence.crons.map((c) => c.id)
-              )
+              openContextModal({
+                modal: "LinkSequenceModal",
+                title: t("link_schedules"),
+                centered: true,
+                innerProps: {
+                  onChange,
+                  sequenceId: sequence.id,
+                  initialCrons: sequence.crons.map((c) => c.id),
+                },
+              })
             }
           >
             <Group>
@@ -148,7 +161,16 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
             w="100%"
             variant={"outline"}
             onClick={() =>
-              prompt?.newSequence((s) => s && onChange(s), sequence)
+              openContextModal({
+                modal: "SequenceModal",
+                title: sequence.name,
+                fullScreen: isMobile,
+                size: "xl",
+                innerProps: {
+                  onChange,
+                  initialSequence: sequence,
+                },
+              })
             }
           >
             <Group>
@@ -162,19 +184,20 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
             p={0}
             w="100%"
             color={"red"}
-            onClick={() => {
-              prompt?.confirm((confirmed) => {
-                if (!confirmed) {
-                  return;
-                }
-                crud?.sequenceCRUD
-                  ?.remove(sequence?.id)
-                  .then(() => router.back())
-                  .catch((err) => {
-                    // TODO
-                  });
-              });
-            }}
+            onClick={() =>
+              openConfirmModal({
+                title: t("are_you_sure"),
+                centered: true,
+                labels: { cancel: t("cancel"), confirm: t("confirm") },
+                onConfirm: () =>
+                  crud?.sequenceCRUD
+                    ?.remove(sequence?.id)
+                    .then(() => router.back())
+                    .catch((err) => {
+                      // TODO
+                    }),
+              })
+            }
           >
             <Group>
               <Trash size={16} />
