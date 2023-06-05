@@ -9,6 +9,7 @@ import {
   Tabs,
   Text,
   ThemeIcon,
+  useMantineTheme,
 } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -18,17 +19,19 @@ import {
   DeviceStateHandler,
   ChannelChangeHandler,
   useSocket,
-  usePrompt,
   useCRUD,
 } from "../context";
 import { Circle } from "tabler-icons-react";
+import { openContextModal } from "@mantine/modals";
+import { useMediaQuery } from "@mantine/hooks";
 
 const PinsStatus: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
   const sContext = useSocket();
-  const prompt = usePrompt();
   const crud = useCRUD();
 
   const { t } = useTranslation();
+  const theme = useMantineTheme();
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   const [pins, setPins] = useState<Pin[]>([]);
   const [deviceState, setDeviceState] = useState<DeviceState>({
@@ -123,15 +126,18 @@ const PinsStatus: FC<{ sequences: Sequence[] }> = ({ sequences }) => {
               <Flex direction={"column"} align={"center"} justify={"center"}>
                 <Text>{t("no_pins_defined")}</Text>
                 <Button
-                  onClick={() =>
-                    prompt?.newPin(
-                      () => crud?.pinsCRUD?.list().then((d) => setPins(d.data)),
-                      pins.reduce(
-                        (acc, pin) => ({ ...acc, [pin.channel]: true }),
-                        {}
-                      )
-                    )
-                  }
+                  onClick={() => {
+                    openContextModal({
+                      modal: "PinModal",
+                      title: t("add_new_pin"),
+                      fullScreen: isMobile,
+                      innerProps: {
+                        onChange: () =>
+                          crud?.pinsCRUD?.list().then((d) => setPins(d.data)),
+                        usedPins: {},
+                      },
+                    });
+                  }}
                   variant="subtle"
                 >
                   {t("add_new_pin")}
