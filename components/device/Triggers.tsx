@@ -7,21 +7,24 @@ import {
   Flex,
   ScrollArea,
   Text,
+  useMantineTheme,
 } from "@mantine/core";
-import { useScrollIntoView } from "@mantine/hooks";
 import { FC, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Refresh } from "tabler-icons-react";
 import { Cron } from "../common";
-import { useCRUD, usePrompt } from "../context";
+import { useCRUD } from "../context";
 import TriggerRow from "./TriggerRow";
+import { openContextModal } from "@mantine/modals";
+import { useMediaQuery } from "@mantine/hooks";
 
 const Triggers: FC = () => {
   const { t } = useTranslation();
+  const theme = useMantineTheme();
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   const [crons, setCrons] = useState<Cron[]>([]);
 
-  const prompt = usePrompt();
   const crud = useCRUD();
 
   const refresh = useCallback(
@@ -46,7 +49,15 @@ const Triggers: FC = () => {
           <ActionIcon
             size={24}
             onClick={() =>
-              prompt?.newCron((cron) => cron && setCrons((cs) => [cron, ...cs]))
+              openContextModal({
+                modal: "CronModal",
+                title: t("add_new_schedule"),
+                fullScreen: isMobile,
+                size: "lg",
+                innerProps: {
+                  onChange: (cron) => setCrons((cs) => [cron, ...cs]),
+                },
+              })
             }
           >
             <Plus size={24} />
@@ -71,18 +82,14 @@ const Triggers: FC = () => {
                         });
                       }}
                       remove={(id) =>
-                        prompt?.confirm(
-                          (confirmed) =>
-                            confirmed &&
-                            crud?.cronCRUD
-                              ?.remove(id)
-                              .then(() =>
-                                setCrons((cs) => cs.filter((c) => c.id !== id))
-                              )
-                              .catch((err) => {
-                                // TODO
-                              })
-                        )
+                        crud?.cronCRUD
+                          ?.remove(id)
+                          .then(() =>
+                            setCrons((cs) => cs.filter((c) => c.id !== id))
+                          )
+                          .catch((err) => {
+                            // TODO
+                          })
                       }
                     />
                   </Accordion.Panel>
@@ -101,7 +108,15 @@ const Triggers: FC = () => {
           <Text>{t("no_schedules_defined")}</Text>
           <Button
             onClick={() =>
-              prompt?.newCron((cron) => cron && setCrons((cs) => [cron, ...cs]))
+              openContextModal({
+                modal: "CronModal",
+                title: t("add_new_schedule"),
+                size: "lg",
+                fullScreen: isMobile,
+                innerProps: {
+                  onChange: (cron) => setCrons((cs) => [cron, ...cs]),
+                },
+              })
             }
             variant="subtle"
           >

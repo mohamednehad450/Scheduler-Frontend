@@ -6,12 +6,14 @@ import {
   Menu,
   Text,
   ThemeIcon,
+  useMantineTheme,
 } from "@mantine/core";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Circle, Dots, Edit, Trash } from "tabler-icons-react";
 import { Pin } from "../common";
-import { usePrompt } from "../context";
+import { openConfirmModal, openContextModal } from "@mantine/modals";
+import { useMediaQuery } from "@mantine/hooks";
 
 interface ChannelRowProps {
   pin: Pin;
@@ -26,8 +28,21 @@ const ChannelRow: FC<ChannelRowProps> = ({
   remove,
   onChange,
 }) => {
-  const prompt = usePrompt();
   const { t } = useTranslation();
+  const theme = useMantineTheme();
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+
+  const edit = () =>
+    openContextModal({
+      modal: "PinModal",
+      title: pin.label,
+      fullScreen: isMobile,
+      innerProps: {
+        initialPin: pin,
+        onChange,
+        usedPins: {},
+      },
+    });
 
   return (
     <>
@@ -69,20 +84,21 @@ const ChannelRow: FC<ChannelRowProps> = ({
                 </ActionIcon>
               </Menu.Target>
               <Menu.Dropdown>
-                <Menu.Item
-                  onClick={() => {
-                    prompt?.newPin(
-                      (newPin) => newPin && onChange(newPin),
-                      {},
-                      pin
-                    );
-                  }}
-                  icon={<Edit size={16} />}
-                >
+                <Menu.Item onClick={edit} icon={<Edit size={16} />}>
                   {t("edit")}
                 </Menu.Item>
                 <Menu.Item
-                  onClick={() => remove(pin.channel)}
+                  onClick={() =>
+                    openConfirmModal({
+                      title: t("are_you_sure"),
+                      centered: true,
+                      labels: {
+                        cancel: t("cancel"),
+                        confirm: t("confirm"),
+                      },
+                      onConfirm: () => remove(pin.channel),
+                    })
+                  }
                   color={"red"}
                   icon={<Trash size={16} />}
                 >

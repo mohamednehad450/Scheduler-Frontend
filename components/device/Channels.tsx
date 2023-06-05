@@ -7,6 +7,7 @@ import {
   Grid,
   ScrollArea,
   Text,
+  useMantineTheme,
 } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -17,10 +18,11 @@ import {
   DeviceState,
   DeviceStateHandler,
   useCRUD,
-  usePrompt,
   useSocket,
 } from "../context";
 import ChannelRow from "./ChannelRow";
+import { openConfirmModal, openContextModal } from "@mantine/modals";
+import { useMediaQuery } from "@mantine/hooks";
 
 const Channels: FC = () => {
   const [pins, setPins] = useState<Pin[]>([]);
@@ -29,9 +31,10 @@ const Channels: FC = () => {
   >([]);
 
   const sContext = useSocket();
-  const prompt = usePrompt();
   const crud = useCRUD();
   const { t } = useTranslation();
+  const theme = useMantineTheme();
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   useEffect(() => {
     if (!sContext?.socket) {
@@ -73,13 +76,18 @@ const Channels: FC = () => {
         <Flex align={"center"} gap={"sm"}>
           <Button
             onClick={() =>
-              prompt?.confirm(
-                (confirmed) =>
-                  confirmed &&
+              openConfirmModal({
+                title: t("are_you_sure"),
+                centered: true,
+                labels: {
+                  cancel: t("cancel"),
+                  confirm: t("confirm"),
+                },
+                onConfirm: () =>
                   sContext?.fallback
                     .resetDevice()
-                    .then((r) => setChannelsStatus(r.data.channelsStatus))
-              )
+                    .then((r) => setChannelsStatus(r.data.channelsStatus)),
+              })
             }
             variant="subtle"
           >
@@ -94,10 +102,19 @@ const Channels: FC = () => {
           <ActionIcon
             size={24}
             onClick={() =>
-              prompt?.newPin(
-                () => crud?.pinsCRUD?.list().then((d) => setPins(d.data)),
-                pins.reduce((acc, pin) => ({ ...acc, [pin.channel]: true }), {})
-              )
+              openContextModal({
+                modal: "PinModal",
+                title: t("add_new_pin"),
+                fullScreen: isMobile,
+                innerProps: {
+                  usedPins: pins.reduce(
+                    (acc, pin) => ({ ...acc, [pin.channel]: true }),
+                    {}
+                  ),
+                  onChange: () =>
+                    crud?.pinsCRUD?.list().then((d) => setPins(d.data)),
+                },
+              })
             }
           >
             <Plus size={24} />
@@ -183,10 +200,19 @@ const Channels: FC = () => {
           <Text>{t("no_pins_defined")}</Text>
           <Button
             onClick={() =>
-              prompt?.newPin(
-                () => crud?.pinsCRUD?.list().then((d) => setPins(d.data)),
-                pins.reduce((acc, pin) => ({ ...acc, [pin.channel]: true }), {})
-              )
+              openContextModal({
+                modal: "PinModal",
+                title: t("add_new_pin"),
+                fullScreen: isMobile,
+                innerProps: {
+                  usedPins: pins.reduce(
+                    (acc, pin) => ({ ...acc, [pin.channel]: true }),
+                    {}
+                  ),
+                  onChange: () =>
+                    crud?.pinsCRUD?.list().then((d) => setPins(d.data)),
+                },
+              })
             }
             variant="subtle"
           >

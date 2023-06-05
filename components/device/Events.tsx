@@ -15,8 +15,9 @@ import { useTranslation } from "react-i18next";
 import { Refresh, Trash } from "tabler-icons-react";
 import { Pagination as Page } from "../../api";
 import { SequenceEvent } from "../common";
-import { useCRUD, usePrompt } from "../context";
+import { useCRUD } from "../context";
 import EventRow from "./EventRow";
+import { openConfirmModal } from "@mantine/modals";
 
 const Events: FC = () => {
   const [events, setEvents] = useState<{
@@ -24,7 +25,6 @@ const Events: FC = () => {
     page?: Page;
   }>({ events: [] });
   const [loading, setLoading] = useState(true);
-  const prompt = usePrompt();
   const viewport = useRef<HTMLDivElement>(null);
 
   const { t } = useTranslation();
@@ -75,9 +75,11 @@ const Events: FC = () => {
             color="red"
             size={24}
             onClick={() =>
-              prompt?.confirm(
-                (confirmed) =>
-                  confirmed &&
+              openConfirmModal({
+                title: t("clear_events"),
+                centered: true,
+                labels: { cancel: t("cancel"), confirm: t("confirm") },
+                onConfirm: () =>
                   crud?.sequenceEvents
                     ?.deleteAll()
                     .then((d) => {
@@ -86,8 +88,7 @@ const Events: FC = () => {
                     .catch((err) => {
                       // TODO
                     }),
-                `${t("clear_events")}`
-              )
+              })
             }
           >
             <Trash size={24} />

@@ -1,12 +1,22 @@
-import { Button, Divider, Flex, Group, Table, Text } from "@mantine/core";
+import {
+  Button,
+  Divider,
+  Flex,
+  Group,
+  Table,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
 import { FC } from "react";
 import { Edit, Link, Trash } from "tabler-icons-react";
 import { Cron } from "../common";
 import cronstrue from "cronstrue";
 import { nextCronDates } from "../common";
 import { useRouter } from "next/router";
-import { usePrompt } from "../context";
 import { useTranslation } from "react-i18next";
+import { openContextModal } from "@mantine/modals";
+import { openConfirmModal } from "@mantine/modals";
+import { useMediaQuery } from "@mantine/hooks";
 
 interface CronRowProps {
   cron: Cron;
@@ -16,9 +26,10 @@ interface CronRowProps {
 
 const TriggerRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
   const router = useRouter();
-  const prompt = usePrompt();
 
   const { t, i18n } = useTranslation();
+  const theme = useMantineTheme();
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   return (
     <>
@@ -58,7 +69,16 @@ const TriggerRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
           <Button
             variant="light"
             onClick={() =>
-              prompt?.newCron((newCron) => newCron && onChange(newCron), cron)
+              openContextModal({
+                modal: "CronModal",
+                title: cron.label,
+                size: "lg",
+                fullScreen: isMobile,
+                innerProps: {
+                  onChange,
+                  initCron: cron,
+                },
+              })
             }
           >
             <Group position="center">
@@ -69,11 +89,16 @@ const TriggerRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
           <Button
             variant="light"
             onClick={() =>
-              prompt?.linkCron(
-                (newCron) => newCron && onChange(newCron),
-                cron.id,
-                cron.sequences.map((s) => s.id)
-              )
+              openContextModal({
+                modal: "LinkCronModal",
+                title: t("link_sequences"),
+                centered: true,
+                innerProps: {
+                  onChange,
+                  cronId: cron.id,
+                  initialSequences: cron.sequences.map((s) => s.id),
+                },
+              })
             }
           >
             <Group position="center">
@@ -81,7 +106,21 @@ const TriggerRow: FC<CronRowProps> = ({ cron, onChange, remove }) => {
               {t("link")}
             </Group>
           </Button>
-          <Button variant="light" color={"red"} onClick={() => remove(cron.id)}>
+          <Button
+            variant="light"
+            color={"red"}
+            onClick={() =>
+              openConfirmModal({
+                title: t("are_you_sure"),
+                centered: true,
+                labels: {
+                  cancel: t("cancel"),
+                  confirm: t("confirm"),
+                },
+                onConfirm: () => remove(cron.id),
+              })
+            }
+          >
             <Group position="center">
               <Trash size="16" />
               {t("delete")}
