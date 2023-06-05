@@ -8,7 +8,6 @@ import { FC, PropsWithChildren } from "react";
 import { useTranslation } from "react-i18next";
 import { ProvideAuth, useAuth } from "./auth";
 import { ProvideCRUD, useCRUD } from "./CRUD";
-import { ProvidePrompt, usePrompt } from "./prompt";
 import {
   ProvideSocket,
   useSocket,
@@ -46,9 +45,7 @@ const AppContext: FC<PropsWithChildren<{}>> = ({ children }) => {
       >
         <ProvideAuth>
           <ProvideCRUD>
-            <ProvideSocket>
-              <ProvidePrompt>{children}</ProvidePrompt>
-            </ProvideSocket>
+            <ProvideSocket>{children}</ProvideSocket>
           </ProvideCRUD>
         </ProvideAuth>
       </MantineProvider>
@@ -56,7 +53,7 @@ const AppContext: FC<PropsWithChildren<{}>> = ({ children }) => {
   );
 };
 
-export { AppContext, useSocket, usePrompt, useAuth, useCRUD };
+export { AppContext, useSocket, useAuth, useCRUD };
 export type {
   DeviceState,
   DeviceStateHandler,
