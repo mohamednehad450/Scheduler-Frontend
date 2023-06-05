@@ -2,6 +2,7 @@ import {
   ColorScheme,
   ColorSchemeProvider,
   MantineProvider,
+  createEmotionCache,
 } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
 import { ModalsProvider } from "@mantine/modals";
@@ -18,7 +19,12 @@ import {
   ChannelChangeHandler,
 } from "./socket";
 import { modals } from "../modals";
+import rtlPlugin from "stylis-plugin-rtl";
 
+const rtlCache = createEmotionCache({
+  key: "mantine-rtl",
+  stylisPlugins: [rtlPlugin],
+});
 const AppContext: FC<PropsWithChildren<{}>> = ({ children }) => {
   const { t } = useTranslation();
 
@@ -31,6 +37,7 @@ const AppContext: FC<PropsWithChildren<{}>> = ({ children }) => {
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
 
+  const rtl = t("dir") === "rtl";
   return (
     <ColorSchemeProvider
       colorScheme={colorScheme}
@@ -39,9 +46,9 @@ const AppContext: FC<PropsWithChildren<{}>> = ({ children }) => {
       <MantineProvider
         withGlobalStyles
         withNormalizeCSS
+        emotionCache={rtl ? rtlCache : undefined}
         theme={{
-          /** Put your mantine theme override here */
-          dir: t("dir") === "rtl" ? "rtl" : "ltr",
+          dir: rtl ? "rtl" : "ltr",
           colorScheme,
         }}
       >

@@ -25,6 +25,8 @@
     "react-dom": "^18.2.0",
     "react-i18next": "^12.2.2",
     "socket.io-client": "^4.5.1",
+    "stylis": "^4.2.0",
+    "stylis-plugin-rtl": "^2.1.1",
     "tabler-icons-react": "^1.48.1",
     "uuid": "^9.0.0"
   },

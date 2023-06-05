@@ -12,8 +12,8 @@ const AppLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
 
   return (
     <AppShell
+      style={{ direction: theme.dir }}
       styles={{
-        root: { direction: theme.dir },
         main: {
           background:
             theme.colorScheme === "dark"

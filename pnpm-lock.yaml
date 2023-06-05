@@ -49,6 +49,12 @@ dependencies:
   socket.io-client:
     specifier: ^4.5.1
     version: 4.5.1
+  stylis:
+    specifier: ^4.2.0
+    version: 4.2.0
+  stylis-plugin-rtl:
+    specifier: ^2.1.1
+    version: 2.1.1(stylis@4.2.0)
   tabler-icons-react:
     specifier: ^1.48.1
     version: 1.48.1(react@18.2.0)
@@ -1116,6 +1122,11 @@ packages:
       shebang-command: 2.0.0
       which: 2.0.2
     dev: true
+
+  /cssjanus@2.1.0:
+    resolution: {integrity: sha512-kAijbny3GmdOi9k+QT6DGIXqFvL96aksNlGr4Rhk9qXDZYWUojU4bRc3IHWxdaLNOqgEZHuXoe5Wl2l7dxLW5g==}
+    engines: {node: '>=10.0.0'}
+    dev: false
 
   /csstype@3.0.9:
     resolution: {integrity: sha512-rpw6JPxK6Rfg1zLOYCSwle2GFOOsnjmDYDaBwEcwoOg4qlsIVCN789VkBZDJAGi4T07gI4YSutR43t9Zz4Lzuw==}
@@ -3180,6 +3191,15 @@ packages:
     dependencies:
       client-only: 0.0.1
       react: 18.2.0
+    dev: false
+
+  /stylis-plugin-rtl@2.1.1(stylis@4.2.0):
+    resolution: {integrity: sha512-q6xIkri6fBufIO/sV55md2CbgS5c6gg9EhSVATtHHCdOnbN/jcI0u3lYhNVeuI65c4lQPo67g8xmq5jrREvzlg==}
+    peerDependencies:
+      stylis: 4.x
+    dependencies:
+      cssjanus: 2.1.0
+      stylis: 4.2.0
     dev: false
 
   /stylis@4.2.0:
