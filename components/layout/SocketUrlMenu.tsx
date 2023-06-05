@@ -1,20 +1,30 @@
 import { FC } from "react";
 import { ActionIcon, Menu, useMantineTheme } from "@mantine/core";
-import { usePrompt, useSocket } from "../context";
+import { useSocket } from "../context";
 import { useTranslation } from "react-i18next";
 import { Circle, DevicesPc } from "tabler-icons-react";
+import { openContextModal } from "@mantine/modals";
 
 const SocketUrlMenu: FC<{ subMenu?: boolean }> = ({ subMenu }) => {
   const theme = useMantineTheme();
   const { t } = useTranslation();
   const sContext = useSocket();
   const connected = !!sContext?.socket;
-  const prompt = usePrompt();
 
   return subMenu ? (
     <>
       <Menu.Label>{connected ? t("connected") : t("disconnected")}</Menu.Label>
-      <Menu.Item icon={<DevicesPc />} onClick={() => prompt?.changeSocket()}>
+      <Menu.Item
+        icon={<DevicesPc />}
+        onClick={() =>
+          openContextModal({
+            modal: "SocketURLModal",
+            title: t("change-socket-url"),
+            centered: true,
+            innerProps: {},
+          })
+        }
+      >
         {t("change-socket-url")}
       </Menu.Item>
     </>
@@ -36,7 +46,17 @@ const SocketUrlMenu: FC<{ subMenu?: boolean }> = ({ subMenu }) => {
         <Menu.Label>
           {connected ? t("connected") : t("disconnected")}
         </Menu.Label>
-        <Menu.Item icon={<DevicesPc />} onClick={() => prompt?.changeSocket()}>
+        <Menu.Item
+          icon={<DevicesPc />}
+          onClick={() =>
+            openContextModal({
+              modal: "SocketURLModal",
+              title: t("change-socket-url"),
+              centered: true,
+              innerProps: {},
+            })
+          }
+        >
           {t("change-socket-url")}
         </Menu.Item>
       </Menu.Dropdown>
