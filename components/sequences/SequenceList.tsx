@@ -1,16 +1,13 @@
-import { Button, Flex, Table, Text } from "@mantine/core";
+import { Button, Flex, Table, Text, useMantineTheme } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import type { Sequence } from "../common";
-import {
-  DeviceState,
-  DeviceStateHandler,
-  usePrompt,
-  useSocket,
-} from "../context";
+import { DeviceState, DeviceStateHandler, useSocket } from "../context";
 import SequenceRow from "./SequenceRow";
 import { useRouter } from "next/router";
 import { useCRUD } from "../context";
 import { useTranslation } from "react-i18next";
+import { openContextModal } from "@mantine/modals";
+import { useMediaQuery } from "@mantine/hooks";
 
 interface SequenceListProps {
   sequences: Sequence[];
@@ -27,8 +24,9 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
   const crud = useCRUD();
 
   const router = useRouter();
-  const prompt = usePrompt();
   const { t } = useTranslation();
+  const theme = useMantineTheme();
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   useEffect(() => {
     if (!sContext?.socket) {
@@ -90,18 +88,14 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
                 isRunning={runningSequences.some((id) => id === s.id)}
                 sequence={s}
                 remove={(id) =>
-                  prompt?.confirm(
-                    (confirmed) =>
-                      confirmed &&
-                      crud?.sequenceCRUD
-                        ?.remove(id)
-                        .then(() => {
-                          onChange(sequences.filter((seq) => id !== seq.id));
-                        })
-                        .catch((err) => {
-                          // TODO
-                        })
-                  )
+                  crud?.sequenceCRUD
+                    ?.remove(id)
+                    .then(() => {
+                      onChange(sequences.filter((seq) => id !== seq.id));
+                    })
+                    .catch((err) => {
+                      // TODO
+                    })
                 }
                 onChange={(newSeq) => {
                   const newSequences = [...sequences];
@@ -139,9 +133,16 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
               <Button
                 variant="subtle"
                 onClick={() =>
-                  prompt?.newSequence(
-                    (newSeq) => newSeq && router.push("/sequences/" + newSeq.id)
-                  )
+                  openContextModal({
+                    title: t("add_new_sequences"),
+                    modal: "SequenceModal",
+                    size: "xl",
+                    fullScreen: isMobile,
+                    innerProps: {
+                      onChange: (newSeq) =>
+                        router.push("/sequences/" + newSeq.id),
+                    },
+                  })
                 }
               >
                 {t("add_new_sequences")}

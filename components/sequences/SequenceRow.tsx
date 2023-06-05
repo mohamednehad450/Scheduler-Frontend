@@ -5,6 +5,7 @@ import {
   Tooltip,
   MediaQuery,
   Menu,
+  useMantineTheme,
 } from "@mantine/core";
 import { FC, MouseEventHandler } from "react";
 import {
@@ -18,8 +19,10 @@ import {
 } from "tabler-icons-react";
 import type { Sequence } from "../common";
 import { useRouter } from "next/router";
-import { useCRUD, usePrompt } from "../context";
+import { useCRUD } from "../context";
 import { useTranslation } from "react-i18next";
+import { openConfirmModal, openContextModal } from "@mantine/modals";
+import { useMediaQuery } from "@mantine/hooks";
 
 const stopPropagation: (cb?: MouseEventHandler) => MouseEventHandler =
   (cb) => (e) => {
@@ -45,9 +48,10 @@ const SequenceRow: FC<SequenceRowProps> = ({
   onChange,
 }) => {
   const router = useRouter();
-  const prompt = usePrompt();
   const crud = useCRUD();
   const { t } = useTranslation();
+  const theme = useMantineTheme();
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   const updateSequence = () =>
     crud?.sequenceCRUD
@@ -68,14 +72,36 @@ const SequenceRow: FC<SequenceRowProps> = ({
         // TODO
       });
   const edit = () =>
-    prompt?.newSequence((seq) => seq && onChange(seq), sequence);
+    openContextModal({
+      modal: "SequenceModal",
+      title: sequence.name,
+      fullScreen: isMobile,
+      size: "xl",
+      innerProps: {
+        onChange,
+        initialSequence: sequence,
+      },
+    });
 
   const copy = () =>
-    prompt?.newSequence(
-      (seq) => seq && router.push(router.route + "/" + seq.id),
-      { orders: sequence.orders }
-    );
+    openContextModal({
+      modal: "SequenceModal",
+      title: t("add_new_sequence"),
+      fullScreen: isMobile,
+      size: "xl",
+      innerProps: {
+        onChange: (seq) => seq && router.push(router.route + "/" + seq.id),
+        initialSequence: { orders: sequence.orders },
+      },
+    });
 
+  const removeFunc = () =>
+    openConfirmModal({
+      title: t("are_you_sure"),
+      centered: true,
+      labels: { cancel: t("cancel"), confirm: t("confirm") },
+      onConfirm: () => remove(sequence.id),
+    });
   return (
     <tr onClick={() => router.push(router.route + "/" + sequence.id)}>
       <td>
@@ -130,11 +156,7 @@ const SequenceRow: FC<SequenceRowProps> = ({
               </ActionIcon>
             </Tooltip>
             <Tooltip label={t("delete")} withArrow>
-              <ActionIcon
-                variant="default"
-                color={"red"}
-                onClick={() => remove(sequence.id)}
-              >
+              <ActionIcon variant="default" color={"red"} onClick={removeFunc}>
                 <Trash size={16} />
               </ActionIcon>
             </Tooltip>
@@ -175,7 +197,7 @@ const SequenceRow: FC<SequenceRowProps> = ({
                 {t("copy")}
               </Menu.Item>
               <Menu.Item
-                onClick={() => remove(sequence.id)}
+                onClick={removeFunc}
                 color={"red"}
                 icon={<Trash size={16} />}
               >

@@ -1,24 +1,34 @@
-import { Tabs, Container, Title, Group, ActionIcon, Flex } from "@mantine/core";
+import {
+  Tabs,
+  Container,
+  Title,
+  Group,
+  ActionIcon,
+  Flex,
+  useMantineTheme,
+} from "@mantine/core";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { Calendar, CalendarOff, List, Plus, Refresh } from "tabler-icons-react";
 import { SequenceList } from "../../components/sequences";
 import { Sequence } from "../../components/common";
-import { usePrompt } from "../../components/context";
 import { useRouter } from "next/router";
 import { useCRUD } from "../../components/context";
 import { useTranslation } from "react-i18next";
+import { openContextModal } from "@mantine/modals";
+import { useMediaQuery } from "@mantine/hooks";
 
 const Sequences: NextPage = () => {
   const [active, setActive] = useState<"all" | "active" | "running">("all");
   const [sequences, setSequences] = useState<Sequence[]>([]);
 
   const router = useRouter();
-  const prompt = usePrompt();
   const crud = useCRUD();
 
   const { t } = useTranslation();
+  const theme = useMantineTheme();
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   useEffect(() => {
     crud?.sequenceCRUD?.list().then((d) => setSequences(d.data));
@@ -47,9 +57,16 @@ const Sequences: NextPage = () => {
               size={32}
               mx="xs"
               onClick={() =>
-                prompt?.newSequence(
-                  (newSeq) => newSeq && router.push("/sequences/" + newSeq.id)
-                )
+                openContextModal({
+                  modal: "SequenceModal",
+                  title: t("add_new_sequence"),
+                  size: "xl",
+                  fullScreen: isMobile,
+                  innerProps: {
+                    onChange: (newSeq) =>
+                      router.push("/sequences/" + newSeq.id),
+                  },
+                })
               }
             >
               <Plus size={32} />
