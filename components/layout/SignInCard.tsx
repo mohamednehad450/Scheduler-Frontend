@@ -3,7 +3,6 @@ import {
   Card,
   Center,
   Container,
-  Tab,
   Tabs,
   TextInput,
   Text,
@@ -20,7 +19,7 @@ type FormError = {
 };
 
 const SignInCard = () => {
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState<string | null>("signIn");
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -51,13 +50,18 @@ const SignInCard = () => {
         <Center>
           <Card shadow="sm" m="lg" radius={"md"} style={{ width: "20rem" }}>
             <Tabs
-              active={activeTab}
-              onTabChange={(n) => {
-                setActiveTab(n);
+              value={activeTab}
+              onTabChange={(s) => {
+                setActiveTab(s);
                 setSignError("");
               }}
             >
-              <Tab label={t("sign_in")}>
+              <Tabs.List>
+                <Tabs.Tab value="signIn">{t("sign_in")}</Tabs.Tab>
+                <Tabs.Tab value="register">{t("register")}</Tabs.Tab>
+              </Tabs.List>
+
+              <Tabs.Panel value="signIn">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -78,7 +82,7 @@ const SignInCard = () => {
                         return;
                       }
                       if (status === 409) {
-                        setActiveTab(1);
+                        setActiveTab("register");
                         setSignError(t("admin_not_registered"));
                       }
                     });
@@ -109,8 +113,8 @@ const SignInCard = () => {
                     {t("sign_in")}
                   </Button>
                 </form>
-              </Tab>
-              <Tab label={t("register")}>
+              </Tabs.Panel>
+              <Tabs.Panel value="register">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -141,7 +145,7 @@ const SignInCard = () => {
                     auth?.register(username, password).catch((err) => {
                       const status = err?.response?.status || 0;
                       if (status === 409) {
-                        setActiveTab(0);
+                        setActiveTab("signIn");
                         setSignError(t("admin_registered"));
                       } else {
                         setSignError(t("unknown_error"));
@@ -183,7 +187,7 @@ const SignInCard = () => {
                     {t("register")}
                   </Button>
                 </form>
-              </Tab>
+              </Tabs.Panel>
             </Tabs>
           </Card>
         </Center>

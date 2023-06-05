@@ -1,4 +1,4 @@
-import { Navbar, useMantineTheme } from "@mantine/core";
+import { Navbar } from "@mantine/core";
 import { Dispatch, FC, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -7,17 +7,37 @@ import {
   DeviceDesktopAnalytics,
 } from "tabler-icons-react";
 import NavButton from "./NavButton";
+import { useRouter } from "next/router";
 
 interface NavProps {
   opened: boolean;
   setOpened: Dispatch<SetStateAction<boolean>>;
 }
 
-const Nav: FC<NavProps> = ({ opened, setOpened }) => {
-  const close = () => setTimeout(() => setOpened(false));
-  const theme = useMantineTheme();
+const routes = [
+  {
+    path: "/",
+    label: "dashboard",
+    color: "blue",
+    icon: <Dashboard size={20} />,
+  },
+  {
+    path: "/sequences",
+    label: "sequences",
+    color: "teal",
+    icon: <ClipboardList size={20} />,
+  },
+  {
+    path: "/device",
+    label: "device",
+    color: "red",
+    icon: <DeviceDesktopAnalytics size={20} />,
+  },
+];
 
+const Nav: FC<NavProps> = ({ opened, setOpened }) => {
   const { t } = useTranslation();
+  const router = useRouter();
 
   return (
     <Navbar
@@ -25,28 +45,22 @@ const Nav: FC<NavProps> = ({ opened, setOpened }) => {
       hiddenBreakpoint="sm"
       hidden={!opened}
       width={{ sm: 200, lg: 300 }}
+      dir={t("dir")}
     >
-      <NavButton
-        href="/"
-        onClick={close}
-        icon={<Dashboard size={20} />}
-        color="blue"
-        label={t("dashboard")}
-      />
-      <NavButton
-        href="/sequences"
-        onClick={close}
-        icon={<ClipboardList size={20} />}
-        color="teal"
-        label={t("sequences")}
-      />
-      <NavButton
-        href="/device"
-        onClick={close}
-        icon={<DeviceDesktopAnalytics size={20} />}
-        color="red"
-        label={t("device")}
-      />
+      <Navbar.Section>
+        {routes.map(({ color, path, label, icon }) => (
+          <NavButton
+            key={path}
+            onClick={() => {
+              router.push(path);
+              setOpened(false);
+            }}
+            icon={icon}
+            color={color}
+            label={t(label)}
+          />
+        ))}
+      </Navbar.Section>
     </Navbar>
   );
 };

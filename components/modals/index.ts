@@ -1,17 +1,23 @@
-import LinkCron from "./LinkCron";
-import ConfirmModal from "./ConfirmModal";
-import NewSequence from "./NewSequence";
-import NewCron from "./NewCron";
-import LinkSequence from "./LinkSequence";
-import NewPin from "./NewPin";
-import ChangeSocketModal from "./ChangeSocketModal";
+import LinkCronModal from "./LinkCronModal";
+import SequenceModal from "./SequenceModal";
+import CronModal from "./CronModal";
+import LinkSequenceModal from "./LinkSequenceModal";
+import PinModal from "./PinModal";
+import SocketURLModal from "./SocketURLModal";
 
-export {
-  ConfirmModal,
-  NewSequence,
-  NewCron,
-  LinkSequence,
-  LinkCron,
-  NewPin,
-  ChangeSocketModal,
+const modals = {
+  PinModal,
+  SocketURLModal,
+  CronModal,
+  SequenceModal,
+  LinkCronModal,
+  LinkSequenceModal,
 };
+
+declare module "@mantine/modals" {
+  export interface MantineModalsOverride {
+    modals: typeof modals;
+  }
+}
+
+export { modals };

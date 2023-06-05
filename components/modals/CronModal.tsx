@@ -2,7 +2,6 @@ import {
   Button,
   Divider,
   Group,
-  Modal,
   Text,
   TextInput,
   useMantineTheme,
@@ -13,15 +12,18 @@ import cronstrue from "cronstrue";
 import CronInput from "./CronInput";
 import { useCRUD } from "../context";
 import { useTranslation } from "react-i18next";
-import { useRouter } from "next/router";
+import { ContextModalProps } from "@mantine/modals";
 
-interface NewCronProps {
-  opened: boolean;
-  onClose: (newCron?: Cron) => void;
+interface CronModalProps {
+  onChange: (cron: Cron) => void;
   initCron?: Cron;
 }
 
-const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
+const CronModal: FC<ContextModalProps<CronModalProps>> = ({
+  context,
+  id,
+  innerProps: { onChange, initCron },
+}) => {
   const theme = useMantineTheme();
   const crud = useCRUD();
 
@@ -37,26 +39,9 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
   useEffect(() => {
     !label && setErr({ label: "" });
   }, [label]);
-  useEffect(() => {
-    if (opened) {
-      setErr({ label: "" });
-      setLabel(initCron?.label || "");
-      setCron(initCron?.cron || "* * * * * *");
-    }
-  }, [opened]);
-
-  const router = useRouter();
 
   return (
-    <Modal
-      title={
-        initCron ? `${t("edit")} ${initCron.label}` : t("add_new_schedule")
-      }
-      opened={opened}
-      onClose={() => onClose()}
-      size="lg"
-      overflow="inside"
-    >
+    <>
       <TextInput
         p="md"
         label={t("label")}
@@ -71,7 +56,6 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
       <Divider />
       <Group
         p="md"
-        direction="column"
         style={{
           zIndex: 1,
           position: "sticky",
@@ -93,7 +77,7 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
         </Group>
       </Group>
       <Group p={"md"} position="right">
-        <Button variant="subtle" onClick={() => onClose()}>
+        <Button variant="subtle" onClick={() => context.closeModal(id)}>
           {t("cancel")}
         </Button>
         <Button
@@ -111,7 +95,8 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
             func &&
               func()
                 .then((d) => {
-                  d?.data && onClose(d.data);
+                  d?.data && onChange(d.data);
+                  d?.data && context.closeModal(id);
                 })
                 .catch((err) => {
                   // TODO
@@ -121,8 +106,8 @@ const NewCron: FC<NewCronProps> = ({ opened, onClose, initCron }) => {
           {t("submit")}
         </Button>
       </Group>
-    </Modal>
+    </>
   );
 };
 
-export default NewCron;
+export default CronModal;

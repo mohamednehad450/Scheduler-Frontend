@@ -1,4 +1,4 @@
-import { Grid, Container } from "@mantine/core";
+import { Container, SimpleGrid } from "@mantine/core";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useEffect, useState } from "react";
@@ -7,13 +7,6 @@ import { useSocket } from "../components/context";
 import { DeviceTime, PinsStatus, Sequences } from "../components/dashboard";
 import { Sequence } from "../components/common";
 import { useTranslation } from "react-i18next";
-const g = {
-  sm: 12,
-  md: 6,
-  lg: 6,
-  xl: 4,
-  span: 12,
-};
 
 const Home: NextPage = () => {
   const [sequences, setSequences] = useState<Sequence[]>([]);
@@ -33,17 +26,19 @@ const Home: NextPage = () => {
         <title>{t("dashboard_title")}</title>
       </Head>
       <Container size={"lg"} m="sm" p="sm">
-        <Grid gutter="md">
-          <Grid.Col {...g}>
-            <DeviceTime />
-          </Grid.Col>
-          <Grid.Col {...g}>
-            <PinsStatus sequences={sequences} />
-          </Grid.Col>
-          <Grid.Col {...g}>
-            <Sequences sequences={sequences} />
-          </Grid.Col>
-        </Grid>
+        <SimpleGrid
+          cols={3}
+          spacing="lg"
+          breakpoints={[
+            { maxWidth: "xl", cols: 3 },
+            { maxWidth: "lg", cols: 2 },
+            { maxWidth: "sm", cols: 1 },
+          ]}
+        >
+          <DeviceTime />
+          <PinsStatus sequences={sequences} />
+          <Sequences sequences={sequences} />
+        </SimpleGrid>
       </Container>
     </>
   );

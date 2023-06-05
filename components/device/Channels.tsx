@@ -1,11 +1,11 @@
 import {
   ActionIcon,
   Button,
-  Container,
+  Card,
   Divider,
-  Group,
+  Flex,
+  Grid,
   ScrollArea,
-  Table,
   Text,
   useMantineTheme,
 } from "@mantine/core";
@@ -18,10 +18,11 @@ import {
   DeviceState,
   DeviceStateHandler,
   useCRUD,
-  usePrompt,
   useSocket,
 } from "../context";
 import ChannelRow from "./ChannelRow";
+import { openConfirmModal, openContextModal } from "@mantine/modals";
+import { useMediaQuery } from "@mantine/hooks";
 
 const Channels: FC = () => {
   const [pins, setPins] = useState<Pin[]>([]);
@@ -30,10 +31,10 @@ const Channels: FC = () => {
   >([]);
 
   const sContext = useSocket();
-  const prompt = usePrompt();
   const crud = useCRUD();
   const { t } = useTranslation();
   const theme = useMantineTheme();
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   useEffect(() => {
     if (!sContext?.socket) {
@@ -67,29 +68,26 @@ const Channels: FC = () => {
   }, [crud]);
 
   return (
-    <Container
-      my="0"
-      px="sm"
-      py="0"
-      style={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "stretch",
-      }}
-    >
-      <Group py="xs" position="apart">
-        <Text size="xl">{t("pins")}</Text>
-        <Group>
+    <Card h="26rem" shadow="sm" p={"0"} radius={"md"}>
+      <Flex justify={"space-between"} align={"center"} h="3rem" px="sm">
+        <Text weight={500} size="lg">
+          {t("pins")}
+        </Text>
+        <Flex align={"center"} gap={"sm"}>
           <Button
             onClick={() =>
-              prompt?.confirm(
-                (confirmed) =>
-                  confirmed &&
+              openConfirmModal({
+                title: t("are_you_sure"),
+                centered: true,
+                labels: {
+                  cancel: t("cancel"),
+                  confirm: t("confirm"),
+                },
+                onConfirm: () =>
                   sContext?.fallback
                     .resetDevice()
-                    .then((r) => setChannelsStatus(r.data.channelsStatus))
-              )
+                    .then((r) => setChannelsStatus(r.data.channelsStatus)),
+              })
             }
             variant="subtle"
           >
@@ -104,97 +102,125 @@ const Channels: FC = () => {
           <ActionIcon
             size={24}
             onClick={() =>
-              prompt?.newPin(
-                () => crud?.pinsCRUD?.list().then((d) => setPins(d.data)),
-                pins.reduce((acc, pin) => ({ ...acc, [pin.channel]: true }), {})
-              )
+              openContextModal({
+                modal: "PinModal",
+                title: t("add_new_pin"),
+                fullScreen: isMobile,
+                innerProps: {
+                  usedPins: pins.reduce(
+                    (acc, pin) => ({ ...acc, [pin.channel]: true }),
+                    {}
+                  ),
+                  onChange: () =>
+                    crud?.pinsCRUD?.list().then((d) => setPins(d.data)),
+                },
+              })
             }
           >
             <Plus size={24} />
           </ActionIcon>
-        </Group>
-      </Group>
+        </Flex>
+      </Flex>
       <Divider />
       {pins.length ? (
-        <ScrollArea pt="xs" m="0" p="0">
-          <Table
-            striped
-            highlightOnHover
-            style={{
-              textAlign: "center",
-              verticalAlign: "middle",
-            }}
-          >
-            <tbody>
-              {pins.map((p, i) => (
-                <ChannelRow
-                  key={p.channel}
-                  onChange={(pin) =>
-                    setPins((pins) => {
-                      pins[i] = pin;
-                      return [...pins];
-                    })
-                  }
-                  pin={p}
-                  remove={(id) =>
-                    crud?.pinsCRUD
-                      ?.remove(id)
-                      .then(() =>
-                        setPins((pins) =>
-                          pins.filter(({ channel }) => id !== channel)
-                        )
+        <>
+          <ScrollArea h="20rem" p="0">
+            {pins.map((pin, i) => (
+              <ChannelRow
+                key={pin.channel}
+                isRunning={channelsStatus[pin.channel]}
+                onChange={(pin) =>
+                  setPins((pins) => {
+                    pins[i] = pin;
+                    return [...pins];
+                  })
+                }
+                pin={pin}
+                remove={(id) =>
+                  crud?.pinsCRUD
+                    ?.remove(id)
+                    .then(() =>
+                      setPins((pins) =>
+                        pins.filter(({ channel }) => id !== channel)
                       )
-                      .catch(() => {
-                        // TODO
-                      })
-                  }
-                  isRunning={channelsStatus && channelsStatus[p.channel]}
-                />
-              ))}
-            </tbody>
-            <tfoot
-              style={{
-                position: "sticky",
-                bottom: 0,
-                background:
-                  theme.colorScheme === "dark" ? theme.colors.dark[4] : "white",
+                    )
+                    .catch(() => {
+                      // TODO
+                    })
+                }
+              />
+            ))}
+          </ScrollArea>
+          <Divider />
+          <Flex h={"3rem"} align={"center"} justify={"stretch"}>
+            <Grid
+              p="sm"
+              w="100%"
+              sx={{
+                textAlign: "center",
+                fontWeight: "bold",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
+              style={{}}
             >
-              <tr>
-                <th style={{ textAlign: "start" }}>{t("label")}</th>
-                <th style={{ textAlign: "start" }}>{t("channel")}</th>
-                <th style={{ textAlign: "start" }}>{t("on_state")}</th>
-                <th style={{ textAlign: "start" }}>{t("status")}</th>
-                <th style={{ textAlign: "start" }}>{t("actions")}</th>
-              </tr>
-            </tfoot>
-          </Table>
-        </ScrollArea>
+              <Grid.Col span={4}>
+                <Text
+                  style={{
+                    textAlign: "start",
+                  }}
+                  size="sm"
+                >
+                  {t("label")}
+                </Text>
+              </Grid.Col>
+              <Grid.Col span={2}>
+                <Text size="sm">{t("channel")}</Text>
+              </Grid.Col>
+              <Grid.Col span={2}>
+                <Text size="sm">{t("on_state")}</Text>
+              </Grid.Col>
+              <Grid.Col span={2}>
+                <Text size="sm">{t("status")}</Text>
+              </Grid.Col>
+              <Grid.Col span={2}>
+                <Text size="sm">{t("actions")}</Text>
+              </Grid.Col>
+            </Grid>
+          </Flex>
+        </>
       ) : (
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+        <Flex
+          h="23rem"
+          direction={"column"}
+          align={"center"}
+          justify={"center"}
         >
           <Text>{t("no_pins_defined")}</Text>
           <Button
             onClick={() =>
-              prompt?.newPin(
-                () => crud?.pinsCRUD?.list().then((d) => setPins(d.data)),
-                pins.reduce((acc, pin) => ({ ...acc, [pin.channel]: true }), {})
-              )
+              openContextModal({
+                modal: "PinModal",
+                title: t("add_new_pin"),
+                fullScreen: isMobile,
+                innerProps: {
+                  usedPins: pins.reduce(
+                    (acc, pin) => ({ ...acc, [pin.channel]: true }),
+                    {}
+                  ),
+                  onChange: () =>
+                    crud?.pinsCRUD?.list().then((d) => setPins(d.data)),
+                },
+              })
             }
             variant="subtle"
           >
             {t("add_new_pin")}
           </Button>
-        </div>
+        </Flex>
       )}
-    </Container>
+    </Card>
   );
 };
 

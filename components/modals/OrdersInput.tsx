@@ -194,7 +194,6 @@ const OrdersInput: FC<OrdersInputProps> = ({
               </ActionIcon>
             }
           />
-
           <Select
             styles={{ root: { width: "40%" } }}
             label={t("step")}
@@ -205,8 +204,6 @@ const OrdersInput: FC<OrdersInputProps> = ({
               if (isNaN(c) || maxX * 0.25 < c) return;
               setStep(c);
             }}
-            rightSectionWidth={0}
-            rightSection={<></>}
           />
         </Group>
         <Select
@@ -224,8 +221,6 @@ const OrdersInput: FC<OrdersInputProps> = ({
             if (isNaN(c)) return;
             setChannelMap((old) => ({ ...old, [c]: [[0, 0.1]] }));
           }}
-          rightSection={<></>}
-          rightSectionWidth={0}
           error={error}
         />
       </Group>
