@@ -102,7 +102,7 @@ const SequenceActivities: FC<SequenceActivitiesProps> = ({ sequence }) => {
         <>
           <Flex h="3rem" px="xs" justify={"end"}>
             <Pagination
-              total={Math.round(
+              total={Math.ceil(
                 (events.page?.total || 0) / (events.page?.perPage || 1)
               )}
               onChange={(page) => {

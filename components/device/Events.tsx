@@ -100,7 +100,7 @@ const Events: FC = () => {
         <>
           <Flex align={"center"} justify={"end"} h="3rem" px="sm">
             <Pagination
-              total={Math.round(
+              total={Math.ceil(
                 (events.page?.total || 0) / (events.page?.perPage || 1)
               )}
               siblings={0}
