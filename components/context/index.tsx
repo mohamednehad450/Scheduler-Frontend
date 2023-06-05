@@ -4,6 +4,7 @@ import {
   MantineProvider,
 } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
+import { ModalsProvider } from "@mantine/modals";
 import { FC, PropsWithChildren } from "react";
 import { useTranslation } from "react-i18next";
 import { ProvideAuth, useAuth } from "./auth";
@@ -16,6 +17,7 @@ import {
   DeviceStateHandler,
   ChannelChangeHandler,
 } from "./socket";
+import { modals } from "../modals";
 
 const AppContext: FC<PropsWithChildren<{}>> = ({ children }) => {
   const { t } = useTranslation();
@@ -45,7 +47,9 @@ const AppContext: FC<PropsWithChildren<{}>> = ({ children }) => {
       >
         <ProvideAuth>
           <ProvideCRUD>
-            <ProvideSocket>{children}</ProvideSocket>
+            <ProvideSocket>
+              <ModalsProvider modals={modals}>{children}</ModalsProvider>
+            </ProvideSocket>
           </ProvideCRUD>
         </ProvideAuth>
       </MantineProvider>
