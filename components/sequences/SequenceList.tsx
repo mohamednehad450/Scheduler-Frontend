@@ -1,4 +1,11 @@
-import { Button, Flex, Table, Text, useMantineTheme } from "@mantine/core";
+import {
+  Button,
+  Flex,
+  ScrollArea,
+  Table,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import type { Sequence } from "../common";
 import { DeviceState, DeviceStateHandler, useSocket } from "../context";
@@ -136,6 +143,7 @@ const SequenceList: FC<SequenceListProps> = ({ sequences, onChange, show }) => {
                   openContextModal({
                     title: t("add_new_sequences"),
                     modal: "SequenceModal",
+                    scrollAreaComponent: ScrollArea.Autosize,
                     size: "xl",
                     fullScreen: isMobile,
                     innerProps: {

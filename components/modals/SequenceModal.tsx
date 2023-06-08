@@ -5,6 +5,7 @@ import {
   ScrollArea,
   Switch,
   TextInput,
+  useMantineTheme,
 } from "@mantine/core";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -16,6 +17,7 @@ import {
   openConfirmModal,
   openContextModal,
 } from "@mantine/modals";
+import { useMediaQuery } from "@mantine/hooks";
 
 type SequenceInput = {
   name: string;
@@ -63,11 +65,12 @@ const SequenceModal: FC<ContextModalProps<SequenceModalProps>> = ({
       orders: "",
     });
   }, [sequence]);
-
+  const theme = useMantineTheme();
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   return (
     <>
       <Divider pt="md" />
-      <ScrollArea>
+      <ScrollArea h={isMobile ? "80svh" : ""}>
         <Group p="xs">
           <TextInput
             required

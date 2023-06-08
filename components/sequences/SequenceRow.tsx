@@ -6,6 +6,7 @@ import {
   MediaQuery,
   Menu,
   useMantineTheme,
+  ScrollArea,
 } from "@mantine/core";
 import { FC, MouseEventHandler } from "react";
 import {
@@ -77,6 +78,7 @@ const SequenceRow: FC<SequenceRowProps> = ({
       modal: "SequenceModal",
       title: sequence.name,
       fullScreen: isMobile,
+      scrollAreaComponent: ScrollArea.Autosize,
       size: "xl",
       innerProps: {
         onChange,
@@ -89,6 +91,7 @@ const SequenceRow: FC<SequenceRowProps> = ({
       modal: "SequenceModal",
       title: t("add_new_sequence"),
       fullScreen: isMobile,
+      scrollAreaComponent: ScrollArea.Autosize,
       size: "xl",
       innerProps: {
         onChange: (seq) => seq && router.push(router.route + "/" + seq.id),

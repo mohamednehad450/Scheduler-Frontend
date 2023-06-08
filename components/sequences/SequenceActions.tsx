@@ -4,6 +4,7 @@ import {
   Divider,
   Grid,
   Group,
+  ScrollArea,
   Text,
   useMantineTheme,
 } from "@mantine/core";
@@ -166,6 +167,7 @@ const SequenceActions: FC<SequenceActionsProps> = ({ sequence, onChange }) => {
                 title: sequence.name,
                 fullScreen: isMobile,
                 size: "xl",
+                scrollAreaComponent: ScrollArea.Autosize,
                 innerProps: {
                   onChange,
                   initialSequence: sequence,
