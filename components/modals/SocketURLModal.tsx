@@ -12,7 +12,11 @@ const SocketURLModal: FC<ContextModalProps<{}>> = ({ id, context }) => {
 
   return (
     <form>
-      <TextInput value={sUrl} onChange={(s) => setSUrl(s.target.value)} />
+      <TextInput
+        size="md"
+        value={sUrl}
+        onChange={(s) => setSUrl(s.target.value)}
+      />
       <Group pt={"md"} position="right">
         <Button variant="subtle" onClick={() => context.closeModal(id)}>
           {t("cancel")}

@@ -71,6 +71,7 @@ const SequenceModal: FC<ContextModalProps<SequenceModalProps>> = ({
         <Group p="xs">
           <TextInput
             required
+            size="md"
             value={sequence.name}
             onChange={(e) =>
               setSequence((s) => ({ ...s, name: e.target.value }))

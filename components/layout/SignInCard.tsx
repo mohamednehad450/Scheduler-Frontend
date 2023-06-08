@@ -93,6 +93,7 @@ const SignInCard = () => {
                     onChange={(e) => setUsername(e.target.value)}
                     mt="xs"
                     type="text"
+                    size="md"
                     required
                     label={t("username")}
                     error={formError.username}
@@ -101,6 +102,7 @@ const SignInCard = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     mt="xs"
+                    size="md"
                     type="password"
                     required
                     label={t("password")}
@@ -158,6 +160,7 @@ const SignInCard = () => {
                     onChange={(e) => setUsername(e.target.value)}
                     my="xs"
                     type="text"
+                    size="md"
                     required
                     label={t("username")}
                     error={formError.username}
@@ -166,6 +169,7 @@ const SignInCard = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     my="xs"
+                    size="md"
                     type="password"
                     required
                     label={t("password")}
@@ -175,6 +179,7 @@ const SignInCard = () => {
                     value={confirm}
                     onChange={(e) => setConfirm(e.target.value)}
                     my="xs"
+                    size="md"
                     type="password"
                     required
                     label={t("confirm_password")}

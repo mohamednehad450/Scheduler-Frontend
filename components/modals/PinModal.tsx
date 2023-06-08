@@ -11,7 +11,7 @@ import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LoadingButton, Pin } from "../common";
 import { useCRUD } from "../context";
-import { ContextModalProps, openContextModal } from "@mantine/modals";
+import { ContextModalProps } from "@mantine/modals";
 
 interface PinModalProps {
   initialPin?: Pin;
@@ -56,6 +56,7 @@ const PinModal: FC<ContextModalProps<PinModalProps>> = ({
       <Divider mb="sm" />
       <TextInput
         py="xs"
+        size="md"
         label={t("label")}
         description={t("choose_pin_label")}
         required
@@ -65,6 +66,7 @@ const PinModal: FC<ContextModalProps<PinModalProps>> = ({
       />
       <Select
         py="xs"
+        size="md"
         label={t("channel")}
         description={t("pick_pin_channel")}
         required

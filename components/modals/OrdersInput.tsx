@@ -165,6 +165,7 @@ const OrdersInput: FC<OrdersInputProps> = ({
         <Group>
           <Select
             styles={{ root: { width: "50%" } }}
+            size="md"
             label={t("sequence_length")}
             value={String(maxX)}
             data={sequenceLength}
@@ -196,6 +197,7 @@ const OrdersInput: FC<OrdersInputProps> = ({
           />
           <Select
             styles={{ root: { width: "40%" } }}
+            size="md"
             label={t("step")}
             value={String(step)}
             data={steps}
@@ -208,6 +210,7 @@ const OrdersInput: FC<OrdersInputProps> = ({
         </Group>
         <Select
           styles={{ root: { minWidth: "25%" } }}
+          size="md"
           label={t("channels")}
           value=""
           data={

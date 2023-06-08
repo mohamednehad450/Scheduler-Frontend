@@ -42,6 +42,7 @@ const DurationInput: FC<DurationInputProps> = ({
         <NumberInput
           label={t("hour")}
           styles={{ root: { width: "4rem" } }}
+          size="md"
           defaultValue={0}
           hideControls
           step={1}
@@ -52,6 +53,7 @@ const DurationInput: FC<DurationInputProps> = ({
         <Text pt="xl">:</Text>
         <NumberInput
           label={t("minute")}
+          size="md"
           min={0}
           max={59}
           styles={{ root: { width: "4rem" } }}
@@ -64,6 +66,7 @@ const DurationInput: FC<DurationInputProps> = ({
         <Text pt="xl">:</Text>
         <NumberInput
           label={t("second")}
+          size="md"
           min={0}
           max={59}
           styles={{ root: { width: "4rem" } }}
@@ -78,6 +81,7 @@ const DurationInput: FC<DurationInputProps> = ({
           label={t("ms")}
           min={0}
           max={1000}
+          size="md"
           styles={{ root: { width: "4rem" } }}
           defaultValue={0}
           hideControls

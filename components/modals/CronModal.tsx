@@ -44,6 +44,7 @@ const CronModal: FC<ContextModalProps<CronModalProps>> = ({
     <>
       <TextInput
         p="md"
+        size="md"
         label={t("label")}
         description={t("schedule_label")}
         value={label}
