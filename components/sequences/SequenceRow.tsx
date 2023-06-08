@@ -12,6 +12,7 @@ import {
   Calendar,
   CalendarOff,
   Copy,
+  Dots,
   Edit,
   PlayerPause,
   PlayerPlay,
@@ -164,6 +165,11 @@ const SequenceRow: FC<SequenceRowProps> = ({
         </MediaQuery>
         <MediaQuery largerThan={"md"} styles={{ display: "none" }}>
           <Menu>
+            <Menu.Target>
+              <ActionIcon>
+                <Dots />
+              </ActionIcon>
+            </Menu.Target>
             <Menu.Dropdown>
               <Menu.Label>{t("actions")}</Menu.Label>
               <Menu.Item
