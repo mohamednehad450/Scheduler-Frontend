@@ -70,7 +70,7 @@ const SequenceModal: FC<ContextModalProps<SequenceModalProps>> = ({
   return (
     <>
       <Divider pt="md" />
-      <ScrollArea h={isMobile ? "80svh" : ""}>
+      <ScrollArea h={isMobile ? "80svh" : undefined}>
         <Group p="xs">
           <TextInput
             required
